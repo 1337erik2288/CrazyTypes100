@@ -8,6 +8,14 @@ interface Monster {
   isDefeated: boolean
 }
 
+interface GameStats {
+  correctChars: number
+  incorrectChars: number
+  totalChars: number
+  startTime: number
+  endTime: number | null
+}
+
 type Language = 'en' | 'ru'
 
 const shapes = ['circle', 'square', 'triangle', 'pentagon', 'hexagon']
@@ -18,6 +26,13 @@ function App() {
   const [language, setLanguage] = useState<Language>('en')
   const [showVictory, setShowVictory] = useState(false)
   const [monster, setMonster] = useState<Monster>(() => createNewMonster())
+  const [gameStats, setGameStats] = useState<GameStats>(() => ({
+    correctChars: 0,
+    incorrectChars: 0,
+    totalChars: 0,
+    startTime: Date.now(),
+    endTime: null
+  }))
 
   function createNewMonster(): Monster {
     return {
@@ -54,6 +69,13 @@ function App() {
   const restartGame = () => {
     setMonster(createNewMonster())
     setShowVictory(false)
+    setGameStats({
+      correctChars: 0,
+      incorrectChars: 0,
+      totalChars: 0,
+      startTime: Date.now(),
+      endTime: null
+    })
     generateNewWord()
   }
 
@@ -77,6 +99,13 @@ function App() {
         // Remove incorrect character immediately
         setUserInput(value.slice(0, -1))
         
+        // Update stats for incorrect character
+        setGameStats(prev => ({
+          ...prev,
+          incorrectChars: prev.incorrectChars + 1,
+          totalChars: prev.totalChars + 1
+        }))
+        
         // Heal monster for incorrect character
         setMonster(prev => {
           const newHealth = Math.min(100, prev.health + 5)
@@ -85,11 +114,21 @@ function App() {
         return
       }
       
+      // Update stats for correct character
+      setGameStats(prev => ({
+        ...prev,
+        correctChars: prev.correctChars + 1,
+        totalChars: prev.totalChars + 1
+      }))
+
       // Damage monster for correct character
       setMonster(prev => {
         const newHealth = Math.max(0, prev.health - 4)
         const isDefeated = newHealth === 0
-        if (isDefeated) setShowVictory(true)
+        if (isDefeated) {
+          setShowVictory(true)
+          setGameStats(prev => ({ ...prev, endTime: Date.now() }))
+        }
         const monsterElement = document.querySelector('.monster')
         if (monsterElement) {
           monsterElement.classList.remove('damage-animation')
@@ -163,6 +202,14 @@ function App() {
           <div className="victory-screen">
             <h2>Victory!</h2>
             <p>You defeated the monster!</p>
+            <div className="stats">
+              <p>Time: {((gameStats.endTime || Date.now()) - gameStats.startTime) / 1000} seconds</p>
+              <p>Total characters: {gameStats.totalChars}</p>
+              <p>Correct characters: {gameStats.correctChars}</p>
+              <p>Mistakes: {gameStats.incorrectChars}</p>
+              <p>Accuracy: {((gameStats.correctChars / gameStats.totalChars) * 100).toFixed(1)}%</p>
+              <p>Speed: {Math.round((gameStats.totalChars / ((gameStats.endTime || Date.now()) - gameStats.startTime)) * 60000)} CPM</p>
+            </div>
             <button onClick={restartGame}>Play Again</button>
           </div>
         ) : (
