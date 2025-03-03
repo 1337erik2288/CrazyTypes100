@@ -2,7 +2,7 @@
   width: 100%;
   height: 100vh;
   margin: 0;
-  padding: 2rem;
+  padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -199,13 +199,16 @@
 
 .game-container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
   width: 100%;
   max-width: 1200px;
   gap: 2rem;
   position: relative;
-  z-index: 2;
+  z-index: 10;
+  padding: 2rem;
+  pointer-events: all;
 }
 
 .monster-container {
@@ -214,6 +217,9 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  margin-top: 2rem;
+  position: relative;
+  z-index: 20;
 }
 
 .monster {
@@ -316,7 +322,11 @@
   align-items: center;
   gap: 1rem;
   position: relative;
-  z-index: 3;
+  z-index: 30;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 2rem;
+  border-radius: 15px;
+  backdrop-filter: blur(5px);
 }
 
 .controls {

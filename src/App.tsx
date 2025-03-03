@@ -5,6 +5,7 @@ import HealthBar from './components/HealthBar'
 import Landscape from './components/Landscape'
 import VictoryScreen from './components/VictoryScreen'
 import TypingInterface from './components/TypingInterface'
+import { getAdditionalWords } from './services/wordsService'
 
 interface Monster {
   health: number
@@ -41,45 +42,22 @@ function App() {
 
   function createNewMonster(): Monster {
     return {
-      health: 100,
+      health: 150,
       shape: shapes[Math.floor(Math.random() * shapes.length)],
       color: '#' + Math.floor(Math.random() * 16777215).toString(16),
       isDefeated: false
     }
   }
 
-  const words = {
-    en: [
-        'typescript', 'javascript', 'programming', 'developer',
-        'monster', 'battle', 'keyboard', 'typing', 'speed',
-        'practice', 'learning', 'coding', 'game', 'react',
-        'computer', 'software', 'interface', 'database', 'network',
-        'algorithm', 'function', 'variable', 'constant', 'module',
-        'debugging', 'framework', 'repository', 'version', 
-        'syntax', 'compiler', 'editor', 'client', 'server',
-        'application', 'deployment', 'testing', 'performance',
-        'automation', 'architecture', 'cloud', 'security'
-    ],
-    ru: [
-        'программа', 'разработка', 'компьютер', 'клавиатура',
-        'монстр', 'битва', 'печать', 'скорость', 'практика',
-        'обучение', 'код', 'игра', 'реакт', 'интерфейс',
-        'база', 'сеть', 'алгоритм', 'функция', 'модуль',
-        'константа', 'массив', 'строка', 'число', 'объект',
-        'отладка', 'фреймворк', 'репозиторий', 'версия',
-        'синтаксис', 'компилятор', 'редактор', 'клиент', 
-        'сервер', 'приложение', 'развертывание', 'тестирование',
-        'производительность', 'автоматизация', 'архитектура',
-        'облако', 'безопасность'
-    ]
-};
-
   const generateNewWord = useCallback(() => {
-    const wordList = words[language]
-    const randomIndex = Math.floor(Math.random() * wordList.length)
-    const newWord = wordList[randomIndex]
-    setCurrentWord(newWord)
-    setUserInput('')
+    getAdditionalWords(language).then(newWords => {
+      if (newWords.length > 0) {
+        const randomIndex = Math.floor(Math.random() * newWords.length)
+        const newWord = newWords[randomIndex]
+        setCurrentWord(newWord)
+        setUserInput('')
+      }
+    })
   }, [language])
 
   const restartGame = () => {
@@ -97,11 +75,19 @@ function App() {
 
   useEffect(() => {
     generateNewWord()
-  }, [generateNewWord])
+  }, []) // Remove generateNewWord from dependencies
 
-  const toggleLanguage = () => {
+  const toggleLanguage = async () => {
     setLanguage(prev => prev === 'en' ? 'ru' : 'en')
-    generateNewWord()
+    setUserInput('')
+    setCurrentWord('')
+    await getAdditionalWords(language === 'en' ? 'ru' : 'en').then(newWords => {
+      if (newWords.length > 0) {
+        const randomIndex = Math.floor(Math.random() * newWords.length)
+        const newWord = newWords[randomIndex]
+        setCurrentWord(newWord)
+      }
+    })
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
