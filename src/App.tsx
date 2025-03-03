@@ -44,19 +44,30 @@ function App() {
   }
 
   const words = {
-    en: ['typescript', 'javascript', 'programming', 'developer',
-      'monster', 'battle', 'keyboard', 'typing', 'speed',
-      'practice', 'learning', 'coding', 'game', 'react',
-      'computer', 'software', 'interface', 'database', 'network',
-      'algorithm', 'function', 'variable', 'constant', 'module'
+    en: [
+        'typescript', 'javascript', 'programming', 'developer',
+        'monster', 'battle', 'keyboard', 'typing', 'speed',
+        'practice', 'learning', 'coding', 'game', 'react',
+        'computer', 'software', 'interface', 'database', 'network',
+        'algorithm', 'function', 'variable', 'constant', 'module',
+        'debugging', 'framework', 'repository', 'version', 
+        'syntax', 'compiler', 'editor', 'client', 'server',
+        'application', 'deployment', 'testing', 'performance',
+        'automation', 'architecture', 'cloud', 'security'
     ],
-    ru: ['программа', 'разработка', 'компьютер', 'клавиатура',
-      'монстр', 'битва', 'печать', 'скорость', 'практика',
-      'обучение', 'код', 'игра', 'реакт', 'интерфейс',
-      'база', 'сеть', 'алгоритм', 'функция', 'модуль',
-      'константа', 'массив', 'строка', 'число', 'объект'
+    ru: [
+        'программа', 'разработка', 'компьютер', 'клавиатура',
+        'монстр', 'битва', 'печать', 'скорость', 'практика',
+        'обучение', 'код', 'игра', 'реакт', 'интерфейс',
+        'база', 'сеть', 'алгоритм', 'функция', 'модуль',
+        'константа', 'массив', 'строка', 'число', 'объект',
+        'отладка', 'фреймворк', 'репозиторий', 'версия',
+        'синтаксис', 'компилятор', 'редактор', 'клиент', 
+        'сервер', 'приложение', 'развертывание', 'тестирование',
+        'производительность', 'автоматизация', 'архитектура',
+        'облако', 'безопасность'
     ]
-  }
+};
 
   const generateNewWord = useCallback(() => {
     const wordList = words[language]
