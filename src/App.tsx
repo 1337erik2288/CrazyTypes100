@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import './App.css'
+import Monster from './components/Monster'
+import HealthBar from './components/HealthBar'
 
 interface Monster {
   health: number
@@ -191,23 +193,20 @@ function App() {
       </div>
       <div className="game-container">
         <div className="monster-container">
-          <div className={`monster ${monster.isDefeated ? 'defeated' : ''}`}
-            style={{ backgroundColor: monster.color, ...(monster.shape === 'circle' ? { borderRadius: '50%' } :
-              monster.shape === 'triangle' ? { clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' } :
-              monster.shape === 'pentagon' ? { clipPath: 'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)' } :
-              monster.shape === 'hexagon' ? { clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' } :
-              { borderRadius: '0' }) }}>
-            <div className="eyes">
-              <div className="eye"></div>
-              <div className="eye"></div>
-            </div>
-          </div>
-          <div className="health-bar">
-          <div className="health-fill" style={{ 
-            width: `${monster.health}%`,
-            backgroundColor: `hsl(${Math.max(0, (monster.health * 1.2) - 120)}, 100%, 50%)`
-          }}></div>
-          </div>
+          <Monster 
+            shape={monster.shape}
+            color={monster.color}
+            isDefeated={monster.isDefeated}
+          />
+          <HealthBar 
+            health={monster.health}
+            canHeal={true}
+            healAmount={5}
+            canRegenerate={true}
+            regenerateAmount={1}
+            isDefeated={monster.isDefeated}
+            onHealthChange={(newHealth) => setMonster(prev => ({ ...prev, health: newHealth }))}
+          />
         </div>
         {showVictory ? (
           <div className="victory-screen">
