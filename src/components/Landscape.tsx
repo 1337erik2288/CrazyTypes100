@@ -1,9 +1,29 @@
 import React from 'react';
 
 const Landscape: React.FC = () => {
+  const handleSunClick = () => {
+    let clicks = 0;
+    let lastClick = 0;
+
+    return (e: React.MouseEvent) => {
+      const time = new Date().getTime();
+      if (time - lastClick > 500) {
+        clicks = 1;
+      } else {
+        clicks++;
+      }
+      lastClick = time;
+
+      if (clicks === 3) {
+        console.log(` ________________________________________\n/ здесь должен был быть секретный       \\\n\\ коровий уровень                       /\n ----------------------------------------\n        \\   ^__^\n         \\  (oo)\\_______\n            (__)\\       )\\/\\\n                ||----w |\n                ||     ||`);
+        clicks = 0;
+      }
+    };
+  };
+
   return (
     <div className="landscape">
-      <div className="sun"></div>
+      <div className="sun" onClick={handleSunClick()}></div>
       <div className="mountain mountain-1"></div>
       <div className="mountain mountain-2"></div>
       <div className="mountain mountain-3"></div>
