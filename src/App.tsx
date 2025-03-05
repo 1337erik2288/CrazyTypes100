@@ -9,8 +9,7 @@ import { getAdditionalWords } from './services/wordsService'
 
 interface Monster {
   health: number
-  shape: string
-  color: string
+  imagePath: string
   isDefeated: boolean
 }
 
@@ -24,7 +23,13 @@ interface GameStats {
 
 type Language = 'en' | 'ru'
 
-const shapes = ['circle', 'square', 'triangle', 'pentagon', 'hexagon']
+const monsterImages = [
+  '/src/image/IMG_0263.JPG',
+  '/src/image/SVOyMINIOn.webp',
+  '/src/image/photo_2023-04-21_13-34-14.jpg',
+  '/src/image/photo_2024-12-19_14-46-01.jpg',
+  '/src/image/photo_2025-02-03_22-51-27.jpg'
+]
 
 function App() {
   const [currentWord, setCurrentWord] = useState('')
@@ -43,8 +48,7 @@ function App() {
   function createNewMonster(): Monster {
     return {
       health: 150,
-      shape: shapes[Math.floor(Math.random() * shapes.length)],
-      color: '#' + Math.floor(Math.random() * 16777215).toString(16),
+      imagePath: monsterImages[Math.floor(Math.random() * monsterImages.length)],
       isDefeated: false
     }
   }
@@ -149,8 +153,7 @@ function App() {
       <div className="game-container">
         <div className="monster-container">
           <Monster 
-            shape={monster.shape}
-            color={monster.color}
+            imagePath={monster.imagePath}
             isDefeated={monster.isDefeated}
           />
           <HealthBar 
