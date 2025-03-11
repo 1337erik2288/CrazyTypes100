@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback } from 'react'
 import './App.css'
 import Monster from './components/Monster'
 import HealthBar from './components/HealthBar'
-import Landscape from './components/Landscape'
 import VictoryScreen from './components/VictoryScreen'
 import TypingInterface from './components/TypingInterface'
+import BackgroundManager from './components/BackgroundManager'
 import { getAdditionalWords } from './services/wordsService'
 
 interface Monster {
@@ -31,12 +31,21 @@ const monsterImages = [
   '/src/image/photo_2025-02-03_22-51-27.jpg'
 ]
 
+const backgroundImages = [
+  '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (2).jpg',
+  '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (3).jpg',
+  '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (4).jpg'
+]
+
 function App() {
   const [currentWord, setCurrentWord] = useState('')
   const [userInput, setUserInput] = useState('')
   const [language, setLanguage] = useState<Language>('en')
   const [showVictory, setShowVictory] = useState(false)
   const [monster, setMonster] = useState<Monster>(() => createNewMonster())
+  const [backgroundImage, setBackgroundImage] = useState(() => {
+    return backgroundImages[Math.floor(Math.random() * backgroundImages.length)]
+  })
   const [gameStats, setGameStats] = useState<GameStats>(() => ({
     correctChars: 0,
     incorrectChars: 0,
@@ -74,6 +83,7 @@ function App() {
       startTime: Date.now(),
       endTime: null
     })
+    setBackgroundImage(backgroundImages[Math.floor(Math.random() * backgroundImages.length)])
     generateNewWord()
   }
 
@@ -130,7 +140,7 @@ function App() {
           setShowVictory(true)
           setGameStats(prev => ({ ...prev, endTime: Date.now() }))
         }
-        const monsterElement = document.querySelector('.monster')
+        const monsterElement = document.querySelector('.monster') as HTMLElement
         if (monsterElement) {
           monsterElement.classList.remove('damage-animation')
           void monsterElement.offsetWidth
@@ -149,7 +159,7 @@ function App() {
 
   return (
     <>
-      <Landscape />
+      <BackgroundManager imagePath={backgroundImage} />
       <div className="game-container">
         <div className="monster-container">
           <Monster 
