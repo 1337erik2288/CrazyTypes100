@@ -1,18 +1,20 @@
 import React, { useEffect, useCallback } from 'react';
 
 interface HealthBarProps {
-  health: number;
-  canHeal?: boolean;
-  healAmount?: number;
-  canRegenerate?: boolean;
-  regenerateAmount?: number;
-  onHealthChange?: (newHealth: number) => void;
-  isDefeated?: boolean;
-  damageThreshold?: number;
+  health: number; // Текущее здоровье
+  initialHealth: number; // Начальное (максимальное) здоровье
+  canHeal?: boolean; // Можно ли исцеляться?
+  healAmount?: number; // Количество восстановления
+  canRegenerate?: boolean; // Авто-регенерация
+  regenerateAmount?: number; // Количество авто-регенерации
+  onHealthChange?: (newHealth: number) => void; // Callback при изменении здоровья
+  isDefeated?: boolean; // Проиграл ли персонаж?
+  damageThreshold?: number; // Порог урона для смены цвета
 }
 
 const HealthBar: React.FC<HealthBarProps> = ({
   health,
+  initialHealth,
   canHeal = false,
   healAmount = 5,
   canRegenerate = false,
@@ -21,47 +23,71 @@ const HealthBar: React.FC<HealthBarProps> = ({
   isDefeated = false,
   damageThreshold = 80
 }) => {
+  // Функция регенерации
   const regenerateHealth = useCallback(() => {
-    if (canRegenerate && health < 100 && !isDefeated) {
-      const newHealth = Math.min(100, health + regenerateAmount);
-      onHealthChange?.(newHealth);
+    if (canRegenerate && health < initialHealth && !isDefeated && onHealthChange) {
+      onHealthChange(Math.min(initialHealth, health + regenerateAmount));
     }
-  }, [canRegenerate, health, regenerateAmount, onHealthChange, isDefeated]);
+  }, [canRegenerate, health, initialHealth, regenerateAmount, onHealthChange, isDefeated]);
 
   useEffect(() => {
-    if (!canRegenerate) return;
-
+    if (!canRegenerate || isDefeated) return;
     const intervalId = setInterval(regenerateHealth, 1000);
     return () => clearInterval(intervalId);
-  }, [canRegenerate, regenerateHealth]);
+  }, [canRegenerate, isDefeated, regenerateHealth]);
 
-  // Calculate the visual width based on actual health percentage
-  const calculateVisualWidth = () => {
-    return `${health}%`;
+  // Функция исцеления
+  const heal = useCallback(() => {
+    if (canHeal && health < initialHealth && !isDefeated && onHealthChange) {
+      onHealthChange(Math.min(initialHealth, health + healAmount));
+    }
+  }, [canHeal, health, initialHealth, healAmount, onHealthChange, isDefeated]);
+
+  // Вычисление цвета с учетом порога урона
+  const calculateColor = () => {
+    const healthPercentage = (health / initialHealth) * 100;
+    const scaledDamageThreshold = (damageThreshold / 100) * initialHealth;
+    if (health <= scaledDamageThreshold) {
+      const hue = (healthPercentage / damageThreshold) * 60; // 60 (жёлтый) → 0 (красный)
+      return `hsl(${hue}, 100%, 50%)`;
+    } else {
+      const hue = ((healthPercentage - damageThreshold) / (100 - damageThreshold)) * 60 + 60; // 120 (зелёный) → 60 (жёлтый)
+      return `hsl(${hue}, 100%, 50%)`;
+    }
   };
 
-  // Calculate color based on health percentage
-  const calculateColor = () => {
-    // Start with green (120), transition to yellow (60), then red (0)
-    const hue = health > damageThreshold
-      ? 120 // Green when health is high
-      : health > damageThreshold / 2
-      ? 60 + ((health - (damageThreshold / 2)) / (damageThreshold / 2)) * 60 // Transition yellow to green
-      : (health / (damageThreshold / 2)) * 60; // Transition red to yellow
-    
-    return `hsl(${hue}, 100%, 50%)`;
+  // Динамическая ширина (min 300px, max 600px)
+  const calculateWidth = () => {
+    return `${Math.max(300, initialHealth * 2)}px`;
   };
 
   return (
-    <div className="health-bar">
-      <div 
-        className="health-fill" 
-        style={{ 
-          width: calculateVisualWidth(),
+    <div className="health-bar" style={{ width: calculateWidth() }}>
+      <div
+        className="health-fill"
+        style={{
+          width: `${(health / initialHealth) * 100}%`,
           backgroundColor: calculateColor(),
-          '--health': health
-        } as React.CSSProperties}
+        }}
       />
+      <span className="health-text">{Math.round((health / initialHealth) * 100)}%</span>
+      {canHeal && health < initialHealth && !isDefeated && (
+        <button
+          onClick={heal}
+          style={{
+            position: 'absolute',
+            right: '-40px',
+            padding: '5px',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer'
+          }}
+        >
+          +
+        </button>
+      )}
     </div>
   );
 };

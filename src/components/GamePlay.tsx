@@ -153,6 +153,7 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu }
           />
           <HealthBar 
             health={monster.health}
+            initialHealth={config.initialHealth}
             canHeal={true}
             healAmount={config.healAmount}
             canRegenerate={true}
