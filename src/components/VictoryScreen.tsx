@@ -11,9 +11,10 @@ interface GameStats {
 interface VictoryScreenProps {
   gameStats: GameStats;
   onRestart: () => void;
+  onReturnToMenu: () => void;
 }
 
-const VictoryScreen: React.FC<VictoryScreenProps> = ({ gameStats, onRestart }) => {
+const VictoryScreen: React.FC<VictoryScreenProps> = ({ gameStats, onRestart, onReturnToMenu }) => {
   return (
     <div className="victory-screen">
       <h2>Victory!</h2>
@@ -26,7 +27,14 @@ const VictoryScreen: React.FC<VictoryScreenProps> = ({ gameStats, onRestart }) =
         <p>Accuracy: {((gameStats.correctChars / gameStats.totalChars) * 100).toFixed(1)}%</p>
         <p>Speed: {Math.round((gameStats.totalChars / ((gameStats.endTime || Date.now()) - gameStats.startTime)) * 60000)} CPM</p>
       </div>
-      <button onClick={onRestart}>Play Again</button>
+      <div className="victory-buttons">
+        <button onClick={onRestart} className="restart-button">
+          Play Again
+        </button>
+        <button onClick={onReturnToMenu} className="menu-button">
+          Return to Menu
+        </button>
+      </div>
     </div>
   );
 };

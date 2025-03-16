@@ -105,10 +105,10 @@
 }
 
 .health-bar {
-  width: 200px;
-  height: 20px;
+  width: clamp(300px, calc(20px * (100 - var(--health, 100))), 600px);
+  height: 30px;
   background-color: #ddd;
-  border-radius: 10px;
+  border-radius: 15px;
   overflow: hidden;
   position: relative;
 }

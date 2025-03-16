@@ -20,9 +20,9 @@ interface GameStats {
   endTime: number | null;
 }
 
-type Language = 'en' | 'ru';
+export type Language = 'en' | 'ru';
 
-interface GamePlayConfig {
+export interface GamePlayConfig {
   backgroundImage: string;
   monsterImage: string;
   initialHealth: number;
@@ -36,9 +36,10 @@ interface GamePlayConfig {
 interface GamePlayProps {
   config: GamePlayConfig;
   onRestart: () => void;
+  onReturnToMenu: () => void;
 }
 
-const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart }) => {
+const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu }) => {
   const [currentWord, setCurrentWord] = useState('');
   const [userInput, setUserInput] = useState('');
   const [showVictory, setShowVictory] = useState(false);
@@ -161,7 +162,7 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart }) => {
           />
         </div>
         {showVictory ? (
-          <VictoryScreen gameStats={gameStats} onRestart={restartGame} />
+          <VictoryScreen gameStats={gameStats} onRestart={restartGame} onReturnToMenu={onReturnToMenu} />
         ) : (
           <TypingInterface
             currentWord={currentWord}

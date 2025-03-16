@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './App.css'
-import GamePlay from './components/GamePlay'
+import GamePlay, { GamePlayConfig, Language } from './components/GamePlay'
+import LevelSelect from './components/LevelSelect'
 
 const monsterImages = [
   '/src/image/IMG_0263.JPG',
@@ -17,6 +18,7 @@ const backgroundImages = [
 ]
 
 function App() {
+  const [isPlaying, setIsPlaying] = useState(false);
   const [gameConfig, setGameConfig] = useState(() => ({
     backgroundImage: backgroundImages[Math.floor(Math.random() * backgroundImages.length)],
     monsterImage: monsterImages[Math.floor(Math.random() * monsterImages.length)],
@@ -25,7 +27,7 @@ function App() {
     regenerateAmount: 1,
     damageAmount: 4,
     healOnMistake: 5,
-    language: 'en' as const
+    language: 'en' as Language
   }))
 
   const handleRestart = () => {
@@ -36,7 +38,24 @@ function App() {
     }))
   }
 
-  return <GamePlay config={gameConfig} onRestart={handleRestart} />
+  const handleLevelSelect = (config: GamePlayConfig) => {
+    setGameConfig(config);
+    setIsPlaying(true);
+  };
+
+  const handleReturnToMenu = () => {
+    setIsPlaying(false);
+  };
+
+  return isPlaying ? (
+    <GamePlay 
+      config={gameConfig} 
+      onRestart={handleRestart} 
+      onReturnToMenu={handleReturnToMenu}
+    />
+  ) : (
+    <LevelSelect onLevelSelect={handleLevelSelect} />
+  )
 }
 
 export default App

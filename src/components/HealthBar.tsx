@@ -8,6 +8,7 @@ interface HealthBarProps {
   regenerateAmount?: number;
   onHealthChange?: (newHealth: number) => void;
   isDefeated?: boolean;
+  damageThreshold?: number;
 }
 
 const HealthBar: React.FC<HealthBarProps> = ({
@@ -17,7 +18,8 @@ const HealthBar: React.FC<HealthBarProps> = ({
   canRegenerate = false,
   regenerateAmount = 1,
   onHealthChange,
-  isDefeated = false
+  isDefeated = false,
+  damageThreshold = 80
 }) => {
   const regenerateHealth = useCallback(() => {
     if (canRegenerate && health < 100 && !isDefeated) {
@@ -33,14 +35,32 @@ const HealthBar: React.FC<HealthBarProps> = ({
     return () => clearInterval(intervalId);
   }, [canRegenerate, regenerateHealth]);
 
+  // Calculate the visual width based on actual health percentage
+  const calculateVisualWidth = () => {
+    return `${health}%`;
+  };
+
+  // Calculate color based on health percentage
+  const calculateColor = () => {
+    // Start with green (120), transition to yellow (60), then red (0)
+    const hue = health > damageThreshold
+      ? 120 // Green when health is high
+      : health > damageThreshold / 2
+      ? 60 + ((health - (damageThreshold / 2)) / (damageThreshold / 2)) * 60 // Transition yellow to green
+      : (health / (damageThreshold / 2)) * 60; // Transition red to yellow
+    
+    return `hsl(${hue}, 100%, 50%)`;
+  };
+
   return (
     <div className="health-bar">
       <div 
         className="health-fill" 
         style={{ 
-          width: `${health}%`,
-          backgroundColor: `hsl(${Math.max(0, (health * 1.2) - 120)}, 100%, 50%)`
-        }}
+          width: calculateVisualWidth(),
+          backgroundColor: calculateColor(),
+          '--health': health
+        } as React.CSSProperties}
       />
     </div>
   );
