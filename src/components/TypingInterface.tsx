@@ -3,7 +3,7 @@ import React from 'react';
 interface TypingInterfaceProps {
   currentWord: string;
   userInput: string;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 const TypingInterface: React.FC<TypingInterfaceProps> = ({
@@ -18,20 +18,21 @@ const TypingInterface: React.FC<TypingInterfaceProps> = ({
 
   return (
     <div className="typing-container">
-      <div className="word-display">
+      <div className={`word-display ${currentWord.includes('\n') ? 'code-display' : ''}`}>
         {currentWord.split('').map((char, index) => (
-          <span key={index} className={getCharacterClass(char, userInput[index], index)}>
-            {char}
+          <span key={index} className={`${getCharacterClass(char, userInput[index], index)} ${char === ' ' ? 'space-char' : ''}`}>
+            {char === ' ' ? '·' : char}
           </span>
         ))}
       </div>
-      <input
-        type="text"
+      <textarea
         value={userInput}
         onChange={onInputChange}
         className="typing-input"
-        placeholder="Type the word..."
+        placeholder="Type the code..."
         autoFocus
+        rows={currentWord.split('\n').length}
+        spellCheck="false"
       />
     </div>
   );

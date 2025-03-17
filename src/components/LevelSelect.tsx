@@ -1,6 +1,8 @@
 import React from 'react';
 import { GamePlayConfig } from './GamePlay';
 
+export type Language = 'en' | 'ru' | 'code';
+
 interface Level {
   id: number;
   name: string;
@@ -63,6 +65,20 @@ const levels: Level[] = [
       healOnMistake: 8,
       language: 'ru'
     }
+  },
+  {
+    id: 5,
+    name: 'Code Challenge',
+    config: {
+      backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (4).jpg',
+      monsterImage: '/src/image/photo_2025-02-03_22-51-27.jpg',
+      initialHealth: 250,
+      healAmount: 0,
+      regenerateAmount: 0,
+      damageAmount: 2,
+      healOnMistake: 10,
+      language: 'code'
+    }
   }
 ];
 
@@ -71,18 +87,28 @@ interface LevelSelectProps {
 }
 
 const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect }) => {
+  // Sort levels by ID to ensure correct order
+  const sortedLevels = [...levels].sort((a, b) => a.id - b.id);
+  
   return (
     <div className="level-select">
-      <h1>Select Level</h1>
-      <div className="level-grid">
-        {levels.map((level) => (
-          <button
-            key={level.id}
-            className="level-button"
-            onClick={() => onLevelSelect(level.config)}
-          >
-            {level.name}
-          </button>
+      <h1>Choose Your Challenge</h1>
+      <div className="level-path">
+        {sortedLevels.map((level, index) => (
+          <div key={level.id} className="level-node">
+            <div className="level-connector" />
+            <button
+              className={`level-circle ${level.config.language === 'ru' ? 'russian' : (level.config.language === 'code' ? 'code' : 'english')}`}
+              data-language={level.config.language}
+              onClick={() => onLevelSelect(level.config)}
+            >
+              <span className="level-number">{level.id}</span>
+              <span className="level-name">{level.name}</span>
+              <span className="level-difficulty">
+                {level.name.toLowerCase().includes('hard') ? '★★★' : '★★'}
+              </span>
+            </button>
+          </div>
         ))}
       </div>
     </div>

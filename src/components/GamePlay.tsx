@@ -5,6 +5,7 @@ import VictoryScreen from './VictoryScreen';
 import TypingInterface from './TypingInterface';
 import BackgroundManager from './BackgroundManager';
 import { getAdditionalWords } from '../services/wordsService';
+import { getCodeSnippets } from '../services/codeService';
 
 interface Monster {
   health: number;
@@ -20,7 +21,7 @@ interface GameStats {
   endTime: number | null;
 }
 
-export type Language = 'en' | 'ru';
+export type Language = 'en' | 'ru' | 'code';
 
 export interface GamePlayConfig {
   backgroundImage: string;
@@ -57,14 +58,25 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu }
   }));
 
   const generateNewWord = useCallback(() => {
-    getAdditionalWords(config.language).then(newWords => {
-      if (newWords.length > 0) {
-        const randomIndex = Math.floor(Math.random() * newWords.length);
-        const newWord = newWords[randomIndex];
-        setCurrentWord(newWord);
-        setUserInput('');
-      }
-    });
+    if (config.language === 'code') {
+      getCodeSnippets().then(snippets => {
+        if (snippets.length > 0) {
+          const randomIndex = Math.floor(Math.random() * snippets.length);
+          const newWord = snippets[randomIndex];
+          setCurrentWord(newWord);
+          setUserInput('');
+        }
+      });
+    } else {
+      getAdditionalWords(config.language).then(newWords => {
+        if (newWords.length > 0) {
+          const randomIndex = Math.floor(Math.random() * newWords.length);
+          const newWord = newWords[randomIndex];
+          setCurrentWord(newWord);
+          setUserInput('');
+        }
+      });
+    }
   }, [config.language]);
 
   const restartGame = () => {
@@ -89,7 +101,7 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu }
     generateNewWord();
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     const lastCharIndex = value.length - 1;
     
