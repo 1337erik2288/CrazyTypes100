@@ -6,6 +6,7 @@ import TypingInterface from './TypingInterface';
 import BackgroundManager from './BackgroundManager';
 import { getAdditionalWords } from '../services/wordsService';
 import { getCodeSnippets } from '../services/codeService';
+import { LevelReward } from '../services/playerService';
 
 interface Monster {
   health: number;
@@ -39,9 +40,11 @@ interface GamePlayProps {
   onRestart: () => void;
   onReturnToMenu: () => void;
   onLevelComplete: () => void;
+  rewards?: LevelReward;
+  isFirstCompletion?: boolean;
 }
 
-const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, onLevelComplete }) => {
+const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, onLevelComplete, rewards, isFirstCompletion = false }) => {
   const [currentWord, setCurrentWord] = useState('');
   const [userInput, setUserInput] = useState('');
   const [showVictory, setShowVictory] = useState(false);
@@ -177,7 +180,13 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
           />
         </div>
         {showVictory ? (
-          <VictoryScreen gameStats={gameStats} onRestart={restartGame} onReturnToMenu={onReturnToMenu} />
+          <VictoryScreen 
+            gameStats={gameStats} 
+            onRestart={restartGame} 
+            onReturnToMenu={onReturnToMenu} 
+            rewards={rewards}
+            isFirstCompletion={isFirstCompletion}
+          />
         ) : (
           <TypingInterface
             currentWord={currentWord}

@@ -1,5 +1,7 @@
 import React from 'react';
 import { GamePlayConfig } from './GamePlay';
+import PlayerStats from './PlayerStats';
+import { PlayerProgress } from '../services/playerService';
 
 export type Language = 'en' | 'ru' | 'code';
 
@@ -85,15 +87,17 @@ const levels: Level[] = [
 interface LevelSelectProps {
   onLevelSelect: (config: GamePlayConfig, levelId: number) => void;
   completedLevels: number[];
+  playerProgress: PlayerProgress;
 }
 
-const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevels }) => {
+const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevels, playerProgress }) => {
   // Sort levels by ID to ensure correct order
   const sortedLevels = [...levels].sort((a, b) => a.id - b.id);
   
   return (
     <div className="level-select">
       <h1>Choose Your Challenge</h1>
+      <PlayerStats playerProgress={playerProgress} />
       <div className="level-path">
         {sortedLevels.map((level, index) => (
           <div key={level.id} className="level-node">

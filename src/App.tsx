@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import GamePlay, { GamePlayConfig, Language } from './components/GamePlay'
-import LevelSelect, { levels } from './components/LevelSelect'
+import LevelSelect, { levels, Level } from './components/LevelSelect'
+import { getPlayerProgress, savePlayerProgress, addRewards, calculateLevelReward, PlayerProgress } from './services/playerService'
 
 const monsterImages = [
   '/src/image/IMG_0263.JPG',
@@ -19,8 +20,11 @@ const backgroundImages = [
 
 function App() {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [completedLevels, setCompletedLevels] = useState<number[]>([]);
+  const [playerProgress, setPlayerProgress] = useState<PlayerProgress>(getPlayerProgress());
   const [currentLevelId, setCurrentLevelId] = useState<number | null>(null);
+  const [currentRewards, setCurrentRewards] = useState<{ experience: number; gold: number } | null>(null);
+  const [isFirstCompletion, setIsFirstCompletion] = useState(false);
+  const [currentLevel, setCurrentLevel] = useState<Level | null>(null);
   const [gameConfig, setGameConfig] = useState(() => ({
     backgroundImage: backgroundImages[Math.floor(Math.random() * backgroundImages.length)],
     monsterImage: monsterImages[Math.floor(Math.random() * monsterImages.length)],
@@ -41,8 +45,23 @@ function App() {
   }
 
   const handleLevelSelect = (config: GamePlayConfig, levelId: number) => {
+    const selectedLevel = levels.find(level => level.id === levelId) || null;
     setGameConfig(config);
     setCurrentLevelId(levelId);
+    setCurrentLevel(selectedLevel);
+    
+    // Check if this level is being played for the first time
+    const isFirstTime = !playerProgress.completedLevels.includes(levelId);
+    setIsFirstCompletion(isFirstTime);
+    
+    // Calculate potential rewards if this is the first completion
+    if (isFirstTime && selectedLevel) {
+      const rewards = calculateLevelReward(selectedLevel);
+      setCurrentRewards(rewards);
+    } else {
+      setCurrentRewards(null);
+    }
+    
     setIsPlaying(true);
   };
 
@@ -50,24 +69,28 @@ function App() {
     setIsPlaying(false);
   };
   
-  // Load completed levels from localStorage on component mount
+  // Load player progress from localStorage on component mount
   useEffect(() => {
-    const savedCompletedLevels = localStorage.getItem('completedLevels');
-    if (savedCompletedLevels) {
-      try {
-        setCompletedLevels(JSON.parse(savedCompletedLevels));
-      } catch (error) {
-        console.error('Error parsing completed levels:', error);
-      }
-    }
+    const progress = getPlayerProgress();
+    setPlayerProgress(progress);
   }, []);
   
-  // Mark current level as completed when victory is achieved
+  // Mark current level as completed and award rewards when victory is achieved
   const handleLevelComplete = () => {
-    if (currentLevelId && !completedLevels.includes(currentLevelId)) {
-      const newCompletedLevels = [...completedLevels, currentLevelId];
-      setCompletedLevels(newCompletedLevels);
-      localStorage.setItem('completedLevels', JSON.stringify(newCompletedLevels));
+    if (currentLevelId && currentLevel && !playerProgress.completedLevels.includes(currentLevelId)) {
+      // Use the pre-calculated rewards from handleLevelSelect
+      if (currentRewards) {
+        // Add rewards and update player progress
+        const updatedProgress = addRewards(currentRewards.experience, currentRewards.gold);
+        
+        // Update completed levels
+        const newCompletedLevels = [...updatedProgress.completedLevels, currentLevelId];
+        updatedProgress.completedLevels = newCompletedLevels;
+        
+        // Save and update state
+        savePlayerProgress(updatedProgress);
+        setPlayerProgress(updatedProgress);
+      }
     }
   };
 
@@ -77,11 +100,14 @@ function App() {
       onRestart={handleRestart} 
       onReturnToMenu={handleReturnToMenu}
       onLevelComplete={handleLevelComplete}
+      rewards={currentRewards || undefined}
+      isFirstCompletion={isFirstCompletion}
     />
   ) : (
     <LevelSelect 
       onLevelSelect={handleLevelSelect} 
-      completedLevels={completedLevels}
+      completedLevels={playerProgress.completedLevels}
+      playerProgress={playerProgress}
     />
   )
 }

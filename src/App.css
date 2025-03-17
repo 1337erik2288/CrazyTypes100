@@ -516,3 +516,120 @@
   50% { transform: scale(1.1); }
   100% { transform: scale(1); }
 }
+
+/* Player Stats Styles */
+.player-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.player-level {
+  margin-bottom: 0.5rem;
+  width: 100%;
+  text-align: center;
+}
+
+.level-label {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 5px rgba(100, 108, 255, 0.8);
+}
+
+.xp-container {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.xp-bar {
+  height: 20px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.xp-fill {
+  height: 100%;
+  background: linear-gradient(to right, #646cff, #535bf2);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.xp-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+}
+
+.gold-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(255, 215, 0, 0.2);
+  border-radius: 20px;
+  border: 2px solid rgba(255, 215, 0, 0.5);
+}
+
+.gold-icon {
+  font-size: 1.2rem;
+}
+
+.gold-amount {
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+}
+
+/* Victory Screen Reward Styles */
+.rewards {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: rgba(255, 215, 0, 0.1);
+  border-radius: 10px;
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+  to { box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
+}
+
+.reward-title {
+  font-weight: bold;
+  color: #ffd700;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.xp-reward {
+  color: #646cff;
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+}
+
+.gold-reward {
+  color: #ffd700;
+  font-weight: bold;
+}
