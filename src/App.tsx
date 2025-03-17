@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import GamePlay, { GamePlayConfig, Language } from './components/GamePlay'
-import LevelSelect from './components/LevelSelect'
+import LevelSelect, { levels } from './components/LevelSelect'
 
 const monsterImages = [
   '/src/image/IMG_0263.JPG',
@@ -19,6 +19,8 @@ const backgroundImages = [
 
 function App() {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [completedLevels, setCompletedLevels] = useState<number[]>([]);
+  const [currentLevelId, setCurrentLevelId] = useState<number | null>(null);
   const [gameConfig, setGameConfig] = useState(() => ({
     backgroundImage: backgroundImages[Math.floor(Math.random() * backgroundImages.length)],
     monsterImage: monsterImages[Math.floor(Math.random() * monsterImages.length)],
@@ -38,13 +40,35 @@ function App() {
     }))
   }
 
-  const handleLevelSelect = (config: GamePlayConfig) => {
+  const handleLevelSelect = (config: GamePlayConfig, levelId: number) => {
     setGameConfig(config);
+    setCurrentLevelId(levelId);
     setIsPlaying(true);
   };
 
   const handleReturnToMenu = () => {
     setIsPlaying(false);
+  };
+  
+  // Load completed levels from localStorage on component mount
+  useEffect(() => {
+    const savedCompletedLevels = localStorage.getItem('completedLevels');
+    if (savedCompletedLevels) {
+      try {
+        setCompletedLevels(JSON.parse(savedCompletedLevels));
+      } catch (error) {
+        console.error('Error parsing completed levels:', error);
+      }
+    }
+  }, []);
+  
+  // Mark current level as completed when victory is achieved
+  const handleLevelComplete = () => {
+    if (currentLevelId && !completedLevels.includes(currentLevelId)) {
+      const newCompletedLevels = [...completedLevels, currentLevelId];
+      setCompletedLevels(newCompletedLevels);
+      localStorage.setItem('completedLevels', JSON.stringify(newCompletedLevels));
+    }
   };
 
   return isPlaying ? (
@@ -52,9 +76,13 @@ function App() {
       config={gameConfig} 
       onRestart={handleRestart} 
       onReturnToMenu={handleReturnToMenu}
+      onLevelComplete={handleLevelComplete}
     />
   ) : (
-    <LevelSelect onLevelSelect={handleLevelSelect} />
+    <LevelSelect 
+      onLevelSelect={handleLevelSelect} 
+      completedLevels={completedLevels}
+    />
   )
 }
 

@@ -38,9 +38,10 @@ interface GamePlayProps {
   config: GamePlayConfig;
   onRestart: () => void;
   onReturnToMenu: () => void;
+  onLevelComplete: () => void;
 }
 
-const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu }) => {
+const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, onLevelComplete }) => {
   const [currentWord, setCurrentWord] = useState('');
   const [userInput, setUserInput] = useState('');
   const [showVictory, setShowVictory] = useState(false);
@@ -136,6 +137,7 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu }
         if (isDefeated) {
           setShowVictory(true);
           setGameStats(prev => ({ ...prev, endTime: Date.now() }));
+          onLevelComplete();
         }
         const monsterElement = document.querySelector('.monster') as HTMLElement;
         if (monsterElement) {

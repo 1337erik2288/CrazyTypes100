@@ -83,10 +83,11 @@ const levels: Level[] = [
 ];
 
 interface LevelSelectProps {
-  onLevelSelect: (config: GamePlayConfig) => void;
+  onLevelSelect: (config: GamePlayConfig, levelId: number) => void;
+  completedLevels: number[];
 }
 
-const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect }) => {
+const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevels }) => {
   // Sort levels by ID to ensure correct order
   const sortedLevels = [...levels].sort((a, b) => a.id - b.id);
   
@@ -98,15 +99,18 @@ const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect }) => {
           <div key={level.id} className="level-node">
             <div className="level-connector" />
             <button
-              className={`level-circle ${level.config.language === 'ru' ? 'russian' : (level.config.language === 'code' ? 'code' : 'english')}`}
+              className={`level-circle ${level.config.language === 'ru' ? 'russian' : (level.config.language === 'code' ? 'code' : 'english')} ${completedLevels.includes(level.id) ? 'completed' : ''}`}
               data-language={level.config.language}
-              onClick={() => onLevelSelect(level.config)}
+              onClick={() => onLevelSelect(level.config, level.id)}
             >
               <span className="level-number">{level.id}</span>
               <span className="level-name">{level.name}</span>
               <span className="level-difficulty">
                 {level.name.toLowerCase().includes('hard') ? '★★★' : '★★'}
               </span>
+              {completedLevels.includes(level.id) && (
+                <span className="level-completed-indicator">✓</span>
+              )}
             </button>
           </div>
         ))}
