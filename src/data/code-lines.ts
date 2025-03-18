@@ -9,7 +9,16 @@ export const codeLines = {
     'array.forEach(item => console.log(item));',
     'const result = numbers.map(x => x * 2);',
     'const filtered = array.filter(x => x > 0);',
-    'localStorage.setItem("key", "value");'
+    'localStorage.setItem("key", "value");',
+    'document.querySelector(".button").addEventListener("click", handleClick);',
+    'const promise = new Promise((resolve, reject) => {});',
+    'async function fetchData() { const response = await fetch(url); }',
+    'const regex = /^[A-Za-z]+$/;',
+    'const date = new Date().toISOString();',
+    'Object.keys(data).map(key => ({ [key]: data[key] }));',
+    'const merged = [...array1, ...array2];',
+    'const { id, name } = user;',
+    'export default class Component extends React.Component {}'  
   ],
   typescript: [
     'interface User { id: number; name: string; }',
@@ -21,7 +30,16 @@ export const codeLines = {
     'const status: "active" | "inactive" = "active";',
     'const handler = (event: MouseEvent): void => { };',
     'let count: number | null = null;',
-    'const getValue = <T>(value: T): T => value;'
+    'const getValue = <T>(value: T): T => value;',
+    'type Callback<T> = (data: T) => void;',
+    'interface Props extends BaseProps { theme: string; }',
+    'const enum Direction { Up, Down, Left, Right }',
+    'abstract class BaseService implements IService {}',
+    'type Partial<T> = { [P in keyof T]?: T[P]; };',
+    '@Injectable() class Service {}',
+    'const tuple: [string, number] = ["value", 42];',
+    'type Nullable<T> = T | null;',
+    'declare module "*.vue" { export default Vue; }'
   ],
   python: [
     'def greet(name: str) -> str: return f"Hello {name}!"',
@@ -33,7 +51,16 @@ export const codeLines = {
     'from typing import List, Optional',
     'def factorial(n: int) -> int: return 1 if n <= 1 else n * factorial(n-1)',
     'lambda x: x * 2',
-    'if __name__ == "__main__": main()'
+    'if __name__ == "__main__": main()',
+    '@property def area(self) -> float: return self.width * self.height',
+    'async def fetch_data(): async with session.get(url) as response: return await response.json()',
+    'from dataclasses import dataclass',
+    'yield from generator()',
+    'assert isinstance(obj, MyClass), "Invalid type"',
+    'dict_comp = {x: x**2 for x in range(5)}',
+    'from functools import lru_cache',
+    'from abc import ABC, abstractmethod',
+    'os.path.join(base_dir, "files")'
   ],
   rust: [
     'let mut count = 0;',
@@ -45,6 +72,15 @@ export const codeLines = {
     'match value { Some(x) => x, None => 0 }',
     'let result = Ok(42).unwrap_or(0);',
     'pub fn process(input: &str) -> String { input.to_string() }',
-    'type Result<T> = std::result::Result<T, Error>;'
+    'type Result<T> = std::result::Result<T, Error>;',
+    'use std::collections::HashMap;',
+    '#[cfg(test)] mod tests {}',
+    'async fn handle_request() -> Result<Response>',
+    'let mut file = File::create("output.txt")?;',
+    '#[tokio::main] async fn main()',
+    'impl<T> Iterator for MyIter<T>',
+    'pub trait Display: Debug {}',
+    'let boxed: Box<dyn Error> = Box::new(err);',
+    'unsafe { ptr.offset(1) }'
   ]
 };

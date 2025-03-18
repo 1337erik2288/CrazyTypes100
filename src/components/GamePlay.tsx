@@ -5,7 +5,7 @@ import VictoryScreen from './VictoryScreen';
 import TypingInterface from './TypingInterface';
 import BackgroundManager from './BackgroundManager';
 import { getAdditionalWords } from '../services/wordsService';
-import { getCodeSnippets } from '../services/codeService';
+import { getRandomCodeLine } from '../services/codeService';
 import { LevelReward } from '../services/playerService';
 
 interface Monster {
@@ -63,13 +63,9 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
 
   const generateNewWord = useCallback(() => {
     if (config.language === 'code') {
-      getCodeSnippets().then(snippets => {
-        if (snippets.length > 0) {
-          const randomIndex = Math.floor(Math.random() * snippets.length);
-          const newWord = snippets[randomIndex];
-          setCurrentWord(newWord);
-          setUserInput('');
-        }
+      getRandomCodeLine('javascript').then((codeLine: string) => {
+        setCurrentWord(codeLine);
+        setUserInput('');
       });
     } else {
       getAdditionalWords(config.language).then(newWords => {

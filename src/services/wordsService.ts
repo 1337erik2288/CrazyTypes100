@@ -1,51 +1,183 @@
 import axios from 'axios';
 
-interface WordResponse {
-  word: string;
-  language: 'en' | 'ru';
-}
+// Updated Russian API URL - using a more reliable endpoint with pre-fetching
+const OPENRUSSIAN_API = 'https://api.datamuse.com/words?sp=?????&v=ru&max=100';
 
-const WORDS_API_KEY = import.meta.env.VITE_WORDS_API_KEY;
-const WORDS_API_HOST = 'wordsapiv1.p.rapidapi.com';
-const OPENRUSSIAN_API = 'https://openrussian.org/api/v1/words/random';
+// Updated English API URL - using pattern to get diverse words
+const ENGLISH_WORDS_API = 'https://api.datamuse.com/words?sp=?????&max=100';
+
+// Cache for English words to reduce API calls and improve response time
+let englishWordsCache: string[] = [];
 
 export async function fetchEnglishWords(count: number = 20): Promise<string[]> {
-  try {
-    const options = {
-      method: 'GET',
-      url: `https://${WORDS_API_HOST}/words/`,
-      params: { random: 'true', limit: count },
-      headers: {
-        'X-RapidAPI-Key': WORDS_API_KEY,
-        'X-RapidAPI-Host': WORDS_API_HOST
-      }
-    };
-
-    const response = await axios.request(options);
-    return response.data.map((item: any) => item.word)
-      .filter((word: string) => word.length >= 4 && word.length <= 12
-        && /^[a-zA-Z]+$/.test(word));
-  } catch (error) {
-    console.error('Error fetching English words:', error);
-    return [];
+  // If we have enough words in the cache, use them
+  if (englishWordsCache.length >= count) {
+    console.log(`Using ${count} English words from cache (${englishWordsCache.length} words available)`);
+    const result = englishWordsCache.slice(0, count);
+    // Remove used words from cache
+    englishWordsCache = englishWordsCache.slice(count);
+    return result;
   }
+
+  // Try up to 3 times to get words from API
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      console.log(`Attempting to fetch English words from API (attempt ${attempt + 1}/3)`);
+      const response = await axios.get(ENGLISH_WORDS_API, { timeout: 5000 }); // Reduced timeout for faster response
+      
+      if (response.data && Array.isArray(response.data)) {
+        console.log(`Received ${response.data.length} words from English API`);
+        
+        // Extract words from response (Datamuse API returns array of objects with 'word' property)
+        const filteredWords = response.data
+          .map((item: any) => item.word)
+          .filter((word: string) => word.length >= 4 && word.length <= 12 && /^[a-zA-Z]+$/.test(word));
+        
+        console.log(`After filtering: ${filteredWords.length} valid English words`);
+        
+        // Ensure we have words with different starting letters
+        const diverseWords = ensureDiverseWords(filteredWords);
+        console.log(`After ensuring diversity: ${diverseWords.length} diverse English words`);
+        
+        // Add all words to cache
+        englishWordsCache = [...englishWordsCache, ...diverseWords];
+        
+        if (englishWordsCache.length >= count) {
+          const result = englishWordsCache.slice(0, count);
+          // Remove used words from cache
+          englishWordsCache = englishWordsCache.slice(count);
+          return result;
+        }
+        
+        // If we don't have enough words, try to get more in the next attempt
+        console.log(`Not enough valid English words (${englishWordsCache.length}/${count}), trying again...`);
+      } else {
+        console.error('Invalid response format from English API:', response.data);
+      }
+    } catch (error) {
+      console.error(`Error fetching English words from API (attempt ${attempt + 1}/3):`, error);
+    }
+    
+    // Wait a bit before retrying, but less time to reduce delay
+    if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 500));
+  }
+  
+  console.log('Falling back to local English dictionary after failed API attempts');
+  // Fallback to local dictionary after all attempts failed
+  const shuffledWords = [...enWords].sort(() => Math.random() - 0.5)
+    .filter((word: string) => word.length >= 4 && word.length <= 12 && /^[a-zA-Z]+$/.test(word));
+  
+  // Ensure we have words with different starting letters
+  const diverseLocalWords = ensureDiverseWords(shuffledWords);
+  
+  // Add some words to cache for future use
+  if (diverseLocalWords.length > count) {
+    englishWordsCache = [...englishWordsCache, ...diverseLocalWords.slice(count, count + 20)];
+  }
+  
+  return diverseLocalWords.slice(0, count);
 }
 
-export async function fetchRussianWords(count: number = 20): Promise<string[]> {
-  try {
-    const words: string[] = [];
-    for (let i = 0; i < count; i++) {
-      const response = await axios.get(OPENRUSSIAN_API);
-      const word = response.data.word.toLowerCase();
-      if (word.length >= 4 && word.length <= 12 && /^[а-яё]+$/i.test(word)) {
-        words.push(word);
-      }
+// Helper function to ensure words have different starting letters
+function ensureDiverseWords(words: string[]): string[] {
+  const letterGroups: {[key: string]: string[]} = {};
+  
+  // Group words by their first letter
+  words.forEach(word => {
+    const firstLetter = word.charAt(0).toLowerCase();
+    if (!letterGroups[firstLetter]) {
+      letterGroups[firstLetter] = [];
     }
-    return words;
-  } catch (error) {
-    console.error('Error fetching Russian words:', error);
-    return [];
+    letterGroups[firstLetter].push(word);
+  });
+  
+  // Take one word from each letter group in rotation until we have enough
+  const result: string[] = [];
+  const letters = Object.keys(letterGroups).sort();
+  
+  let index = 0;
+  while (result.length < words.length && letters.length > 0) {
+    const letter = letters[index % letters.length];
+    const group = letterGroups[letter];
+    
+    if (group.length > 0) {
+      result.push(group.shift()!);
+    } else {
+      // Remove this letter from rotation if no more words
+      letters.splice(index % letters.length, 1);
+      if (letters.length === 0) break;
+      continue; // Don't increment index if we removed a letter
+    }
+    
+    index++;
   }
+  
+  return result;
+}
+
+// Cache for Russian words to reduce API calls and improve response time
+let russianWordsCache: string[] = [];
+
+export async function fetchRussianWords(count: number = 20): Promise<string[]> {
+  // If we have enough words in the cache, use them
+  if (russianWordsCache.length >= count) {
+    console.log(`Using ${count} Russian words from cache (${russianWordsCache.length} words available)`);
+    const result = russianWordsCache.slice(0, count);
+    // Remove used words from cache
+    russianWordsCache = russianWordsCache.slice(count);
+    return result;
+  }
+
+  // Try up to 3 times to get words from API
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      console.log(`Attempting to fetch Russian words from API (attempt ${attempt + 1}/3)`);
+      const response = await axios.get(OPENRUSSIAN_API, { timeout: 5000 }); // Reduced timeout for faster response
+      
+      if (response.data && Array.isArray(response.data)) {
+        console.log(`Received ${response.data.length} words from Russian API`);
+        
+        // Extract words from response (Datamuse API returns array of objects with 'word' property)
+        const words = response.data
+          .map((item: any) => item.word)
+          .filter((word: string) => word.length >= 4 && word.length <= 12 && /^[а-яё]+$/i.test(word));
+        
+        console.log(`After filtering: ${words.length} valid Russian words`);
+        
+        // Add all words to cache
+        russianWordsCache = [...russianWordsCache, ...words];
+        
+        if (russianWordsCache.length >= count) {
+          const result = russianWordsCache.slice(0, count);
+          // Remove used words from cache
+          russianWordsCache = russianWordsCache.slice(count);
+          return result;
+        }
+        
+        // If we don't have enough words, try to get more in the next attempt
+        console.log(`Not enough valid Russian words (${russianWordsCache.length}/${count}), trying again...`);
+      } else {
+        console.error('Invalid response format from Russian API:', response.data);
+      }
+    } catch (error) {
+      console.error(`Error fetching Russian words from API (attempt ${attempt + 1}/3):`, error);
+    }
+    
+    // Wait a bit before retrying, but less time to reduce delay
+    if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 500));
+  }
+  
+  console.log('Falling back to local Russian dictionary after failed API attempts');
+  // Fallback to local dictionary after all attempts failed
+  const shuffledWords = [...ruWords].sort(() => Math.random() - 0.5)
+    .filter((word: string) => word.length >= 4 && word.length <= 12 && /^[а-яё]+$/i.test(word));
+  
+  // Add some words to cache for future use
+  if (shuffledWords.length > count) {
+    russianWordsCache = [...russianWordsCache, ...shuffledWords.slice(count, count + 20)];
+  }
+  
+  return shuffledWords.slice(0, count);
 }
 
 import { ruWords } from '../data/ru-words';
@@ -54,17 +186,42 @@ import { enWords } from '../data/en-words';
 
 export async function getAdditionalWords(language: string): Promise<string[]> {
   try {
+    console.log(`Getting additional words for language: ${language}`);
+    
     if (language === 'ru') {
-      // Use local Russian words
-      const shuffledWords = [...ruWords].sort(() => Math.random() - 0.5);
-      return shuffledWords.slice(0, 10);
+      // Try to get Russian words from API first
+      try {
+        console.log('Attempting to fetch Russian words from API');
+        const apiWords = await fetchRussianWords(10);
+        console.log(`Fetched ${apiWords.length} Russian words from API`);
+        return apiWords;
+      } catch (apiError) {
+        console.error('Error fetching Russian words from API, falling back to local dictionary:', apiError);
+        // Fall back to local dictionary
+        const shuffledWords = [...ruWords].sort(() => Math.random() - 0.5);
+        return shuffledWords.slice(0, 10);
+      }
     } else {
-      // Use local English words
-      const shuffledWords = [...enWords].sort(() => Math.random() - 0.5);
-      return shuffledWords.slice(0, 10);
+      // Try to get English words from API first
+      try {
+        console.log('Attempting to fetch English words from API');
+        const apiWords = await fetchEnglishWords(10);
+        console.log(`Fetched ${apiWords.length} English words from API`);
+        return apiWords;
+      } catch (apiError) {
+        console.error('Error fetching English words from API, falling back to local dictionary:', apiError);
+        // Fall back to local dictionary
+        const shuffledWords = [...enWords].sort(() => Math.random() - 0.5);
+        return shuffledWords.slice(0, 10);
+      }
     }
   } catch (error) {
-    console.error('Error fetching words:', error);
-    return [];
+    console.error('Error in getAdditionalWords:', error);
+    // Ultimate fallback
+    if (language === 'ru') {
+      return [...ruWords].sort(() => Math.random() - 0.5).slice(0, 10);
+    } else {
+      return [...enWords].sort(() => Math.random() - 0.5).slice(0, 10);
+    }
   }
 }

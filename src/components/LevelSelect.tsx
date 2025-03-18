@@ -99,7 +99,7 @@ const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevel
       <h1>Choose Your Challenge</h1>
       <PlayerStats playerProgress={playerProgress} />
       <div className="level-path">
-        {sortedLevels.map((level, index) => (
+        {sortedLevels.map((level) => (
           <div key={level.id} className="level-node">
             <div className="level-connector" />
             <button
