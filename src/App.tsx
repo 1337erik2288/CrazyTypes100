@@ -5,11 +5,13 @@ import LevelSelect, { levels, Level } from './components/LevelSelect'
 import { getPlayerProgress, savePlayerProgress, addRewards, calculateLevelReward, PlayerProgress } from './services/playerService'
 
 const monsterImages = [
-  '/src/image/IMG_0263.JPG',
-  '/src/image/SVOyMINIOn.webp',
-  '/src/image/photo_2023-04-21_13-34-14.jpg',
-  '/src/image/photo_2024-12-19_14-46-01.jpg',
-  '/src/image/photo_2025-02-03_22-51-27.jpg'
+  '/src/image/monster/Cartoon Monster Design 3.png',
+  '/src/image/monster/Cartoon Monster Design.png',
+  '/Users/erik/Documents/TraeProjects/CrazyTypes100/src/image/monster/Cartoon Monster Design.png',
+  '/src/image/monster/Cartoon Monster Photoroom Mar 18 2025.png',
+  '/src/image/monster/Cartoon Style Monster Photoroom.png',
+  '/src/image/monster/DALL·E Cartoon March 18 2025.png',
+  '/src/image/monster/DALL·E_2025_03_18_07_42_33_A_cartoon_style_monster_with_a_mischievous-Photoroom.png'
 ]
 
 const backgroundImages = [

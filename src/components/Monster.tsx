@@ -46,10 +46,10 @@ const Monster: React.FC<MonsterProps> = ({ imagePath, isDefeated }) => {
         src={imagePath} 
         alt="Monster" 
         style={{
-          width: '100%',
+          width: 'auto',
           height: '100%',
-          objectFit: 'cover',
-          borderRadius: '10px'
+          maxWidth: '100%',
+          objectFit: 'contain'
         }}
       />
     </div>

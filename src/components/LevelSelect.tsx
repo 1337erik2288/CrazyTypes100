@@ -17,7 +17,7 @@ const levels: Level[] = [
     name: 'Easy English',
     config: {
       backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (2).jpg',
-      monsterImage: '/src/image/IMG_0263.JPG',
+      monsterImage: '/src/image/monster/Cartoon Monster Design.png',
       initialHealth: 150,
       healAmount: 5,
       regenerateAmount: 1,
@@ -31,7 +31,7 @@ const levels: Level[] = [
     name: 'Hard English',
     config: {
       backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (3).jpg',
-      monsterImage: '/src/image/SVOyMINIOn.webp',
+      monsterImage: '/src/image/monster/Cartoon Monster Design 3.png',
       initialHealth: 200,
       healAmount: 0,
       regenerateAmount: 0,
@@ -45,7 +45,7 @@ const levels: Level[] = [
     name: 'Easy Russian',
     config: {
       backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (4).jpg',
-      monsterImage: '/src/image/photo_2023-04-21_13-34-14.jpg',
+      monsterImage: '/src/image/monster/Cartoon Monster Photoroom Mar 18 2025.png',
       initialHealth: 150,
       healAmount: 5,
       regenerateAmount: 1,
@@ -59,7 +59,7 @@ const levels: Level[] = [
     name: 'Hard Russian',
     config: {
       backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (2).jpg',
-      monsterImage: '/src/image/photo_2024-12-19_14-46-01.jpg',
+      monsterImage: '/src/image/monster/Cartoon Style Monster Photoroom.png',
       initialHealth: 200,
       healAmount: 0,
       regenerateAmount: 0,
@@ -73,7 +73,7 @@ const levels: Level[] = [
     name: 'Code Challenge',
     config: {
       backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (4).jpg',
-      monsterImage: '/src/image/photo_2025-02-03_22-51-27.jpg',
+      monsterImage: '/src/image/monster/DALL·E Cartoon March 18 2025.png',
       initialHealth: 250,
       healAmount: 0,
       regenerateAmount: 0,
