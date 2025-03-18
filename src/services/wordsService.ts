@@ -50,6 +50,8 @@ export async function fetchRussianWords(count: number = 20): Promise<string[]> {
 
 import { ruWords } from '../data/ru-words';
 
+import { enWords } from '../data/en-words';
+
 export async function getAdditionalWords(language: string): Promise<string[]> {
   try {
     if (language === 'ru') {
@@ -57,10 +59,9 @@ export async function getAdditionalWords(language: string): Promise<string[]> {
       const shuffledWords = [...ruWords].sort(() => Math.random() - 0.5);
       return shuffledWords.slice(0, 10);
     } else {
-      // For English words, continue using the API
-      const response = await fetch('https://random-word-api.herokuapp.com/word?number=10&lang=en');
-      const words = await response.json();
-      return words;
+      // Use local English words
+      const shuffledWords = [...enWords].sort(() => Math.random() - 0.5);
+      return shuffledWords.slice(0, 10);
     }
   } catch (error) {
     console.error('Error fetching words:', error);

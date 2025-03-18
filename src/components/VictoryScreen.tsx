@@ -42,9 +42,6 @@ const VictoryScreen: React.FC<VictoryScreenProps> = ({ gameStats, onRestart, onR
         <button onClick={onRestart} className="restart-button">
           Play Again
         </button>
-        <button onClick={onReturnToMenu} className="menu-button">
-          Return to Menu
-        </button>
       </div>
     </div>
   );

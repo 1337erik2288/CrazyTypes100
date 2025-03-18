@@ -35,6 +35,24 @@
   pointer-events: all;
 }
 
+.menu-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 100;
+  padding: 10px 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: 2px solid white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.menu-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
 @media (orientation: landscape) {
   .game-container {
     flex-direction: row;

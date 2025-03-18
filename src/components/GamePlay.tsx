@@ -163,6 +163,7 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
     <>
       <BackgroundManager imagePath={config.backgroundImage} />
       <div className="game-container">
+        <button className="menu-button" onClick={onReturnToMenu}>Вернуться в меню</button>
         <div className="monster-container">
           <Monster 
             imagePath={monster.imagePath}
