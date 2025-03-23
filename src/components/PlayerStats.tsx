@@ -3,9 +3,10 @@ import { PlayerProgress, calculateLevelProgress } from '../services/playerServic
 
 interface PlayerStatsProps {
   playerProgress: PlayerProgress;
+  onOpenShop?: () => void;
 }
 
-const PlayerStats: React.FC<PlayerStatsProps> = ({ playerProgress }) => {
+const PlayerStats: React.FC<PlayerStatsProps> = ({ playerProgress, onOpenShop }) => {
   const progressPercentage = calculateLevelProgress(playerProgress);
   
   return (
@@ -29,9 +30,10 @@ const PlayerStats: React.FC<PlayerStatsProps> = ({ playerProgress }) => {
         </div>
       </div>
       
-      <div className="gold-container">
+      <div className="gold-container" onClick={onOpenShop} style={{ cursor: onOpenShop ? 'pointer' : 'default' }}>
         <span className="gold-icon">💰</span>
         <span className="gold-amount">{playerProgress.gold}</span>
+        {onOpenShop && <span className="shop-hint">Shop</span>}
       </div>
     </div>
   );

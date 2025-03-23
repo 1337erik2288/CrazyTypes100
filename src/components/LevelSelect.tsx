@@ -88,16 +88,17 @@ interface LevelSelectProps {
   onLevelSelect: (config: GamePlayConfig, levelId: number) => void;
   completedLevels: number[];
   playerProgress: PlayerProgress;
+  onOpenShop: () => void;
 }
 
-const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevels, playerProgress }) => {
+const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevels, playerProgress, onOpenShop }) => {
   // Sort levels by ID to ensure correct order
   const sortedLevels = [...levels].sort((a, b) => a.id - b.id);
   
   return (
     <div className="level-select">
       <h1>Choose Your Challenge</h1>
-      <PlayerStats playerProgress={playerProgress} />
+      <PlayerStats playerProgress={playerProgress} onOpenShop={onOpenShop} />
       <div className="level-path">
         {sortedLevels.map((level) => (
           <div key={level.id} className="level-node">

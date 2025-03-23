@@ -1,0 +1,246 @@
+.character-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(100, 108, 255, 0.3);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.character-model {
+  position: relative;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.character-base {
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 10px rgba(100, 108, 255, 0.5);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.equipment-slots {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.equipment-slot {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  margin: 0 0.5rem;
+  border: 1px solid rgba(100, 108, 255, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.equipment-slot:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 3px 10px rgba(100, 108, 255, 0.3);
+}
+
+.weapon-slot {
+  border-color: rgba(255, 100, 100, 0.3);
+}
+
+.armor-slot {
+  border-color: rgba(100, 200, 255, 0.3);
+}
+
+.accessory-slot {
+  border-color: rgba(255, 215, 0, 0.3);
+}
+
+.equipped-item {
+  cursor: pointer;
+  font-size: 1.5rem;
+  transition: transform 0.2s ease;
+}
+
+.equipped-item:hover {
+  transform: scale(1.2);
+}
+
+.empty-slot {
+  opacity: 0.5;
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.character-stats {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 108, 255, 0.5) rgba(0, 0, 0, 0.2);
+}
+
+.stats-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.stats-list::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.stats-list::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 108, 255, 0.5);
+  border-radius: 10px;
+}
+
+.equipped-stat {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border-left: 3px solid rgba(100, 108, 255, 0.5);
+  transition: all 0.2s ease;
+}
+
+.equipped-stat:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+  transform: translateX(3px);
+}
+
+.stat-icon {
+  margin-right: 0.75rem;
+  font-size: 1.2rem;
+}
+
+.stat-name {
+  flex-grow: 1;
+  font-weight: 500;
+  color: #fff;
+}
+
+.no-equipment {
+  text-align: center;
+  padding: 1.5rem;
+  color: #888;
+  font-style: italic;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+/* New styles for equipment management */
+.unequip-button, .equip-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.4rem;
+  margin-left: 0.75rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.unequip-button {
+  background-color: rgba(255, 100, 100, 0.1);
+}
+
+.unequip-button:hover {
+  background-color: rgba(255, 100, 100, 0.3);
+  transform: scale(1.1);
+}
+
+.equip-button {
+  background-color: rgba(100, 200, 100, 0.1);
+}
+
+.equip-button:hover {
+  background-color: rgba(100, 200, 100, 0.3);
+  transform: scale(1.1);
+}
+
+.available-equipment {
+  margin-top: 2rem;
+  border-top: 1px solid rgba(100, 108, 255, 0.3);
+  padding-top: 1.5rem;
+  width: 100%;
+}
+
+.available-equipment h3 {
+  margin-bottom: 1rem;
+  color: #646cff;
+  font-size: 1.2rem;
+  text-align: center;
+  text-shadow: 0 0 5px rgba(100, 108, 255, 0.3);
+}
+
+.equipment-category {
+  margin-bottom: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid rgba(100, 108, 255, 0.1);
+}
+
+.equipment-category h4 {
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+  color: #ddd;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.available-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.available-item:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-left-color: rgba(100, 108, 255, 0.5);
+  transform: translateX(3px);
+}
+
+.item-icon {
+  margin-right: 0.75rem;
+  font-size: 1.2rem;
+}
+
+.item-name {
+  flex-grow: 1;
+  font-weight: 500;
+  color: #eee;
+}

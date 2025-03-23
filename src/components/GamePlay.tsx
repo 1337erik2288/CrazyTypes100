@@ -7,6 +7,7 @@ import BackgroundManager from './BackgroundManager';
 import { getAdditionalWords } from '../services/wordsService';
 import { getRandomCodeLine } from '../services/codeService';
 import { LevelReward } from '../services/playerService';
+import { getPlayerEquipment, applyEquipmentEffects } from '../services/equipmentService';
 
 interface Monster {
   health: number;
@@ -45,12 +46,18 @@ interface GamePlayProps {
 }
 
 const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, onLevelComplete, rewards, isFirstCompletion = false }) => {
+  // Apply equipment effects to the game configuration
+  const [gameConfig, setGameConfig] = useState(() => {
+    const playerEquipment = getPlayerEquipment();
+    return applyEquipmentEffects(config, playerEquipment.equipped);
+  });
+  
   const [currentWord, setCurrentWord] = useState('');
   const [userInput, setUserInput] = useState('');
   const [showVictory, setShowVictory] = useState(false);
   const [monster, setMonster] = useState<Monster>(() => ({
-    health: config.initialHealth,
-    imagePath: config.monsterImage,
+    health: gameConfig.initialHealth,
+    imagePath: gameConfig.monsterImage,
     isDefeated: false
   }));
   const [gameStats, setGameStats] = useState<GameStats>(() => ({

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import GamePlay, { GamePlayConfig, Language } from './components/GamePlay'
 import LevelSelect, { levels, Level } from './components/LevelSelect'
+import Shop from './components/Shop'
 import { getPlayerProgress, savePlayerProgress, addRewards, calculateLevelReward, PlayerProgress } from './services/playerService'
 
 const monsterImages = [
@@ -21,7 +22,7 @@ const backgroundImages = [
 ]
 
 function App() {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentScreen, setCurrentScreen] = useState<'levelSelect' | 'playing' | 'shop'>('levelSelect');
   const [playerProgress, setPlayerProgress] = useState<PlayerProgress>(getPlayerProgress());
   const [currentLevelId, setCurrentLevelId] = useState<number | null>(null);
   const [currentRewards, setCurrentRewards] = useState<{ experience: number; gold: number } | null>(null);
@@ -64,11 +65,19 @@ function App() {
       setCurrentRewards(null);
     }
     
-    setIsPlaying(true);
+    setCurrentScreen('playing');
   };
 
   const handleReturnToMenu = () => {
-    setIsPlaying(false);
+    setCurrentScreen('levelSelect');
+  };
+  
+  const handleOpenShop = () => {
+    setCurrentScreen('shop');
+  };
+  
+  const handleEquipmentPurchased = (updatedProgress: PlayerProgress) => {
+    setPlayerProgress(updatedProgress);
   };
   
   // Load player progress from localStorage on component mount
@@ -96,22 +105,42 @@ function App() {
     }
   };
 
-  return isPlaying ? (
-    <GamePlay 
-      config={gameConfig} 
-      onRestart={handleRestart} 
-      onReturnToMenu={handleReturnToMenu}
-      onLevelComplete={handleLevelComplete}
-      rewards={currentRewards || undefined}
-      isFirstCompletion={isFirstCompletion}
-    />
-  ) : (
-    <LevelSelect 
-      onLevelSelect={handleLevelSelect} 
-      completedLevels={playerProgress.completedLevels}
-      playerProgress={playerProgress}
-    />
-  )
+  // Render the appropriate screen based on currentScreen state
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case 'playing':
+        return (
+          <GamePlay 
+            config={gameConfig} 
+            onRestart={handleRestart} 
+            onReturnToMenu={handleReturnToMenu}
+            onLevelComplete={handleLevelComplete}
+            rewards={currentRewards || undefined}
+            isFirstCompletion={isFirstCompletion}
+          />
+        );
+      case 'shop':
+        return (
+          <Shop 
+            playerProgress={playerProgress}
+            onReturnToMenu={handleReturnToMenu}
+            onEquipmentPurchased={handleEquipmentPurchased}
+          />
+        );
+      case 'levelSelect':
+      default:
+        return (
+          <LevelSelect 
+            onLevelSelect={handleLevelSelect} 
+            completedLevels={playerProgress.completedLevels}
+            playerProgress={playerProgress}
+            onOpenShop={handleOpenShop}
+          />
+        );
+    }
+  };
+
+  return renderScreen()
 }
 
 export default App
