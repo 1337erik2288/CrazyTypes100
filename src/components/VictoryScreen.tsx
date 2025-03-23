@@ -1,4 +1,5 @@
 import React from 'react';
+import './VictoryScreen.css';
 import { LevelReward } from '../services/playerService';
 
 interface GameStats {

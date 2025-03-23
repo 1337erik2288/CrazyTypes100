@@ -4,6 +4,7 @@ import Character from './Character';
 import { Equipment, getPlayerEquipment, purchaseEquipment, equipItem, unequipItem } from '../services/equipmentService';
 import Casino from './Casino';
 import './Casino.css';
+import './Shop.css';
 
 interface ShopProps {
   playerProgress: PlayerProgress;

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
+import './Monster.css';
 
 interface MonsterProps {
   imagePath: string;

@@ -1,0 +1,73 @@
+.victory-screen {
+  text-align: center;
+  padding: 2rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.victory-screen h2 {
+  font-size: 2.5rem;
+  color: #4caf50;
+  margin-bottom: 1rem;
+}
+
+.victory-screen p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.victory-screen .stats p {
+  color: #333;
+  font-weight: 500;
+  margin: 0.5rem 0;
+}
+
+.victory-screen button {
+  padding: 0.8rem 1.5rem;
+  font-size: 1.1rem;
+  background-color: #646cff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.victory-screen button:hover {
+  background-color: #535bf2;
+}
+
+/* Victory Screen Reward Styles */
+.rewards {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: rgba(255, 215, 0, 0.1);
+  border-radius: 10px;
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+  to { box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
+}
+
+.reward-title {
+  font-weight: bold;
+  color: #ffd700;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.xp-reward {
+  color: #646cff;
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+}
+
+.gold-reward {
+  color: #ffd700;
+  font-weight: bold;
+}

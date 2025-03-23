@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
+import './ui/health/HealthBar.css';
 
 interface HealthBarProps {
   health: number; // Текущее здоровье

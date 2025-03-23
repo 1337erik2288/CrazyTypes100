@@ -1,4 +1,5 @@
 import React from 'react';
+import './TypingInterface.css';
 
 interface TypingInterfaceProps {
   currentWord: string;

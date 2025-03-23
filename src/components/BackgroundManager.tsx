@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
+import './ui/background/BackgroundManager.css';
 
 interface BackgroundManagerProps {
   imagePath: string;

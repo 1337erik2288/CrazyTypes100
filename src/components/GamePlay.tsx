@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import './GamePlay.css';
 import Monster from './Monster';
 import HealthBar from './HealthBar';
 import VictoryScreen from './VictoryScreen';

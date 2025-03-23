@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import './components/GameContainer.css'
 import GamePlay, { GamePlayConfig, Language } from './components/GamePlay'
 import LevelSelect, { levels, Level } from './components/LevelSelect'
 import Shop from './components/Shop'

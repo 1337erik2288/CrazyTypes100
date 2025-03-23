@@ -1,0 +1,26 @@
+.health-bar {
+  height: 30px;
+  min-width: 300px;
+  max-width: 600px;
+  background-color: #ddd;
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.health-fill {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+  position: absolute;
+  left: 0; /* Заполнение только слева направо */
+}
+
+.health-text {
+  position: relative;
+  font-weight: bold;
+  color: black;
+  z-index: 2;
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import './PlayerStats.css';
 import { PlayerProgress, calculateLevelProgress } from '../services/playerService';
 
 interface PlayerStatsProps {

@@ -1,4 +1,5 @@
 import React from 'react';
+import './LevelSelect.css';
 import { GamePlayConfig } from './GamePlay';
 import PlayerStats from './PlayerStats';
 import { PlayerProgress } from '../services/playerService';
