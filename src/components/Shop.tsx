@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { PlayerProgress } from '../services/playerService';
+import { PlayerProgress, addRewards } from '../services/playerService';
 import Character from './Character';
 import { Equipment, getPlayerEquipment, purchaseEquipment, equipItem, unequipItem } from '../services/equipmentService';
+import Casino from './Casino';
+import './Casino.css';
 
 interface ShopProps {
   playerProgress: PlayerProgress;
@@ -15,6 +17,7 @@ const Shop: React.FC<ShopProps> = ({ playerProgress, onReturnToMenu, onEquipment
   const [equippedItems, setEquippedItems] = useState<Equipment[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [showCasino, setShowCasino] = useState<boolean>(false);
 
   useEffect(() => {
     // Load player's equipment and available equipment for purchase
@@ -48,13 +51,24 @@ const Shop: React.FC<ShopProps> = ({ playerProgress, onReturnToMenu, onEquipment
   const handleEquipmentChange = (updatedEquipment: Equipment[]) => {
     setEquippedItems(updatedEquipment);
   };
+  
+  // Обработчик для открытия/закрытия казино
+  const toggleCasino = () => {
+    setShowCasino(prev => !prev);
+  };
+  
+  // Обработчик выигрыша в казино
+  const handleCasinoWin = (amount: number) => {
+    const updatedProgress = addRewards(0, amount);
+    onEquipmentPurchased(updatedProgress);
+  };
 
   const filteredEquipment = selectedCategory === 'all' 
     ? availableEquipment 
     : availableEquipment.filter(item => item.type === selectedCategory);
 
   return (
-    <div className="shop-container">
+    <div className="shop-container" style={{ position: 'relative' }}>
       <div className="shop-header">
         <h1>Equipment Shop</h1>
         <button className="menu-button-shop" onClick={onReturnToMenu}>Return to Menu</button>
@@ -136,6 +150,18 @@ const Shop: React.FC<ShopProps> = ({ playerProgress, onReturnToMenu, onEquipment
           </div>
         </div>
       </div>
+      
+      {/* Секретная кнопка казино */}
+      <button 
+        className="secret-casino-button" 
+        onClick={toggleCasino} 
+        aria-label="Secret Casino"
+      />
+      
+      {/* Модальное окно казино */}
+      {showCasino && (
+        <Casino onClose={toggleCasino} onWin={handleCasinoWin} />
+      )}
     </div>
   );
 };
