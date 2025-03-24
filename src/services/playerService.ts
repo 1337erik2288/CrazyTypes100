@@ -34,29 +34,26 @@ const XP_REQUIREMENTS = [
   2700,   // Level 10
 ];
 
-// Calculate rewards based on level difficulty and language
+// Calculate rewards based on level ID
 export const calculateLevelReward = (level: Level): LevelReward => {
-  let baseExperience = 50;
-  let baseGold = 25;
+  // Фиксированные награды для каждого уровня согласно требованиям
+  const goldRewards = {
+    1: 30,  // Уровень 1 - 30 золота
+    2: 60,  // Уровень 2 - 60 золота
+    3: 100, // Уровень 3 - 100 золота
+    4: 140, // Уровень 4 - 140 золота
+    5: 180, // Уровень 5 - 180 золота
+    6: 240, // Уровень 6 - 240 золота
+    7: 300  // Уровень 7 - 300 золота
+  };
   
-  // Adjust for difficulty
-  if (level.name.toLowerCase().includes('hard')) {
-    baseExperience *= 1.5;
-    baseGold *= 1.5;
-  }
-  
-  // Adjust for language type
-  if (level.config.language === 'ru') {
-    baseExperience *= 1.2;
-    baseGold *= 1.2;
-  } else if (level.config.language === 'code') {
-    baseExperience *= 1.5;
-    baseGold *= 1.5;
-  }
+  // Опыт рассчитываем пропорционально золоту
+  const gold = goldRewards[level.id as keyof typeof goldRewards] || 50;
+  const experience = gold * 2;
   
   return {
-    experience: Math.round(baseExperience),
-    gold: Math.round(baseGold),
+    experience: experience,
+    gold: gold,
   };
 };
 

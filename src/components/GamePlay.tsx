@@ -24,7 +24,7 @@ interface GameStats {
   endTime: number | null;
 }
 
-export type Language = 'en' | 'ru' | 'code';
+export type Language = 'en' | 'ru' | 'code' | 'key-combos' | 'simple-words' | 'phrases' | 'math' | 'paragraphs' | 'mixed';
 
 export interface GamePlayConfig {
   backgroundImage: string;

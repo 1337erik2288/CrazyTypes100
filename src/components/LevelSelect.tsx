@@ -4,7 +4,7 @@ import { GamePlayConfig } from './GamePlay';
 import PlayerStats from './PlayerStats';
 import { PlayerProgress } from '../services/playerService';
 
-export type Language = 'en' | 'ru' | 'code';
+export type Language = 'en' | 'ru' | 'code' | 'key-combos' | 'simple-words' | 'phrases' | 'math' | 'paragraphs' | 'mixed';
 
 interface Level {
   id: number;
@@ -15,72 +15,100 @@ interface Level {
 const levels: Level[] = [
   {
     id: 1,
-    name: 'Easy English',
+    name: 'Основы быстрого набора',
     config: {
       backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (2).jpg',
       monsterImage: '/src/image/monster/Cartoon Monster Design.png',
-      initialHealth: 150,
-      healAmount: 5,
-      regenerateAmount: 1,
-      damageAmount: 4,
-      healOnMistake: 5,
-      language: 'en'
+      initialHealth: 100,
+      healAmount: 0,
+      regenerateAmount: 0,
+      damageAmount: 5,
+      healOnMistake: 0,
+      language: 'key-combos'
     }
   },
   {
     id: 2,
-    name: 'Hard English',
+    name: 'Простые слова',
     config: {
       backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (3).jpg',
       monsterImage: '/src/image/monster/Cartoon Monster Design 3.png',
-      initialHealth: 200,
+      initialHealth: 150,
       healAmount: 0,
-      regenerateAmount: 0,
-      damageAmount: 3,
-      healOnMistake: 8,
-      language: 'en'
+      regenerateAmount: 1,
+      damageAmount: 4,
+      healOnMistake: 2,
+      language: 'simple-words'
     }
   },
   {
     id: 3,
-    name: 'Easy Russian',
+    name: 'Фразы и сложные слова',
     config: {
       backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (4).jpg',
       monsterImage: '/src/image/monster/Cartoon Monster Photoroom Mar 18 2025.png',
-      initialHealth: 150,
-      healAmount: 5,
-      regenerateAmount: 1,
-      damageAmount: 4,
-      healOnMistake: 5,
-      language: 'ru'
+      initialHealth: 200,
+      healAmount: 0,
+      regenerateAmount: 2,
+      damageAmount: 3,
+      healOnMistake: 4,
+      language: 'phrases'
     }
   },
   {
     id: 4,
-    name: 'Hard Russian',
+    name: 'Числа и математика',
     config: {
       backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (2).jpg',
       monsterImage: '/src/image/monster/Cartoon Style Monster Photoroom.png',
-      initialHealth: 200,
+      initialHealth: 250,
       healAmount: 0,
-      regenerateAmount: 0,
+      regenerateAmount: 3,
       damageAmount: 3,
-      healOnMistake: 8,
-      language: 'ru'
+      healOnMistake: 5,
+      language: 'math'
     }
   },
   {
     id: 5,
-    name: 'Code Challenge',
+    name: 'Кодовые строки',
     config: {
-      backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (4).jpg',
+      backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (3).jpg',
       monsterImage: '/src/image/monster/DALL·E Cartoon March 18 2025.png',
-      initialHealth: 250,
+      initialHealth: 300,
       healAmount: 0,
-      regenerateAmount: 0,
+      regenerateAmount: 5,
       damageAmount: 2,
       healOnMistake: 10,
       language: 'code'
+    }
+  },
+  {
+    id: 6,
+    name: 'Сложные тексты',
+    config: {
+      backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (4).jpg',
+      monsterImage: '/src/image/monster/DALL·E_2025_03_18_07_42_33_A_cartoon_style_monster_with_a_mischievous-Photoroom.png',
+      initialHealth: 350,
+      healAmount: 0,
+      regenerateAmount: 6,
+      damageAmount: 2,
+      healOnMistake: 10,
+      language: 'paragraphs'
+    }
+  },
+  {
+    id: 7,
+    name: 'Финальная битва',
+    config: {
+      backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (2).jpg',
+      monsterImage: '/src/image/monster/Cartoon Monster Design.png',
+      initialHealth: 500,
+      healAmount: 0,
+      regenerateAmount: 7,
+      damageAmount: 1,
+      healOnMistake: 15,
+      language: 'mixed'
     }
   }
 ];

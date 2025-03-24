@@ -181,14 +181,48 @@ export async function fetchRussianWords(count: number = 20): Promise<string[]> {
 }
 
 import { ruWords } from '../data/ru-words';
-
 import { enWords } from '../data/en-words';
+import { keyComboWords } from '../data/key-combos';
+import { simpleWords } from '../data/simple-words';
+import { phrasesWords } from '../data/phrases-words';
+import { mathExpressions } from '../data/math-expressions';
+import { textParagraphs } from '../data/text-paragraphs';
+import { mixedChallenges } from '../data/mixed-challenges';
+import { enChallenges } from '../data/en-challenges';
 
 export async function getAdditionalWords(language: string): Promise<string[]> {
   try {
     console.log(`Getting additional words for language: ${language}`);
     
-    if (language === 'ru') {
+    // Новые типы словарей
+    if (language === 'key-combos') {
+      return Promise.resolve(keyComboWords.sort(() => Math.random() - 0.5).slice(0, 10));
+    } else if (language === 'simple-words') {
+      return Promise.resolve(simpleWords.sort(() => Math.random() - 0.5).slice(0, 10));
+    } else if (language === 'phrases') {
+      // Случайно выбираем между словами и фразами
+      const useWords = Math.random() > 0.5;
+      if (useWords) {
+        return Promise.resolve(phrasesWords.words.sort(() => Math.random() - 0.5).slice(0, 10));
+      } else {
+        return Promise.resolve(phrasesWords.phrases.sort(() => Math.random() - 0.5).slice(0, 10));
+      }
+    } else if (language === 'math') {
+      // Случайно выбираем между числами и выражениями
+      const useNumbers = Math.random() > 0.5;
+      if (useNumbers) {
+        return Promise.resolve(mathExpressions.numbers.sort(() => Math.random() - 0.5).slice(0, 10));
+      } else {
+        return Promise.resolve(mathExpressions.expressions.sort(() => Math.random() - 0.5).slice(0, 10));
+      }
+    } else if (language === 'paragraphs') {
+      return Promise.resolve(textParagraphs.sort(() => Math.random() - 0.5).slice(0, 3));
+    } else if (language === 'mixed') {
+      // Выбираем случайный тип контента для смешанного режима
+      const contentTypes = ['code', 'complexWords', 'mathExpressions', 'paragraphs'];
+      const randomType = contentTypes[Math.floor(Math.random() * contentTypes.length)];
+      return Promise.resolve(mixedChallenges[randomType as keyof typeof mixedChallenges].sort(() => Math.random() - 0.5).slice(0, 10));
+    } else if (language === 'ru') {
       // Try to get Russian words from API first
       try {
         console.log('Attempting to fetch Russian words from API');
