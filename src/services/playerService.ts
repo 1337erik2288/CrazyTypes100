@@ -110,3 +110,9 @@ export const calculateLevelProgress = (progress: PlayerProgress): number => {
   
   return Math.min(100, Math.floor((xpForCurrentLevel / xpRequiredForNextLevel) * 100));
 };
+
+// Calculate player rating based on typing speed and accuracy
+export const calculatePlayerRating = (speed: number, accuracy: number): number => {
+  // Rating formula: (Speed × 0.7) + (Accuracy × 0.3)
+  return (speed * 0.7) + (accuracy * 0.3);
+};

@@ -1,6 +1,6 @@
 import React from 'react';
 import './VictoryScreen.css';
-import { LevelReward } from '../services/playerService';
+import { LevelReward, calculatePlayerRating } from '../services/playerService';
 
 interface GameStats {
   correctChars: number;
@@ -30,6 +30,10 @@ const VictoryScreen: React.FC<VictoryScreenProps> = ({ gameStats, onRestart, onR
         <p>Mistakes: {gameStats.incorrectChars}</p>
         <p>Accuracy: {((gameStats.correctChars / gameStats.totalChars) * 100).toFixed(1)}%</p>
         <p>Speed: {Math.round((gameStats.totalChars / ((gameStats.endTime || Date.now()) - gameStats.startTime)) * 60000)} CPM</p>
+        <p>Rating: {Math.round(calculatePlayerRating(
+          Math.round((gameStats.totalChars / ((gameStats.endTime || Date.now()) - gameStats.startTime)) * 60000),
+          ((gameStats.correctChars / gameStats.totalChars) * 100)
+        ))}</p>
         
         {isFirstCompletion && rewards && (
           <div className="rewards">
@@ -42,6 +46,9 @@ const VictoryScreen: React.FC<VictoryScreenProps> = ({ gameStats, onRestart, onR
       <div className="victory-buttons">
         <button onClick={onRestart} className="restart-button">
           Play Again
+        </button>
+        <button onClick={onReturnToMenu} className="menu-button">
+          Return to Menu
         </button>
       </div>
     </div>

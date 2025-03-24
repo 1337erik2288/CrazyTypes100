@@ -33,6 +33,19 @@ const TypingInterface: React.FC<TypingInterfaceProps> = ({
     return wordChar === inputChar ? 'correct' : 'incorrect';
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    
+    // Для математических выражений проверяем только ответ
+    if (isMathExpression) {
+      if (value === expectedAnswer) {
+        onInputChange(e);
+      }
+    } else {
+      onInputChange(e);
+    }
+  };
+
   return (
     <div className="typing-container">
       <div className={`word-display ${currentWord.includes('\n') ? 'code-display' : ''}`}>
@@ -47,7 +60,7 @@ const TypingInterface: React.FC<TypingInterfaceProps> = ({
       )}
       <textarea
         value={userInput}
-        onChange={onInputChange}
+        onChange={handleInputChange}
         className="typing-input"
         placeholder="Type the code..."
         autoFocus
@@ -55,6 +68,7 @@ const TypingInterface: React.FC<TypingInterfaceProps> = ({
         spellCheck="false"
       />
     </div>
+  );
 };
 
 export default TypingInterface;
