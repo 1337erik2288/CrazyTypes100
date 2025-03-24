@@ -213,7 +213,9 @@ export async function getAdditionalWords(language: string): Promise<string[]> {
       if (useNumbers) {
         return Promise.resolve(mathExpressions.numbers.sort(() => Math.random() - 0.5).slice(0, 10));
       } else {
-        return Promise.resolve(mathExpressions.expressions.sort(() => Math.random() - 0.5).slice(0, 10));
+        // Для выражений возвращаем только ответы, а отображаем выражения
+        const shuffledExpressions = [...mathExpressions.expressions].sort(() => Math.random() - 0.5).slice(0, 10);
+        return Promise.resolve(shuffledExpressions.map(expr => expr.answer));
       }
     } else if (language === 'paragraphs') {
       return Promise.resolve(textParagraphs.sort(() => Math.random() - 0.5).slice(0, 3));

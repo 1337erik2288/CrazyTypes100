@@ -9,6 +9,7 @@ import { getAdditionalWords } from '../services/wordsService';
 import { getRandomCodeLine } from '../services/codeService';
 import { LevelReward } from '../services/playerService';
 import { getPlayerEquipment, applyEquipmentEffects } from '../services/equipmentService';
+import { mathExpressions } from '../data/math-expressions';
 
 interface Monster {
   health: number;
@@ -75,6 +76,32 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
         setCurrentWord(codeLine);
         setUserInput('');
       });
+    } else if (config.language === 'math') {
+      // Специальная обработка для математических выражений
+      getAdditionalWords(config.language).then(newWords => {
+        if (newWords.length > 0) {
+          const randomIndex = Math.floor(Math.random() * newWords.length);
+          const newWord = newWords[randomIndex];
+          
+          // Проверяем, является ли это выражением или числом
+          const useExpressions = Math.random() > 0.5;
+          if (!useExpressions) {
+            // Если это число, просто отображаем его
+            setCurrentWord(newWord);
+          } else {
+            // Если это выражение, находим соответствующее отображение
+            const matchingExpression = mathExpressions.expressions.find(expr => expr.answer === newWord);
+            if (matchingExpression) {
+              // Устанавливаем отображаемое выражение, но пользователь будет вводить только ответ
+              setCurrentWord(matchingExpression.display);
+            } else {
+              // Если не нашли соответствия, просто отображаем число
+              setCurrentWord(newWord);
+            }
+          }
+          setUserInput('');
+        }
+      });
     } else {
       getAdditionalWords(config.language).then(newWords => {
         if (newWords.length > 0) {
@@ -113,52 +140,74 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
     const value = e.target.value;
     const lastCharIndex = value.length - 1;
     
-    if (lastCharIndex >= 0 && lastCharIndex < currentWord.length) {
-      const isCorrect = value[lastCharIndex] === currentWord[lastCharIndex];
+    // Проверяем, является ли текущее слово математическим выражением
+    const isMathExpression = config.language === 'math' && currentWord.includes('=?');
+    
+    // Если это математическое выражение, находим ожидаемый ответ
+    let expectedAnswer = currentWord;
+    if (isMathExpression) {
+      const matchingExpression = mathExpressions.expressions.find(expr => expr.display === currentWord);
+      if (matchingExpression) {
+        expectedAnswer = matchingExpression.answer;
+      }
+    }
+    
+    if (lastCharIndex >= 0) {
+      // Для математических выражений проверяем ввод относительно ответа, а не отображаемого выражения
+      const compareWith = isMathExpression ? expectedAnswer : currentWord;
       
-      if (!isCorrect) {
-        setUserInput(value.slice(0, -1));
+      // Проверяем, не выходит ли индекс за пределы длины ответа
+      if (lastCharIndex < compareWith.length) {
+        const isCorrect = value[lastCharIndex] === compareWith[lastCharIndex];
+        
+        if (!isCorrect) {
+          setUserInput(value.slice(0, -1));
+          
+          setGameStats(prev => ({
+            ...prev,
+            incorrectChars: prev.incorrectChars + 1,
+            totalChars: prev.totalChars + 1
+          }));
+          
+          setMonster(prev => {
+            const newHealth = Math.min(config.initialHealth, prev.health + config.healOnMistake);
+            return { ...prev, health: newHealth };
+          });
+          return;
+        }
         
         setGameStats(prev => ({
           ...prev,
-          incorrectChars: prev.incorrectChars + 1,
+          correctChars: prev.correctChars + 1,
           totalChars: prev.totalChars + 1
         }));
-        
-        setMonster(prev => {
-          const newHealth = Math.min(config.initialHealth, prev.health + config.healOnMistake);
-          return { ...prev, health: newHealth };
-        });
-        return;
-      }
-      
-      setGameStats(prev => ({
-        ...prev,
-        correctChars: prev.correctChars + 1,
-        totalChars: prev.totalChars + 1
-      }));
 
-      setMonster(prev => {
-        const newHealth = Math.max(0, prev.health - config.damageAmount);
-        const isDefeated = newHealth === 0;
-        if (isDefeated) {
-          setShowVictory(true);
-          setGameStats(prev => ({ ...prev, endTime: Date.now() }));
-          onLevelComplete();
+        setMonster(prev => {
+          const newHealth = Math.max(0, prev.health - config.damageAmount);
+          const isDefeated = newHealth === 0;
+          if (isDefeated) {
+            setShowVictory(true);
+            setGameStats(prev => ({ ...prev, endTime: Date.now() }));
+            onLevelComplete();
+          }
+          const monsterElement = document.querySelector('.monster') as HTMLElement;
+          if (monsterElement) {
+            monsterElement.classList.remove('damage-animation');
+            void monsterElement.offsetWidth;
+            monsterElement.classList.add('damage-animation');
+          }
+          return { ...prev, health: newHealth, isDefeated };
+        });
+        
+        setUserInput(value);
+        
+        // Для математических выражений проверяем, совпадает ли ввод с ответом
+        if ((isMathExpression && value === expectedAnswer) || 
+            (!isMathExpression && value === currentWord)) {
+          if (!monster.isDefeated) {
+            generateNewWord();
+          }
         }
-        const monsterElement = document.querySelector('.monster') as HTMLElement;
-        if (monsterElement) {
-          monsterElement.classList.remove('damage-animation');
-          void monsterElement.offsetWidth;
-          monsterElement.classList.add('damage-animation');
-        }
-        return { ...prev, health: newHealth, isDefeated };
-      });
-      
-      setUserInput(value);
-      
-      if (value === currentWord && !monster.isDefeated) {
-        generateNewWord();
       }
     }
   };

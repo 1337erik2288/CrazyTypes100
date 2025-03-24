@@ -1,5 +1,6 @@
 import React from 'react';
 import './TypingInterface.css';
+import { mathExpressions } from '../data/math-expressions';
 
 interface TypingInterfaceProps {
   currentWord: string;
@@ -12,7 +13,22 @@ const TypingInterface: React.FC<TypingInterfaceProps> = ({
   userInput,
   onInputChange
 }) => {
+  // Проверяем, является ли текущее слово математическим выражением
+  const isMathExpression = currentWord.includes('=?');
+  
+  // Если это математическое выражение, находим ожидаемый ответ
+  let expectedAnswer = '';
+  if (isMathExpression) {
+    const matchingExpression = mathExpressions.expressions.find(expr => expr.display === currentWord);
+    if (matchingExpression) {
+      expectedAnswer = matchingExpression.answer;
+    }
+  }
+  
   const getCharacterClass = (wordChar: string, inputChar: string, index: number) => {
+    // Для математических выражений не показываем подсветку символов в выражении
+    if (isMathExpression) return '';
+    
     if (index >= userInput.length) return '';
     return wordChar === inputChar ? 'correct' : 'incorrect';
   };
@@ -26,6 +42,9 @@ const TypingInterface: React.FC<TypingInterfaceProps> = ({
           </span>
         ))}
       </div>
+      {isMathExpression && (
+        <div className="math-hint">Введите только ответ</div>
+      )}
       <textarea
         value={userInput}
         onChange={onInputChange}
@@ -36,7 +55,6 @@ const TypingInterface: React.FC<TypingInterfaceProps> = ({
         spellCheck="false"
       />
     </div>
-  );
 };
 
 export default TypingInterface;
