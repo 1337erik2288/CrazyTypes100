@@ -1,0 +1,61 @@
+.equipment-stats-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  width: auto;
+  min-width: 250px;
+  max-width: 100%;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-item:last-child {
+  border-bottom: none;
+}
+
+.stat-value {
+  font-weight: bold;
+  color: #4caf50;
+}
+
+.stat-label {
+  color: #e0e0e0;
+}
+
+@media (min-width: 768px) {
+  .equipment-stats-container {
+    flex-direction: row;
+    max-width: 600px;
+    justify-content: space-between;
+  }
+  
+  .stat-item {
+    flex: 1;
+    border-bottom: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .stat-item:last-child {
+    border-right: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .equipment-stats-container {
+    max-width: 100%;
+  }
+}

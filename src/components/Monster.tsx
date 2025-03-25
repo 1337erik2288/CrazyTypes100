@@ -50,7 +50,8 @@ const Monster: React.FC<MonsterProps> = ({ imagePath, isDefeated }) => {
           width: 'auto',
           height: '100%',
           maxWidth: '100%',
-          objectFit: 'contain'
+          objectFit: 'contain',
+          opacity: isDefeated ? 0.5 : 1
         }}
       />
     </div>

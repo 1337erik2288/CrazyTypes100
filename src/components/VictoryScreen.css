@@ -33,10 +33,25 @@
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin: 0 0.5rem;
 }
 
 .victory-screen button:hover {
   background-color: #535bf2;
+}
+
+.victory-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.restart-button {
+  background-color: #4caf50;
+}
+
+.restart-button:hover {
+  background-color: #3d8b40;
 }
 
 /* Victory Screen Reward Styles */

@@ -36,9 +36,15 @@ const TypingInterface: React.FC<TypingInterfaceProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     
-    // Для математических выражений проверяем только ответ
+    // Для математических выражений проверяем ввод посимвольно
     if (isMathExpression) {
-      if (value === expectedAnswer) {
+      // Проверяем, что каждый введенный символ соответствует ожидаемому ответу
+      const isValidInput = value.split('').every((char, index) => {
+        return index < expectedAnswer.length && char === expectedAnswer[index];
+      });
+      
+      // Если ввод валидный, передаем его дальше
+      if (isValidInput) {
         onInputChange(e);
       }
     } else {

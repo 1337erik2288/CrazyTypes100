@@ -5,6 +5,7 @@ import HealthBar from './HealthBar';
 import VictoryScreen from './VictoryScreen';
 import TypingInterface from './TypingInterface';
 import BackgroundManager from './BackgroundManager';
+import EquipmentStats from './EquipmentStats';
 import { getAdditionalWords } from '../services/wordsService';
 import { getRandomCodeLine } from '../services/codeService';
 import { LevelReward } from '../services/playerService';
@@ -49,8 +50,9 @@ interface GamePlayProps {
 
 const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, onLevelComplete, rewards, isFirstCompletion = false }) => {
   // Apply equipment effects to the game configuration
+  const [playerEquipment, setPlayerEquipment] = useState(() => getPlayerEquipment());
+  
   const [gameConfig, setGameConfig] = useState(() => {
-    const playerEquipment = getPlayerEquipment();
     return applyEquipmentEffects(config, playerEquipment.equipped);
   });
   
@@ -217,6 +219,7 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
       <BackgroundManager imagePath={config.backgroundImage} />
       <div className="game-container">
         <button className="menu-button" onClick={onReturnToMenu}>Вернуться в меню</button>
+        
         <div className="monster-container">
           <Monster 
             imagePath={monster.imagePath}
@@ -233,6 +236,7 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
             onHealthChange={(newHealth) => setMonster(prev => ({ ...prev, health: newHealth }))}
           />
         </div>
+
         {showVictory ? (
           <VictoryScreen 
             gameStats={gameStats} 
@@ -242,11 +246,18 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
             isFirstCompletion={isFirstCompletion}
           />
         ) : (
-          <TypingInterface
-            currentWord={currentWord}
-            userInput={userInput}
-            onInputChange={handleInputChange}
-          />
+          <>
+            <TypingInterface
+              currentWord={currentWord}
+              userInput={userInput}
+              onInputChange={handleInputChange}
+            />
+            <div className="equipment-stats-bottom">
+              <EquipmentStats 
+                equipment={playerEquipment.equipped} 
+              />
+            </div>
+          </>
         )}
       </div>
     </>
