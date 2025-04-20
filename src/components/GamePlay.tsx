@@ -73,6 +73,9 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
   }));
   
   const [currentDamage, setCurrentDamage] = useState(0);
+  const [baseDamage] = useState(config.damageAmount);
+  const [bonusDamageActive, setBonusDamageActive] = useState(false);
+  const [bonusDamagePercent, setBonusDamagePercent] = useState(0);
 
   const generateNewWord = useCallback(() => {
     if (config.language === 'code') {
@@ -201,8 +204,13 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
             monsterElement.classList.add('damage-animation');
           }
           
-          // Показываем текущий урон в случайном месте
-          setCurrentDamage(config.damageAmount);
+          // Рассчитываем урон с учетом накопительного бонуса за своевременный ввод
+          const damageToApply = bonusDamageActive 
+            ? config.damageAmount * (1 + bonusDamagePercent / 100) 
+            : config.damageAmount;
+          
+          // Показываем текущий урон в случайном месте с точностью до сотых
+          setCurrentDamage(parseFloat(damageToApply.toFixed(2)));
           setTimeout(() => setCurrentDamage(0), 1000); // Скрываем через 1 секунду
           
           return { ...prev, health: newHealth, isDefeated };
@@ -239,7 +247,7 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
               left: `${Math.random() * 80 + 10}%`,
               transform: 'translate(-50%, -50%)'
             }}>
-              <span>-{currentDamage}</span>
+              <span>-{currentDamage.toFixed(2)}</span>
             </div>
           )}
           <HealthBar 
@@ -268,6 +276,15 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
               currentWord={currentWord}
               userInput={userInput}
               onInputChange={handleInputChange}
+              onTimerComplete={() => {
+                setBonusDamageActive(false);
+                setBonusDamagePercent(0);
+              }}
+              onTimerSuccess={() => {
+                setBonusDamageActive(true);
+                setBonusDamagePercent(prev => prev + 10);
+              }}
+              bonusPercent={bonusDamagePercent}
             />
             <div className="equipment-stats-bottom">
               <EquipmentStats 

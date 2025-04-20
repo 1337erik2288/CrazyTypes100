@@ -105,3 +105,46 @@
   padding: 0.5rem;
   border-radius: 4px;
 }
+
+.word-display-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.timer-container {
+  position: absolute;
+  right: -50px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.timer-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: conic-gradient(#4caf50 100%, transparent 0%);
+  position: relative;
+}
+
+.timer-circle::before {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.timer-text {
+  position: relative;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  z-index: 1;
+}
