@@ -71,7 +71,7 @@ const HealthBar: React.FC<HealthBarProps> = ({
           backgroundColor: calculateColor(),
         }}
       />
-      <span className="health-text">{Math.round((health / initialHealth) * 100)}%</span>
+      <span className="health-text">{Math.round((health / initialHealth) * 100)}% | {Math.round(health)}/{initialHealth}</span>
       {canHeal && health < initialHealth && !isDefeated && (
         <button
           onClick={heal}

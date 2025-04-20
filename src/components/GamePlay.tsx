@@ -71,6 +71,8 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
     startTime: Date.now(),
     endTime: null
   }));
+  
+  const [currentDamage, setCurrentDamage] = useState(0);
 
   const generateNewWord = useCallback(() => {
     if (config.language === 'code') {
@@ -198,6 +200,11 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
             void monsterElement.offsetWidth;
             monsterElement.classList.add('damage-animation');
           }
+          
+          // Показываем текущий урон в случайном месте
+          setCurrentDamage(config.damageAmount);
+          setTimeout(() => setCurrentDamage(0), 1000); // Скрываем через 1 секунду
+          
           return { ...prev, health: newHealth, isDefeated };
         });
         
@@ -225,6 +232,16 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
             imagePath={monster.imagePath}
             isDefeated={monster.isDefeated}
           />
+          {currentDamage > 0 && (
+            <div className="damage-display" style={{
+              position: 'absolute',
+              top: `${Math.random() * 80 + 10}%`,
+              left: `${Math.random() * 80 + 10}%`,
+              transform: 'translate(-50%, -50%)'
+            }}>
+              <span>-{currentDamage}</span>
+            </div>
+          )}
           <HealthBar 
             health={monster.health}
             initialHealth={config.initialHealth}
