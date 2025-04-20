@@ -211,7 +211,7 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
           
           // Показываем текущий урон в случайном месте с точностью до сотых
           setCurrentDamage(parseFloat(damageToApply.toFixed(2)));
-          setTimeout(() => setCurrentDamage(0), 1000); // Скрываем через 1 секунду
+          setTimeout(() => setCurrentDamage(0), 1330); // Увеличиваем время отображения на 33% (было 1000мс)
           
           return { ...prev, health: newHealth, isDefeated };
         });
@@ -247,7 +247,7 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
               left: `${Math.random() * 80 + 10}%`,
               transform: 'translate(-50%, -50%)'
             }}>
-              <span>-{currentDamage.toFixed(2)}</span>
+              <span>-{Number.isInteger(currentDamage) ? currentDamage.toFixed(0) : currentDamage.toFixed(2)}</span>
             </div>
           )}
           <HealthBar 
