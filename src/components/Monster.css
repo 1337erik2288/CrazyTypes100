@@ -8,6 +8,12 @@
   align-items: center;
 }
 
+.monster img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
 @keyframes damage {
   0% { transform: translateX(0); }
   25% { transform: translateX(-10px); }
@@ -39,5 +45,21 @@
   .monster-container {
     margin-top: 0;
     margin-right: 2rem;
+  }
+}
+
+.monster-attacking {
+  animation: attack 0.3s ease-in-out;
+}
+
+@keyframes attack {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1) translateY(-5px);
+  }
+  100% {
+    transform: scale(1);
   }
 }

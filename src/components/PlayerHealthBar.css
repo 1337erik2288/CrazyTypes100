@@ -1,0 +1,39 @@
+.player-health-container {
+  margin-top: 10px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.player-health-label {
+  font-size: 14px;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.player-health-bar {
+  height: 20px;
+  background-color: #333;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #555;
+}
+
+.player-health-fill {
+  height: 100%;
+  transition: width 0.3s ease-in-out;
+}
+
+.player-health-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}

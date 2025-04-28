@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './GamePlay.css';
 import Monster from './Monster';
 import HealthBar from './HealthBar';
@@ -11,11 +11,15 @@ import { getRandomCodeLine } from '../services/codeService';
 import { LevelReward } from '../services/playerService';
 import { getPlayerEquipment, applyEquipmentEffects } from '../services/equipmentService';
 import { mathExpressions } from '../data/math-expressions';
+import PlayerHealthBar from './PlayerHealthBar';
+import { getPlayerHealth, getMaxPlayerHealth, damagePlayer, healPlayerToMax } from '../services/playerService';
 
 interface Monster {
   health: number;
+  maxHealth?: number;
   imagePath: string;
   isDefeated: boolean;
+  takingDamage?: boolean;
 }
 
 interface GameStats {
@@ -37,6 +41,8 @@ export interface GamePlayConfig {
   damageAmount: number;
   healOnMistake: number;
   language: Language;
+  monsterDamage?: number; // Урон, наносимый монстром игроку
+  attackInterval?: number; // Интервал атаки монстра в миллисекундах
 }
 
 interface GamePlayProps {
@@ -50,9 +56,9 @@ interface GamePlayProps {
 
 const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, onLevelComplete, rewards, isFirstCompletion = false }) => {
   // Apply equipment effects to the game configuration
-  const [playerEquipment, setPlayerEquipment] = useState(() => getPlayerEquipment());
+  const [playerEquipment] = useState(() => getPlayerEquipment());
   
-  const [gameConfig, setGameConfig] = useState(() => {
+  const [gameConfig] = useState(() => {
     return applyEquipmentEffects(config, playerEquipment.equipped);
   });
   
@@ -61,8 +67,10 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
   const [showVictory, setShowVictory] = useState(false);
   const [monster, setMonster] = useState<Monster>(() => ({
     health: gameConfig.initialHealth,
+    maxHealth: gameConfig.initialHealth,
     imagePath: gameConfig.monsterImage,
-    isDefeated: false
+    isDefeated: false,
+    takingDamage: false
   }));
   const [gameStats, setGameStats] = useState<GameStats>(() => ({
     correctChars: 0,
@@ -73,9 +81,17 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
   }));
   
   const [currentDamage, setCurrentDamage] = useState(0);
-  const [baseDamage] = useState(config.damageAmount);
+  // Remove the unused baseDamage variable
   const [bonusDamageActive, setBonusDamageActive] = useState(false);
   const [bonusDamagePercent, setBonusDamagePercent] = useState(0);
+
+  // Добавляем состояния для здоровья игрока
+  const [playerHealth, setPlayerHealth] = useState<number>(getPlayerHealth());
+  const [maxPlayerHealth, setMaxPlayerHealth] = useState<number>(getMaxPlayerHealth());
+  const [playerDamageAnimation, setPlayerDamageAnimation] = useState<boolean>(false);
+  
+  // Таймер для нанесения урона игроку
+  const monsterAttackInterval = useRef<NodeJS.Timeout | null>(null);
 
   const generateNewWord = useCallback(() => {
     if (config.language === 'code') {
@@ -124,8 +140,10 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
   const restartGame = () => {
     setMonster({
       health: config.initialHealth,
+      maxHealth: config.initialHealth,
       imagePath: config.monsterImage,
-      isDefeated: false
+      isDefeated: false,
+      takingDamage: false
     });
     setShowVictory(false);
     setGameStats({
@@ -141,7 +159,56 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
 
   useEffect(() => {
     generateNewWord();
-  }, []);
+    
+    // Восстанавливаем здоровье игрока до максимума при начале нового уровня
+    healPlayerToMax();
+    setPlayerHealth(getPlayerHealth());
+    setMaxPlayerHealth(getMaxPlayerHealth());
+    
+    // Запускаем таймер атаки монстра, если уровень предусматривает урон
+    if (config.monsterDamage && config.monsterDamage > 0) {
+      // Используем attackInterval из конфигурации или значение по умолчанию 5000 мс (5 секунд)
+      const interval = config.attackInterval || 5000;
+      
+      monsterAttackInterval.current = setInterval(() => {
+        // Монстр атакует только если не побежден
+        if (!monster.isDefeated) {
+          const newHealth = damagePlayer(config.monsterDamage || 0);
+          setPlayerHealth(newHealth);
+          setPlayerDamageAnimation(true);
+          
+          // Сбрасываем анимацию получения урона
+          setTimeout(() => {
+            setPlayerDamageAnimation(false);
+          }, 300);
+          
+          // Проверяем, не проиграл ли игрок
+          if (newHealth <= 0) {
+            // Игрок проиграл
+            handleDefeat();
+          }
+        }
+      }, interval);
+    }
+    
+    return () => {
+      // Очищаем таймер атаки монстра при размонтировании компонента
+      if (monsterAttackInterval.current) {
+        clearInterval(monsterAttackInterval.current);
+      }
+    };
+  }, [config, monster.isDefeated]);
+  
+  // Функция обработки поражения игрока
+  const handleDefeat = () => {
+    // Останавливаем таймер атаки монстра
+    if (monsterAttackInterval.current) {
+      clearInterval(monsterAttackInterval.current);
+    }
+    
+    // Показываем экран поражения или возвращаемся в меню
+    onReturnToMenu();
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
@@ -239,6 +306,8 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
           <Monster 
             imagePath={monster.imagePath}
             isDefeated={monster.isDefeated}
+            takingDamage={monster.takingDamage}
+            className={playerDamageAnimation ? 'monster-attacking' : ''}
           />
           {currentDamage > 0 && (
             <div className="damage-display" style={{
@@ -259,6 +328,12 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
             regenerateAmount={config.regenerateAmount}
             isDefeated={monster.isDefeated}
             onHealthChange={(newHealth) => setMonster(prev => ({ ...prev, health: newHealth }))}
+          />
+          
+          {/* Добавляем полосу здоровья игрока */}
+          <PlayerHealthBar 
+            currentHealth={playerHealth} 
+            maxHealth={maxPlayerHealth}
           />
         </div>
 

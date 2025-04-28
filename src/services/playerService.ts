@@ -116,3 +116,49 @@ export const calculatePlayerRating = (speed: number, accuracy: number): number =
   // Rating formula: (Speed × 0.7) + (Accuracy × 0.3)
   return (speed * 0.7) + (accuracy * 0.3);
 };
+
+// Базовое здоровье игрока
+const BASE_PLAYER_HEALTH = 100;
+const HEALTH_PER_LEVEL = 10; // Дополнительное здоровье за каждый уровень
+
+// Получение текущего уровня игрока
+export const getPlayerLevel = (): number => {
+  const playerProgress = getPlayerProgress();
+  return playerProgress.level;
+};
+
+// Получение максимального здоровья игрока на основе его уровня
+export const getMaxPlayerHealth = (): number => {
+  const playerLevel = getPlayerLevel();
+  return BASE_PLAYER_HEALTH + (playerLevel - 1) * HEALTH_PER_LEVEL;
+};
+
+// Получение текущего здоровья игрока
+export const getPlayerHealth = (): number => {
+  const storedHealth = localStorage.getItem('playerHealth');
+  if (storedHealth) {
+    return parseInt(storedHealth, 10);
+  }
+  // Если здоровье не найдено, устанавливаем максимальное
+  const maxHealth = getMaxPlayerHealth();
+  setPlayerHealth(maxHealth);
+  return maxHealth;
+};
+
+// Установка здоровья игрока
+export const setPlayerHealth = (health: number): void => {
+  localStorage.setItem('playerHealth', health.toString());
+};
+
+// Нанесение урона игроку
+export const damagePlayer = (damage: number): number => {
+  const currentHealth = getPlayerHealth();
+  const newHealth = Math.max(0, currentHealth - damage);
+  setPlayerHealth(newHealth);
+  return newHealth;
+};
+
+// Восстановление здоровья игрока до максимума
+export const healPlayerToMax = (): void => {
+  setPlayerHealth(getMaxPlayerHealth());
+};

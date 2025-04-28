@@ -24,7 +24,8 @@ const levels: Level[] = [
       regenerateAmount: 0,
       damageAmount: 5,
       healOnMistake: 0,
-      language: 'key-combos'
+      language: 'key-combos',
+      monsterDamage: 0 // Первый уровень без урона
     }
   },
   {
