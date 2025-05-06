@@ -119,7 +119,7 @@ export const calculatePlayerRating = (speed: number, accuracy: number): number =
 
 // Базовое здоровье игрока
 const BASE_PLAYER_HEALTH = 100;
-const HEALTH_PER_LEVEL = 10; // Дополнительное здоровье за каждый уровень
+const HEALTH_PER_LEVEL = 10;
 
 // Получение текущего уровня игрока
 export const getPlayerLevel = (): number => {
@@ -130,19 +130,17 @@ export const getPlayerLevel = (): number => {
 // Получение максимального здоровья игрока на основе его уровня
 export const getMaxPlayerHealth = (): number => {
   const playerLevel = getPlayerLevel();
-  return BASE_PLAYER_HEALTH + (playerLevel - 1) * HEALTH_PER_LEVEL;
+  return BASE_PLAYER_HEALTH + (playerLevel * HEALTH_PER_LEVEL);
 };
 
 // Получение текущего здоровья игрока
 export const getPlayerHealth = (): number => {
-  const storedHealth = localStorage.getItem('playerHealth');
-  if (storedHealth) {
-    return parseInt(storedHealth, 10);
+  // Get current health from storage or return max health if not set
+  const savedHealth = localStorage.getItem('playerHealth');
+  if (savedHealth) {
+    return parseInt(savedHealth, 10);
   }
-  // Если здоровье не найдено, устанавливаем максимальное
-  const maxHealth = getMaxPlayerHealth();
-  setPlayerHealth(maxHealth);
-  return maxHealth;
+  return getMaxPlayerHealth();
 };
 
 // Установка здоровья игрока

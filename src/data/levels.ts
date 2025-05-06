@@ -59,6 +59,7 @@ export const levels: LevelConfig[] = [
     monsterDamage: 1, // Второй уровень с минимальным уроном
     attackInterval: 6000 // Атака каждые 6 секунд
   },
+  // Для третьего уровня
   {
     id: 3,
     name: 'Фразы и сложные слова',
@@ -71,9 +72,10 @@ export const levels: LevelConfig[] = [
     background: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (4).jpg',
     monsterImage: '/src/image/monster/Cartoon Monster Photoroom Mar 18 2025.png',
     contentType: ContentType.Phrases,
-    monsterDamage: 2,
+    monsterDamage: 2, // Уменьшаем урон с 3 до 2
     attackInterval: 5000 // Атака каждые 5 секунд
   },
+  // Для четвертого уровня
   {
     id: 4,
     name: 'Числа и математика',
@@ -87,7 +89,7 @@ export const levels: LevelConfig[] = [
     monsterImage: '/src/image/monster/Cartoon Style Monster Photoroom.png',
     contentType: ContentType.Math,
     monsterDamage: 3,
-    attackInterval: 4500 // Атака каждые 4.5 секунды
+    attackInterval: 4500 // Проверьте, что это значение корректно
   },
   {
     id: 5,

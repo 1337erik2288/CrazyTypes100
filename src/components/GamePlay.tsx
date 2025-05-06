@@ -81,7 +81,7 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
   }));
   
   const [currentDamage, setCurrentDamage] = useState(0);
-  // Remove the unused baseDamage variable
+  // Удаляем неиспользуемую переменную baseDamage
   const [bonusDamageActive, setBonusDamageActive] = useState(false);
   const [bonusDamagePercent, setBonusDamagePercent] = useState(0);
 
@@ -89,6 +89,7 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
   const [playerHealth, setPlayerHealth] = useState<number>(getPlayerHealth());
   const [maxPlayerHealth, setMaxPlayerHealth] = useState<number>(getMaxPlayerHealth());
   const [playerDamageAnimation, setPlayerDamageAnimation] = useState<boolean>(false);
+  const [showAttackWarning, setShowAttackWarning] = useState<boolean>(false);
   
   // Таймер для нанесения урона игроку
   const monsterAttackInterval = useRef<NodeJS.Timeout | null>(null);
@@ -165,30 +166,70 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
     setPlayerHealth(getPlayerHealth());
     setMaxPlayerHealth(getMaxPlayerHealth());
     
+    // Очищаем предыдущий таймер, если он существует
+    if (monsterAttackInterval.current) {
+      clearInterval(monsterAttackInterval.current);
+      monsterAttackInterval.current = null;
+    }
+    
+    // Добавляем отладочный вывод для проверки параметров уровня
+    console.log('Уровень:', config);
+    console.log('Урон монстра:', config.monsterDamage);
+    console.log('Интервал атаки:', config.attackInterval);
+    
     // Запускаем таймер атаки монстра, если уровень предусматривает урон
-    if (config.monsterDamage && config.monsterDamage > 0) {
-      // Используем attackInterval из конфигурации или значение по умолчанию 5000 мс (5 секунд)
-      const interval = config.attackInterval || 5000;
+    if (config.monsterDamage && config.monsterDamage > 0 && config.attackInterval && config.attackInterval > 0) {
+      // Добавляем задержку перед первой атакой (7 секунд)
+      const initialDelay = 7000; 
       
-      monsterAttackInterval.current = setInterval(() => {
-        // Монстр атакует только если не побежден
-        if (!monster.isDefeated) {
-          const newHealth = damagePlayer(config.monsterDamage || 0);
-          setPlayerHealth(newHealth);
-          setPlayerDamageAnimation(true);
-          
-          // Сбрасываем анимацию получения урона
-          setTimeout(() => {
-            setPlayerDamageAnimation(false);
-          }, 300);
-          
-          // Проверяем, не проиграл ли игрок
-          if (newHealth <= 0) {
-            // Игрок проиграл
-            handleDefeat();
+      // Показываем предупреждение за 2 секунды до первой атаки
+      setTimeout(() => {
+        setShowAttackWarning(true);
+        
+        // Скрываем предупреждение через 2 секунды
+        setTimeout(() => {
+          setShowAttackWarning(false);
+        }, 2000);
+      }, initialDelay - 2000);
+      
+      // Таймер для первой атаки с задержкой
+      const initialAttackTimer = setTimeout(() => {
+        // Запускаем регулярные атаки после первой задержки
+        monsterAttackInterval.current = setInterval(() => {
+          // Монстр атакует только если не побежден
+          if (!monster.isDefeated) {
+            // Ограничиваем урон монстра до максимум 10 единиц за атаку
+            const actualDamage = Math.min(config.monsterDamage || 0, 10);
+            
+            console.log('Монстр атакует! Урон:', actualDamage);
+            
+            const newHealth = damagePlayer(actualDamage);
+            console.log('Новое здоровье игрока:', newHealth);
+            
+            setPlayerHealth(newHealth);
+            setPlayerDamageAnimation(true);
+            
+            // Сбрасываем анимацию получения урона
+            setTimeout(() => {
+              setPlayerDamageAnimation(false);
+            }, 300);
+            
+            // Проверяем, не проиграл ли игрок
+            if (newHealth <= 0) {
+              // Игрок проиграл
+              handleDefeat();
+            }
           }
+        }, config.attackInterval);
+      }, initialDelay);
+      
+      // Очистка таймера начальной задержки при размонтировании
+      return () => {
+        clearTimeout(initialAttackTimer);
+        if (monsterAttackInterval.current) {
+          clearInterval(monsterAttackInterval.current);
         }
-      }, interval);
+      };
     }
     
     return () => {
@@ -367,6 +408,12 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
               />
             </div>
           </>
+        )}
+        
+        {showAttackWarning && (
+          <div className="attack-warning">
+            Monster is about to attack!
+          </div>
         )}
       </div>
     </>
