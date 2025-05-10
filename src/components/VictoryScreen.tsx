@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './VictoryScreen.css';
 import { LevelReward, calculatePlayerRating } from '../services/playerService';
+import { saveLevelResult } from '../services/progressService';
 
 interface GameStats {
   correctChars: number;
@@ -13,12 +14,30 @@ interface GameStats {
 interface VictoryScreenProps {
   gameStats: GameStats;
   onRestart: () => void;
-  onReturnToMenu: () => void;
+  // Removed onReturnToMenu
   rewards?: LevelReward;
   isFirstCompletion?: boolean;
+  speed: number;
+  accuracy: number;
+  levelId: number; // <--- добавлено
 }
 
-const VictoryScreen: React.FC<VictoryScreenProps> = ({ gameStats, onRestart, onReturnToMenu, rewards, isFirstCompletion = false }) => {
+const VictoryScreen: React.FC<VictoryScreenProps> = ({
+  onRestart,
+  // Removed onReturnToMenu
+  rewards,
+  isFirstCompletion,
+  speed,
+  accuracy,
+  gameStats,
+  levelId // <--- добавлено
+}) => {
+  useEffect(() => {
+    if (levelId !== undefined && levelId !== null) {
+      saveLevelResult(levelId.toString(), speed, accuracy);
+    }
+  }, [levelId, speed, accuracy]);
+
   return (
     <div className="victory-screen">
       <h2>Victory!</h2>
@@ -34,7 +53,6 @@ const VictoryScreen: React.FC<VictoryScreenProps> = ({ gameStats, onRestart, onR
           Math.round((gameStats.totalChars / ((gameStats.endTime || Date.now()) - gameStats.startTime)) * 60000),
           ((gameStats.correctChars / gameStats.totalChars) * 100)
         ))}</p>
-        
         {isFirstCompletion && rewards && (
           <div className="rewards">
             <p className="reward-title">Rewards Earned:</p>

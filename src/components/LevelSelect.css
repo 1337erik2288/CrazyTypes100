@@ -241,3 +241,86 @@
   50% { transform: scale(1.1); }
   100% { transform: scale(1); }
 }
+
+.level-path-rect {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.level-card-rect {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(60,60,60,0.10);
+  padding: 24px 32px;
+  min-width: 280px;
+  max-width: 320px;
+  min-height: 220px;
+  max-height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: box-shadow 0.2s, transform 0.2s;
+  border: 2px solid transparent;
+}
+
+.level-card-rect.completed {
+  border: 2px solid #4caf50;
+  background: linear-gradient(135deg, #e0ffe0 0%, #b2f7b2 100%);
+}
+
+.level-title {
+  font-size: 1.3em;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #222;
+}
+
+.level-difficulty {
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.level-difficulty.easy {
+  color: #43a047; /* зелёный */
+}
+.level-difficulty.medium {
+  color: #ff9800; /* оранжевый */
+}
+.level-difficulty.hard {
+  color: #e53935; /* красный */
+}
+
+.level-content {
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.level-stats {
+  margin: 10px 0;
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 8px 12px;
+  width: 100%;
+  color: #222;
+}
+
+.level-start-btn {
+  margin-top: auto;
+  align-self: stretch;
+  padding: 10px 0;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.level-start-btn:disabled {
+  background: #bdbdbd;
+  cursor: not-allowed;
+}

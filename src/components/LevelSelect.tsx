@@ -2,7 +2,7 @@ import React from 'react';
 import './LevelSelect.css';
 import { GamePlayConfig } from './GamePlay';
 import PlayerStats from './PlayerStats';
-import { PlayerProgress } from '../services/playerService';
+import { PlayerProgress } from '../services/playerService'; // Импортируем обновленный тип
 
 export type Language = 'en' | 'ru' | 'code' | 'key-combos' | 'simple-words' | 'phrases' | 'math' | 'paragraphs' | 'mixed';
 
@@ -129,10 +129,20 @@ const levels: Level[] = [
 
 interface LevelSelectProps {
   onLevelSelect: (config: GamePlayConfig, levelId: number) => void;
-  completedLevels: number[];
+  completedLevels: string[]; // Было number[]
   playerProgress: PlayerProgress;
   onOpenShop: () => void;
 }
+
+const levelDescriptions: Record<number, { difficulty: string; content: string; diffClass: string }> = {
+  1: { difficulty: 'Легко', content: 'Комбинации клавиш', diffClass: 'easy' },
+  2: { difficulty: 'Легко', content: 'Простые слова', diffClass: 'easy' },
+  3: { difficulty: 'Средне', content: 'Фразы и сложные слова', diffClass: 'medium' },
+  4: { difficulty: 'Средне', content: 'Числа и математика', diffClass: 'medium' },
+  5: { difficulty: 'Сложно', content: 'Кодовые строки', diffClass: 'hard' },
+  6: { difficulty: 'Сложно', content: 'Сложные тексты', diffClass: 'hard' },
+  7: { difficulty: 'Сложно', content: 'Смешанный режим', diffClass: 'hard' }
+};
 
 const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevels, playerProgress, onOpenShop }) => {
   // Sort levels by ID to ensure correct order
@@ -140,28 +150,38 @@ const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevel
   
   return (
     <div className="level-select">
-      <h1>Choose Your Challenge</h1>
+      <h1>Выберите испытание</h1>
       <PlayerStats playerProgress={playerProgress} onOpenShop={onOpenShop} />
-      <div className="level-path">
-        {sortedLevels.map((level) => (
-          <div key={level.id} className="level-node">
-            <div className="level-connector" />
-            <button
-              className={`level-circle ${level.config.language === 'ru' ? 'russian' : (level.config.language === 'code' ? 'code' : 'english')} ${completedLevels.includes(level.id) ? 'completed' : ''}`}
-              data-language={level.config.language}
-              onClick={() => onLevelSelect(level.config, level.id)}
-            >
-              <span className="level-number">{level.id}</span>
-              <span className="level-name">{level.name}</span>
-              <span className="level-difficulty">
-                {level.name.toLowerCase().includes('hard') ? '★★★' : '★★'}
-              </span>
-              {completedLevels.includes(level.id) && (
-                <span className="level-completed-indicator">✓</span>
-              )}
-            </button>
-          </div>
-        ))}
+      <div className="level-path-rect">
+        {sortedLevels.map((level) => { // level.id здесь number
+          const isCompleted = completedLevels.includes(level.id.toString()); // Сравниваем со string
+          const stats = playerProgress.levelStats?.[level.id.toString()]; // Доступ по строковому ключу
+          const { difficulty, content, diffClass } = levelDescriptions[level.id] || { difficulty: '', content: '', diffClass: '' };
+          return (
+            <div key={level.id} className={`level-card-rect ${isCompleted ? 'completed' : ''}`}>
+              <div className="level-title">{level.name}</div>
+              <div className={`level-difficulty ${diffClass}`}>Сложность: <b>{difficulty}</b></div>
+              <div className="level-content">Содержание: {content}</div>
+              <div className="level-stats">
+                {stats ? (
+                  <>
+                    <div>Скорость: <b>{stats.speed.toFixed(2)} зн./мин</b></div>
+                    <div>Точность: <b>{stats.accuracy.toFixed(2)}%</b></div>
+                  </>
+                ) : (
+                  <div>Нет данных</div>
+                )}
+              </div>
+              <button
+                className="level-start-btn"
+                onClick={() => onLevelSelect(level.config, level.id)}
+                disabled={level.id > Math.max(...completedLevels.map(id => parseInt(id, 10)), 0) + 1 && completedLevels.length > 0 || (completedLevels.length === 0 && level.id > 1) } // Логика disabled должна учитывать, что completedLevels теперь string[]
+              >
+                {isCompleted ? 'Повторить' : 'Начать'}
+              </button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

@@ -13,6 +13,7 @@ import { getPlayerEquipment, applyEquipmentEffects } from '../services/equipment
 import { mathExpressions } from '../data/math-expressions';
 import PlayerHealthBar from './PlayerHealthBar';
 import { getPlayerHealth, getMaxPlayerHealth, damagePlayer, healPlayerToMax } from '../services/playerService';
+import { saveLevelResult } from '../services/progressService';
 
 interface Monster {
   health: number;
@@ -28,6 +29,8 @@ interface GameStats {
   totalChars: number;
   startTime: number;
   endTime: number | null;
+  speed?: number;      // Add this
+  accuracy?: number;   // Add this
 }
 
 export type Language = 'en' | 'ru' | 'code' | 'key-combos' | 'simple-words' | 'phrases' | 'math' | 'paragraphs' | 'mixed';
@@ -52,9 +55,18 @@ interface GamePlayProps {
   onLevelComplete: () => void;
   rewards?: LevelReward;
   isFirstCompletion?: boolean;
+  levelId: number | null; // <--- Added levelId
 }
 
-const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, onLevelComplete, rewards, isFirstCompletion = false }) => {
+const GamePlay: React.FC<GamePlayProps> = ({
+  config,
+  onRestart,
+  onReturnToMenu,
+  onLevelComplete,
+  rewards,
+  isFirstCompletion = false,
+  levelId // <--- Destructured levelId
+}) => {
   // Apply equipment effects to the game configuration
   const [playerEquipment] = useState(() => getPlayerEquipment());
   
@@ -337,11 +349,23 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
     }
   };
 
+  // Удалена логика сохранения результатов
+  const handleReturnToMenu = () => {
+    // Сохраняем результат только если победа и есть id уровня
+    if (showVictory && gameStats && levelId !== null && gameStats.endTime && gameStats.startTime && gameStats.totalChars > 0) { // Changed: (gameConfig as any).id to levelId
+      const durationMinutes = (gameStats.endTime - gameStats.startTime) / 60000;
+      const speed = gameStats.correctChars / durationMinutes;
+      const accuracy = (gameStats.correctChars / gameStats.totalChars) * 100;
+      saveLevelResult(levelId.toString(), speed, accuracy); // Changed: (gameConfig as any).id to levelId.toString()
+    }
+    onReturnToMenu();
+  };
+
   return (
     <>
-      <BackgroundManager imagePath={config.backgroundImage} />
+      <BackgroundManager imagePath={gameConfig.backgroundImage} />
       <div className="game-container">
-        <button className="menu-button" onClick={onReturnToMenu}>Вернуться в меню</button>
+        <button className="menu-button" onClick={handleReturnToMenu}>Вернуться в меню</button>
         
         <div className="monster-container">
           <Monster 
@@ -380,11 +404,18 @@ const GamePlay: React.FC<GamePlayProps> = ({ config, onRestart, onReturnToMenu, 
 
         {showVictory ? (
           <VictoryScreen 
-            gameStats={gameStats} 
+            gameStats={gameStats}
+            speed={gameStats && gameStats.endTime && gameStats.startTime && gameStats.totalChars > 0
+              ? gameStats.correctChars / ((gameStats.endTime - gameStats.startTime) / 60000)
+              : 0}
+            accuracy={gameStats && gameStats.totalChars > 0
+              ? (gameStats.correctChars / gameStats.totalChars) * 100
+              : 0}
             onRestart={restartGame} 
-            onReturnToMenu={onReturnToMenu} 
+            // onReturnToMenu={onReturnToMenu} // <--- Removed this line
             rewards={rewards}
             isFirstCompletion={isFirstCompletion}
+            levelId={levelId as number} // <--- Added this line, ensuring levelId is passed
           />
         ) : (
           <>

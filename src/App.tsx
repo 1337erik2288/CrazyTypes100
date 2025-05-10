@@ -55,7 +55,7 @@ function App() {
     setCurrentLevel(selectedLevel);
     
     // Check if this level is being played for the first time
-    const isFirstTime = !playerProgress.completedLevels.includes(levelId);
+    const isFirstTime = !playerProgress.completedLevels.includes(levelId.toString()); // Changed: levelId to levelId.toString()
     setIsFirstCompletion(isFirstTime);
     
     // Calculate potential rewards if this is the first completion
@@ -70,6 +70,7 @@ function App() {
   };
 
   const handleReturnToMenu = () => {
+    setPlayerProgress(getPlayerProgress()); // обновить прогресс из localStorage
     setCurrentScreen('levelSelect');
   };
   
@@ -89,14 +90,15 @@ function App() {
   
   // Mark current level as completed and award rewards when victory is achieved
   const handleLevelComplete = () => {
-    if (currentLevelId && currentLevel && !playerProgress.completedLevels.includes(currentLevelId)) {
+    if (currentLevelId !== null && currentLevel && !playerProgress.completedLevels.includes(currentLevelId.toString())) { // Changed: currentLevelId to currentLevelId.toString()
       // Use the pre-calculated rewards from handleLevelSelect
       if (currentRewards) {
         // Add rewards and update player progress
         const updatedProgress = addRewards(currentRewards.experience, currentRewards.gold);
         
         // Update completed levels
-        const newCompletedLevels = [...updatedProgress.completedLevels, currentLevelId];
+        // Ensure currentLevelId is not null before converting to string, already handled by the outer if
+        const newCompletedLevels = [...updatedProgress.completedLevels, currentLevelId.toString()]; // Changed: currentLevelId to currentLevelId.toString()
         updatedProgress.completedLevels = newCompletedLevels;
         
         // Save and update state
@@ -118,6 +120,7 @@ function App() {
             onLevelComplete={handleLevelComplete}
             rewards={currentRewards || undefined}
             isFirstCompletion={isFirstCompletion}
+            levelId={currentLevelId} // Pass currentLevelId to GamePlay
           />
         );
       case 'shop':

@@ -4,9 +4,24 @@ export interface PlayerProgress {
   experience: number;
   gold: number;
   level: number;
-  completedLevels: number[];
+  completedLevels: string[]; // Было number[]
+  levelStats?: {
+    [levelId: string]: {     // Ключ был number
+      speed: number;
+      accuracy: number;
+      date: number;         // Добавлено поле date для консистентности
+    }
+  };
 }
 
+// Убедитесь, что DEFAULT_PLAYER_PROGRESS также соответствует этой структуре:
+// export const DEFAULT_PLAYER_PROGRESS: PlayerProgress = {
+//   experience: 0,
+//   gold: 0,
+//   level: 1,
+//   completedLevels: [], // Теперь string[]
+//   levelStats: {}       // Ключи теперь string
+// };
 export interface LevelReward {
   experience: number;
   gold: number;
