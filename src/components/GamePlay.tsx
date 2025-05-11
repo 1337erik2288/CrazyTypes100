@@ -3,6 +3,7 @@ import './GamePlay.css';
 import Monster from './Monster';
 import HealthBar from './HealthBar';
 import VictoryScreen from './VictoryScreen';
+import DefeatScreen from './DefeatScreen'; // Добавьте этот импорт
 import TypingInterface from './TypingInterface';
 import BackgroundManager from './BackgroundManager';
 import EquipmentStats from './EquipmentStats';
@@ -77,6 +78,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
   const [currentWord, setCurrentWord] = useState('');
   const [userInput, setUserInput] = useState('');
   const [showVictory, setShowVictory] = useState(false);
+  const [showDefeatScreen, setShowDefeatScreen] = useState(false); // Добавьте это состояние
   const [monster, setMonster] = useState<Monster>(() => ({
     health: gameConfig.initialHealth,
     maxHealth: gameConfig.initialHealth,
@@ -159,6 +161,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
       takingDamage: false
     });
     setShowVictory(false);
+    setShowDefeatScreen(false); // Сбрасываем экран поражения
     setGameStats({
       correctChars: 0,
       incorrectChars: 0,
@@ -259,8 +262,8 @@ const GamePlay: React.FC<GamePlayProps> = ({
       clearInterval(monsterAttackInterval.current);
     }
     
-    // Показываем экран поражения или возвращаемся в меню
-    onReturnToMenu();
+    setShowDefeatScreen(true); // Показываем экран поражения
+    // onReturnToMenu(); // Больше не вызываем это напрямую
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -412,10 +415,20 @@ const GamePlay: React.FC<GamePlayProps> = ({
               ? (gameStats.correctChars / gameStats.totalChars) * 100
               : 0}
             onRestart={restartGame} 
-            // onReturnToMenu={onReturnToMenu} // <--- Removed this line
             rewards={rewards}
             isFirstCompletion={isFirstCompletion}
-            levelId={levelId as number} // <--- Added this line, ensuring levelId is passed
+            levelId={levelId as number} 
+          />
+        ) : showDefeatScreen ? ( // Добавляем условие для экрана поражения
+          <DefeatScreen
+            onRestart={() => {
+              setShowDefeatScreen(false);
+              restartGame(); // Используем restartGame, который уже вызывает onRestart из App.tsx
+            }}
+            onReturnToMenu={() => {
+              setShowDefeatScreen(false);
+              onReturnToMenu();
+            }}
           />
         ) : (
           <>

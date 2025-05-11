@@ -37,19 +37,19 @@ const EquipmentStats: React.FC<EquipmentStatsProps> = ({ equipment }) => {
     <div className="equipment-stats-container">
       <div className="stat-item">
         <span className="stat-value">+{stats.damageBonus}</span>
-        <span className="stat-label">Damage</span>
+        <span className="stat-label">Урон</span>
       </div>
       <div className="stat-item">
         <span className="stat-value">+{stats.healBonus}</span>
-        <span className="stat-label">Healing</span>
+        <span className="stat-label">Лечение</span>
       </div>
       <div className="stat-item">
         <span className="stat-value">+{stats.regenerateBonus}</span>
-        <span className="stat-label">Regeneration</span>
+        <span className="stat-label">Регенерация</span>
       </div>
       <div className="stat-item">
         <span className="stat-value">-{stats.mistakePenaltyReduction}</span>
-        <span className="stat-label">Monster Heal</span>
+        <span className="stat-label">Лечение Монстра</span>
       </div>
     </div>
   );

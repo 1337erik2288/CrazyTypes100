@@ -1,0 +1,57 @@
+.defeat-screen {
+  text-align: center;
+  padding: 2rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000; /* Убедитесь, что он поверх других элементов */
+}
+
+.defeat-screen h2 {
+  font-size: 2.5rem;
+  color: #ff4d4d; /* Красный цвет для поражения */
+  margin-bottom: 1rem;
+}
+
+.defeat-screen p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.defeat-screen .defeat-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.defeat-screen button {
+  padding: 0.8rem 1.5rem;
+  font-size: 1.1rem;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.defeat-screen .restart-button-defeat {
+  background-color: #ffc107; /* Янтарный цвет для "Попробовать снова" */
+}
+
+.defeat-screen .restart-button-defeat:hover {
+  background-color: #e0a800;
+}
+
+.defeat-screen .menu-button-defeat {
+  background-color: #6c757d; /* Серый цвет для "Вернуться в меню" */
+}
+
+.defeat-screen .menu-button-defeat:hover {
+  background-color: #5a6268;
+}

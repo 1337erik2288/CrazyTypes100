@@ -1,61 +1,76 @@
 .equipment-stats-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* Всегда в один ряд */
   gap: 0.5rem;
-  padding: 1rem;
+  padding: 0.5rem;
   background-color: rgba(0, 0, 0, 0.7);
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: white;
   width: auto;
-  min-width: 250px;
+  min-width: 0;
   max-width: 100%;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: nowrap; /* Запрещаем перенос */
+  height: auto; /* Убираем адаптивность по высоте */
 }
 
 .stat-item {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  padding: 0.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 80px;
+  max-width: 110px;
+  padding: 0.2rem 0.1rem; /* Минимальные отступы */
+  border-bottom: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: #333;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  box-sizing: border-box;
+  margin: 0;
+  white-space: nowrap; /* Запрещаем перенос текста */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .stat-item:last-child {
-  border-bottom: none;
+  border-right: none;
 }
 
 .stat-value {
   font-weight: bold;
   color: #4caf50;
+  font-size: 0.75rem;
+  margin-bottom: 0.1rem;
 }
 
 .stat-label {
   color: #e0e0e0;
-}
-
-@media (min-width: 768px) {
-  .equipment-stats-container {
-    flex-direction: row;
-    max-width: 600px;
-    justify-content: space-between;
-  }
-  
-  .stat-item {
-    flex: 1;
-    border-bottom: none;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  
-  .stat-item:last-child {
-    border-right: none;
-  }
+  font-size: 0.6rem;
+  line-height: 1.1;
+  white-space: nowrap; /* Запрещаем перенос текста */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (max-width: 768px) {
   .equipment-stats-container {
-    max-width: 100%;
+    gap: 0.2rem;
+    padding: 0.2rem;
+  }
+  .stat-item {
+    min-width: 60px;
+    max-width: 90px;
+    font-size: 0.7rem;
+    padding: 0.1rem 0.05rem;
+  }
+  .stat-value {
+    font-size: 0.65rem;
+  }
+  .stat-label {
+    font-size: 0.5rem;
   }
 }

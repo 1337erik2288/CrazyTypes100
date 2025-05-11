@@ -13,7 +13,7 @@ const PlayerStats: React.FC<PlayerStatsProps> = ({ playerProgress, onOpenShop })
   return (
     <div className="player-stats">
       <div className="player-level">
-        <span className="level-label">Level {playerProgress.level}</span>
+        <span className="level-label">Уровень {playerProgress.level}</span>
       </div>
       
       <div className="xp-container">
@@ -25,7 +25,7 @@ const PlayerStats: React.FC<PlayerStatsProps> = ({ playerProgress, onOpenShop })
           <span className="xp-text">
             {playerProgress.experience} XP
             {playerProgress.level < 10 && (
-              <> / Next level: {progressPercentage}%</>
+              <> / Следующий уровень: {progressPercentage}%</>
             )}
           </span>
         </div>
@@ -34,7 +34,7 @@ const PlayerStats: React.FC<PlayerStatsProps> = ({ playerProgress, onOpenShop })
       <div className="gold-container" onClick={onOpenShop} style={{ cursor: onOpenShop ? 'pointer' : 'default' }}>
         <span className="gold-icon">💰</span>
         <span className="gold-amount">{playerProgress.gold}</span>
-        {onOpenShop && <span className="shop-hint">Shop</span>}
+        {onOpenShop && <span className="shop-hint">Магазин</span>}
       </div>
     </div>
   );

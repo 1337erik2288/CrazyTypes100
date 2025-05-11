@@ -11,7 +11,7 @@ interface MonsterProps {
 const Monster: React.FC<MonsterProps> = ({ imagePath, isDefeated, takingDamage, className }) => {
   return (
     <div className={`monster ${isDefeated ? 'defeated' : ''} ${takingDamage ? 'damage-animation' : ''} ${className || ''}`}>
-      <img src={imagePath} alt="Monster" />
+      <img src={imagePath} alt="Монстр" />
     </div>
   );
 };

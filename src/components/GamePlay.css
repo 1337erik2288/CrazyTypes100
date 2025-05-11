@@ -127,7 +127,7 @@
 
 .attack-warning {
   position: absolute;
-  top: 20%;
+  top: 20px; /* Изменено с 20% на фиксированное значение сверху */
   left: 50%;
   transform: translateX(-50%);
   background-color: rgba(255, 0, 0, 0.7);
@@ -136,7 +136,7 @@
   border-radius: 5px;
   font-weight: bold;
   animation: pulse 0.5s infinite alternate;
-  z-index: 100;
+  z-index: 100; /* Убедитесь, что z-index достаточно высокий */
 }
 
 @keyframes pulse {

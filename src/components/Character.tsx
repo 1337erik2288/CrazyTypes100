@@ -110,16 +110,16 @@ const Character: React.FC<CharacterProps> = ({ equipment, ownedEquipment = [], o
             ))}
           </div>
         ) : (
-          <div className="no-equipment">No equipment</div>
+          <div className="no-equipment">Нет экипировки</div>
         )}
         
         {showEquipControls && ownedEquipment.length > 0 && (
           <div className="available-equipment">
-            <h3>Available Equipment</h3>
+            <h3>Доступная экипировка</h3>
             
             {availableWeapons.length > 0 && (
               <div className="equipment-category">
-                <h4>Weapons</h4>
+                <h4>Оружие</h4>
                 {availableWeapons.map(item => (
                   <div key={item.id} className="available-item">
                     <span className="item-icon">{item.icon}</span>
@@ -127,7 +127,7 @@ const Character: React.FC<CharacterProps> = ({ equipment, ownedEquipment = [], o
                     <button 
                       className="equip-button" 
                       onClick={() => handleEquip(item)}
-                      title="Equip"
+                      title="Экипировать"
                     >
                       ✅
                     </button>
@@ -138,7 +138,7 @@ const Character: React.FC<CharacterProps> = ({ equipment, ownedEquipment = [], o
             
             {availableArmors.length > 0 && (
               <div className="equipment-category">
-                <h4>Armor</h4>
+                <h4>Броня</h4>
                 {availableArmors.map(item => (
                   <div key={item.id} className="available-item">
                     <span className="item-icon">{item.icon}</span>
@@ -146,7 +146,7 @@ const Character: React.FC<CharacterProps> = ({ equipment, ownedEquipment = [], o
                     <button 
                       className="equip-button" 
                       onClick={() => handleEquip(item)}
-                      title="Equip"
+                      title="Экипировать"
                     >
                       ✅
                     </button>
@@ -157,7 +157,7 @@ const Character: React.FC<CharacterProps> = ({ equipment, ownedEquipment = [], o
             
             {availableAccessories.length > 0 && (
               <div className="equipment-category">
-                <h4>Accessories</h4>
+                <h4>Аксессуары</h4>
                 {availableAccessories.map(item => (
                   <div key={item.id} className="available-item">
                     <span className="item-icon">{item.icon}</span>
@@ -165,7 +165,7 @@ const Character: React.FC<CharacterProps> = ({ equipment, ownedEquipment = [], o
                     <button 
                       className="equip-button" 
                       onClick={() => handleEquip(item)}
-                      title="Equip"
+                      title="Экипировать"
                     >
                       ✅
                     </button>

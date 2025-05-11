@@ -145,7 +145,7 @@ const TypingInterface: React.FC<TypingInterfaceProps> = ({
         value={userInput}
         onChange={handleInputChange}
         className="typing-input"
-        placeholder="Type the code..."
+        placeholder="Введите текст..."
         autoFocus
         rows={currentWord.split('\n').length}
         spellCheck="false"

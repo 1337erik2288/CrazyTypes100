@@ -71,8 +71,8 @@ const Shop: React.FC<ShopProps> = ({ playerProgress, onReturnToMenu, onEquipment
   return (
     <div className="shop-container" style={{ position: 'relative' }}>
       <div className="shop-header">
-        <h1>Equipment Shop</h1>
-        <button className="menu-button-shop" onClick={onReturnToMenu}>Return to Menu</button>
+        <h1>Магазин экипировки</h1>
+        <button className="menu-button-shop" onClick={onReturnToMenu}>Вернуться в меню</button>
       </div>
 
       <div className="shop-content">
@@ -95,29 +95,29 @@ const Shop: React.FC<ShopProps> = ({ playerProgress, onReturnToMenu, onEquipment
               className={`category-button ${selectedCategory === 'all' ? 'active' : ''}`}
               onClick={() => setSelectedCategory('all')}
             >
-              All
+              Все
             </button>
             <button 
               className={`category-button ${selectedCategory === 'weapon' ? 'active' : ''}`}
               onClick={() => setSelectedCategory('weapon')}
             >
-              Weapons
+              Оружие
             </button>
             <button 
               className={`category-button ${selectedCategory === 'armor' ? 'active' : ''}`}
               onClick={() => setSelectedCategory('armor')}
             >
-              Armor
+              Броня
             </button>
             <button 
               className={`category-button ${selectedCategory === 'accessory' ? 'active' : ''}`}
               onClick={() => setSelectedCategory('accessory')}
             >
-              Accessories
+              Аксессуары
             </button>
           </div>
 
-          {errorMessage && <div className="error-message">{errorMessage}</div>}
+          {errorMessage && <div className="error-message">{errorMessage === 'Not enough gold!' ? 'Недостаточно золота!' : errorMessage === 'Failed to purchase item' ? 'Не удалось купить предмет' : errorMessage}</div>}
 
           <div className="equipment-grid">
             {filteredEquipment.map(item => {
@@ -143,7 +143,7 @@ const Shop: React.FC<ShopProps> = ({ playerProgress, onReturnToMenu, onEquipment
                     onClick={() => handlePurchase(item)}
                     disabled={isOwned || playerProgress.gold < item.price}
                   >
-                    {isOwned ? 'Owned' : 'Purchase'}
+                    {isOwned ? 'Куплено' : 'Купить'}
                   </button>
                 </div>
               );

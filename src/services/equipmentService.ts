@@ -33,72 +33,72 @@ interface PurchaseResult {
 const AVAILABLE_EQUIPMENT: Equipment[] = [
   {
     id: 'weapon_1',
-    name: 'Basic Sword',
-    description: 'A simple sword that increases your damage.',
+    name: 'Простой Меч',
+    description: 'Простой меч, который увеличивает ваш урон.',
     icon: '🗡️',
     type: 'weapon',
     price: 100,
-    stats: ['+1 Damage'],
+    stats: ['+1 Урон'],
     effects: {
       damageBonus: 1
     }
   },
   {
     id: 'weapon_2',
-    name: 'Magic Wand',
-    description: 'A magical wand that increases your damage significantly.',
+    name: 'Магический Жезл',
+    description: 'Магический жезл, который значительно увеличивает ваш урон.',
     icon: '🪄',
     type: 'weapon',
     price: 250,
-    stats: ['+3 Damage'],
+    stats: ['+3 Урон'],
     effects: {
       damageBonus: 3
     }
   },
   {
     id: 'armor_1',
-    name: 'Leather Armor',
-    description: 'Basic protection that reduces monster healing on mistakes.',
+    name: 'Кожаная Броня',
+    description: 'Базовая защита, которая уменьшает лечение монстра при ошибках.',
     icon: '🥋',
     type: 'armor',
     price: 150,
-    stats: ['-1 Monster Heal'],
+    stats: ['-1 Лечение Монстра'],
     effects: {
       mistakePenaltyReduction: 1
     }
   },
   {
     id: 'armor_2',
-    name: 'Steel Plate',
-    description: 'Heavy armor that significantly reduces monster healing on mistakes.',
+    name: 'Стальная Кираса',
+    description: 'Тяжелая броня, которая значительно уменьшает лечение монстра при ошибках.',
     icon: '🛡️',
     type: 'armor',
     price: 300,
-    stats: ['-3 Monster Heal'],
+    stats: ['-3 Лечение Монстра'],
     effects: {
       mistakePenaltyReduction: 3
     }
   },
   {
     id: 'accessory_1',
-    name: 'Healing Amulet',
-    description: 'An amulet that increases your healing power.',
+    name: 'Амулет Лечения',
+    description: 'Амулет, который увеличивает вашу силу лечения.',
     icon: '📿',
     type: 'accessory',
     price: 200,
-    stats: ['+2 Healing'],
+    stats: ['+2 Лечение'],
     effects: {
       healBonus: 2
     }
   },
   {
     id: 'accessory_2',
-    name: 'Regeneration Ring',
-    description: 'A ring that increases your health regeneration.',
+    name: 'Кольцо Регенерации',
+    description: 'Кольцо, которое увеличивает вашу регенерацию здоровья.',
     icon: '💍',
     type: 'accessory',
     price: 350,
-    stats: ['+2 Regeneration'],
+    stats: ['+2 Регенерация'],
     effects: {
       regenerateBonus: 2
     }
