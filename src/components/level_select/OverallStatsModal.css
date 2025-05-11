@@ -1,0 +1,104 @@
+.stats-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7); /* Немного увеличим прозрачность фона */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px; /* Добавим отступы для маленьких экранов */
+  box-sizing: border-box; /* Учитываем padding в размерах */
+}
+
+.stats-modal-content {
+  background: #2c2c2c; /* Чуть светлее фон для контента */
+  color: #fff;
+  padding: 20px; /* Уменьшим внутренние отступы */
+  border-radius: 12px;
+  width: 90%; /* Ширина относительно родителя */
+  max-width: 800px; /* Максимальная ширина, чтобы не было слишком широко */
+  max-height: 90vh; /* Максимальная высота, чтобы помещалось на экране */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); /* Более выраженная тень */
+  display: flex;
+  flex-direction: column; /* Элементы в столбец */
+  overflow-y: auto; /* Вертикальный скролл, если контент не помещается */
+}
+
+.stats-modal-content h2 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #1abc9c; /* Цвет заголовка в стиль */
+}
+
+.stats-grid {
+  display: flex;
+  justify-content: space-around; /* Распределим элементы равномерно */
+  gap: 15px; /* Уменьшим разрыв */
+  margin-bottom: 25px; /* Увеличим отступ снизу */
+  flex-wrap: wrap; /* Позволим перенос на маленьких экранах */
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #333;
+  padding: 15px;
+  border-radius: 8px;
+  min-width: 150px; /* Минимальная ширина для элемента статистики */
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 1em; /* Уменьшим немного шрифт */
+  color: #bbb;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 1.4em; /* Уменьшим немного шрифт */
+  font-weight: bold;
+  color: #fff;
+}
+
+.progress-visualization {
+  margin: 20px 0; /* Уменьшим отступы */
+  flex-grow: 1; /* Позволим блоку с графиком занимать доступное место */
+  min-height: 300px; /* Минимальная высота для графика */
+  position: relative; /* Необходимо для корректной работы maintainAspectRatio: false */
+  width: 100%; /* График должен занимать всю доступную ширину контейнера */
+}
+
+.progress-visualization h4 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #e74c3c; /* Цвет подзаголовка */
+}
+
+.close-modal-button {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 12px 24px; /* Увеличим немного паддинги */
+  border-radius: 6px;
+  font-size: 1em;
+  cursor: pointer;
+  margin-top: 20px; /* Увеличим отступ сверху */
+  align-self: center; /* Кнопка по центру */
+  transition: background-color 0.3s ease;
+}
+
+.close-modal-button:hover {
+  background: #c0392b;
+}
+
+/* Стили для самого графика, чтобы он был адаптивным */
+/* react-chartjs-2 обычно сам справляется с этим, если контейнер правильно настроен */
+.progress-visualization canvas {
+  max-width: 100%;
+  max-height: 100%;
+}

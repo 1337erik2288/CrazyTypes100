@@ -3,6 +3,9 @@ import './LevelSelect.css';
 import { GamePlayConfig } from './GamePlay';
 import PlayerStats from './PlayerStats';
 import { PlayerProgress } from '../services/playerService'; // Импортируем обновленный тип
+import OverallStatsModal from './level_select/OverallStatsModal';
+import { getOverallStats } from '../services/overallStatsService';
+import { useState } from 'react';
 
 export type Language = 'en' | 'ru' | 'code' | 'key-combos' | 'simple-words' | 'phrases' | 'math' | 'paragraphs' | 'mixed';
 
@@ -145,6 +148,9 @@ const levelDescriptions: Record<number, { difficulty: string; content: string; d
 };
 
 const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevels, playerProgress, onOpenShop }) => {
+  const [showStatsModal, setShowStatsModal] = useState<boolean>(false);
+  const [overallStats, setOverallStats] = useState<any | null>(null); // TODO: Replace 'any' with the actual type of overallStats
+
   // Sort levels by ID to ensure correct order
   const sortedLevels = [...levels].sort((a, b) => a.id - b.id);
   
@@ -152,6 +158,18 @@ const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevel
     <div className="level-select">
       <h1>Выберите испытание</h1>
       <PlayerStats playerProgress={playerProgress} onOpenShop={onOpenShop} />
+      <button 
+        onClick={() => { 
+          setOverallStats(getOverallStats()); 
+          setShowStatsModal(true); 
+        }} 
+        className="open-stats-btn"
+      >
+        Общая статистика
+      </button>
+      {showStatsModal && overallStats && ( /* Added null check for overallStats */
+        <OverallStatsModal stats={overallStats} onClose={() => setShowStatsModal(false)} />
+      )}
       <div className="level-path-rect">
         {sortedLevels.map((level) => { // level.id здесь number
           const isCompleted = completedLevels.includes(level.id.toString()); // Сравниваем со string
