@@ -30,23 +30,17 @@ const EquipmentStats: React.FC<EquipmentStatsProps> = ({ equipment }) => {
     let monsterRegenReduction = 0;
     
     equipment.forEach((item, index) => {
-      // Используем 'as any' для доступа к свойствам, которые могут отсутствовать в строгом типе EquipmentEffects,
-      // но присутствуют в фактических данных согласно логам.
-      const effects = item.effects as any; 
+      const effects = item.effects as any; // Используем 'as any' для гибкости
       
       console.log(`Item ${index} (${item.name}):`, JSON.parse(JSON.stringify(item))); 
       if (effects) {
         console.log(`Item ${index} (${item.name}) effects:`, JSON.parse(JSON.stringify(effects))); 
         
-        playerDamageBonus += effects.damageBonus || 0; // Используем 'damageBonus' из логов
-        playerHealBonus += effects.healBonus || 0;   // Используем 'healBonus' из логов
-        
-        // Для этих свойств в логах нет альтернативных имен, используем стандартные
-        monsterDamageReduction += effects.monsterDamageReduction || 0; 
-        
-        monsterHealReduction += effects.mistakePenaltyReduction || 0; // Используем 'mistakePenaltyReduction' из логов
-        
-        // Для этого свойства в логах нет альтернативного имени, используем стандартное
+        // Используем имена свойств из логов:
+        playerDamageBonus += effects.damageBonus || 0; 
+        playerHealBonus += effects.healBonus || 0;
+        monsterDamageReduction += effects.monsterDamageReduction || 0;
+        monsterHealReduction += effects.monsterHealReduction || 0; // <-- Исправлено имя свойства
         monsterRegenReduction += effects.monsterRegenReduction || 0;
       } else {
         console.log(`Item ${index} (${item.name}) has NO effects property or it is undefined.`);

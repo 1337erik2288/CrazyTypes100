@@ -116,12 +116,15 @@ const GamePlay: React.FC<GamePlayProps> = ({
   }, [equippedPlayerItems]);
 
   const generateNewWord = useCallback(() => {
-    if (initialConfig.language === 'code') { // <--- FIX: Use initialConfig
-      getRandomCodeLine('javascript').then((codeLine: string) => {
+    if (initialConfig.language === 'code') {
+      // Получаем список всех доступных языков из сервиса или вручную
+      const codeLanguages = ['javascript', 'python', 'typescript', 'java', 'csharp']; // Пример, замените на актуальные
+      const randomLang = codeLanguages[Math.floor(Math.random() * codeLanguages.length)];
+      getRandomCodeLine(randomLang).then((codeLine: string) => {
         setCurrentWord(codeLine);
         setUserInput('');
       });
-    } else if (initialConfig.language === 'math') { // <--- FIX: Use initialConfig
+    } else if (initialConfig.language === 'math') {
       // Специальная обработка для математических выражений
       getAdditionalWords(initialConfig.language).then(newWords => { // <--- FIX: Use initialConfig
         if (newWords.length > 0) {
@@ -345,7 +348,19 @@ const GamePlay: React.FC<GamePlayProps> = ({
           }));
           
           setMonster(prev => {
-            const newHealth = Math.min(initialConfig.initialHealth, prev.health + initialConfig.healOnMistake); // <--- FIX: Use initialConfig
+            // Sum up monster heal reduction from equipment
+            const totalHealReduction = equippedPlayerItems.reduce(
+              (sum, item) => sum + (item.effects?.monsterHealReduction || 0),
+              0
+            );
+            
+            const healAmount = Math.max(0, gameConfig.healOnMistake - totalHealReduction);
+            
+            const newHealth = Math.min(
+              prev.maxHealth || gameConfig.initialHealth,
+              prev.health + healAmount
+            );
+            
             return { ...prev, health: newHealth };
           });
           return;
@@ -445,11 +460,11 @@ const GamePlay: React.FC<GamePlayProps> = ({
           )}
           <HealthBar 
             health={monster.health}
-            initialHealth={initialConfig.initialHealth} // <--- FIX: Use initialConfig
+            initialHealth={gameConfig.initialHealth}
             canHeal={true}
-            healAmount={initialConfig.healAmount} // <--- FIX: Use initialConfig
+            healAmount={gameConfig.healAmount}
             canRegenerate={true}
-            regenerateAmount={initialConfig.regenerateAmount} // <--- FIX: Use initialConfig
+            regenerateAmount={gameConfig.regenerateAmount}
             isDefeated={monster.isDefeated}
             onHealthChange={(newHealth) => setMonster(prev => ({ ...prev, health: newHealth }))}
           />
