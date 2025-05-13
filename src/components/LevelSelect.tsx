@@ -6,6 +6,7 @@ import { PlayerProgress } from '../services/playerService'; // Импортир�
 import OverallStatsModal from './level_select/OverallStatsModal';
 import { getOverallStats } from '../services/overallStatsService';
 import { useState } from 'react';
+import { levelResources } from '../data/levelResources';
 
 export type Language = 'en' | 'ru' | 'code' | 'key-combos' | 'simple-words' | 'phrases' | 'math' | 'paragraphs' | 'mixed';
 
@@ -152,8 +153,9 @@ const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevel
   const [overallStats, setOverallStats] = useState<any | null>(null); // TODO: Replace 'any' with the actual type of overallStats
 
   // Sort levels by ID to ensure correct order
-  const sortedLevels = [...levels].sort((a, b) => a.id - b.id);
-  
+  // Сортировка по id
+  const sortedLevels = [...levelResources].sort((a, b) => a.id - b.id);
+
   return (
     <div className="level-select">
       <h1>Выберите испытание</h1>
@@ -171,15 +173,14 @@ const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevel
         <OverallStatsModal stats={overallStats} onClose={() => setShowStatsModal(false)} />
       )}
       <div className="level-path-rect">
-        {sortedLevels.map((level) => { // level.id здесь number
-          const isCompleted = completedLevels.includes(level.id.toString()); // Сравниваем со string
-          const stats = playerProgress.levelStats?.[level.id.toString()]; // Доступ по строковому ключу
-          const { difficulty, content, diffClass } = levelDescriptions[level.id] || { difficulty: '', content: '', diffClass: '' };
+        {sortedLevels.map((level) => {
+          const isCompleted = completedLevels.includes(level.id.toString());
+          const stats = playerProgress.levelStats?.[level.id.toString()];
           return (
             <div key={level.id} className={`level-card-rect ${isCompleted ? 'completed' : ''}`}>
               <div className="level-title">{level.name}</div>
-              <div className={`level-difficulty ${diffClass}`}>Сложность: <b>{difficulty}</b></div>
-              <div className="level-content">Содержание: {content}</div>
+              <div className={`level-difficulty ${level.diffClass}`}>Сложность: <b>{level.difficulty}</b></div>
+              <div className="level-content">Содержание: {level.content}</div>
               <div className="level-stats">
                 {stats ? (
                   <>
