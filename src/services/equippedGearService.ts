@@ -1,5 +1,5 @@
 import { Equipment } from '../data/equipmentData';
-import { GamePlayConfig } from '../components/GamePlay'; // Предполагаем, что GamePlayConfig экспортируется
+import { GamePlayConfig } from '../components/GamePlay'; // Убедитесь, что GamePlayConfig импортирован
 
 const EQUIPPED_ITEMS_STORAGE_KEY = 'playerEquippedItems';
 
@@ -46,23 +46,26 @@ export const unequipItem = (itemIdToUnequip: string): { success: boolean, equipp
 // Применяет эффекты от надетых предметов к конфигурации игры
 export const applyEquipmentEffects = (config: GamePlayConfig, equipment: Equipment[]): GamePlayConfig => {
   let newConfig = { ...config };
+
+  let totalPlayerHealBonus = 0;
+  let totalMonsterHealReduction = 0;
+  let totalMonsterRegenReduction = 0;
+  // playerDamageBonus и monsterDamageReduction обрабатываются напрямую в GamePlay.tsx
+
   equipment.forEach(item => {
     if (item.effects) {
-      if (item.effects.damageBonus) {
-        // Логика бонуса к урону теперь обрабатывается в GamePlay.tsx напрямую с playerBaseDamage
-        // Здесь можно оставить место для других глобальных эффектов, если они появятся
-      }
-      if (item.effects.healBonus) {
-        newConfig.healAmount = (newConfig.healAmount || 0) + item.effects.healBonus;
-      }
-      if (item.effects.regenerateBonus) {
-        newConfig.regenerateAmount = (newConfig.regenerateAmount || 0) + item.effects.regenerateBonus;
-      }
-      if (item.effects.mistakePenaltyReduction) {
-        newConfig.healOnMistake = Math.max(0, (newConfig.healOnMistake || 0) - item.effects.mistakePenaltyReduction);
-      }
-      // Добавьте другие эффекты по мере необходимости
+      totalPlayerHealBonus += item.effects.playerHealBonus || 0;
+      totalMonsterHealReduction += item.effects.monsterHealReduction || 0;
+      totalMonsterRegenReduction += item.effects.monsterRegenReduction || 0;
+      // playerDamageBonus не меняет GamePlayConfig напрямую
+      // monsterDamageReduction не меняет GamePlayConfig напрямую
     }
   });
+
+  // Применяем бонусы, влияющие на GamePlayConfig
+  newConfig.healAmount = (config.healAmount || 0) + totalPlayerHealBonus; // Бонус к лечению игрока
+  newConfig.healOnMistake = Math.max(0, (config.healOnMistake || 0) - totalMonsterHealReduction); // Уменьшение лечения монстра при ошибке
+  newConfig.regenerateAmount = Math.max(0, (config.regenerateAmount || 0) - totalMonsterRegenReduction); // Уменьшение регенерации монстра
+
   return newConfig;
 };

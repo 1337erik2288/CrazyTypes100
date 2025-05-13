@@ -25,10 +25,10 @@ const levels: Level[] = [
       initialHealth: 100,
       healAmount: 0,
       regenerateAmount: 0,
-      damageAmount: 5,
+      // damageAmount: 5, // <--- Удалено
       healOnMistake: 0,
       language: 'key-combos',
-      monsterDamage: 0, // Первый уровень без урона
+      monsterDamage: 0, 
       attackInterval: 0
     }
   },
@@ -41,11 +41,11 @@ const levels: Level[] = [
       initialHealth: 150,
       healAmount: 0,
       regenerateAmount: 1,
-      damageAmount: 4,
+      // damageAmount: 4, // <--- Удалено
       healOnMistake: 2,
       language: 'simple-words',
       monsterDamage: 2,
-      attackInterval: 6000  // Increase from 1000ms to 6000ms (6 seconds)
+      attackInterval: 6000
     }
   },
   {
@@ -57,11 +57,11 @@ const levels: Level[] = [
       initialHealth: 200,
       healAmount: 0,
       regenerateAmount: 2,
-      damageAmount: 3,
+      // damageAmount: 3, // <--- Удалено
       healOnMistake: 4,
       language: 'phrases',
       monsterDamage: 3,
-      attackInterval: 5000  // Increase from 1000ms to 5000ms (5 seconds)
+      attackInterval: 5000
     }
   },
   {
@@ -73,11 +73,11 @@ const levels: Level[] = [
       initialHealth: 250,
       healAmount: 0,
       regenerateAmount: 3,
-      damageAmount: 3,
+      // damageAmount: 3, // <--- Удалено
       healOnMistake: 5,
       language: 'math',
       monsterDamage: 5,
-      attackInterval: 4500  // Increase from 1000ms to 4500ms (4.5 seconds)
+      attackInterval: 4500
     }
   },
   {
@@ -89,11 +89,11 @@ const levels: Level[] = [
       initialHealth: 300,
       healAmount: 0,
       regenerateAmount: 5,
-      damageAmount: 2,
+      // damageAmount: 2, // <--- Удалено
       healOnMistake: 10,
       language: 'code',
       monsterDamage: 6,
-      attackInterval: 4000  // Increase from 1000ms to 4000ms (4 seconds)
+      attackInterval: 4000
     }
   },
   {
@@ -105,11 +105,11 @@ const levels: Level[] = [
       initialHealth: 350,
       healAmount: 0,
       regenerateAmount: 6,
-      damageAmount: 2,
+      // damageAmount: 2, // <--- Удалено
       healOnMistake: 10,
       language: 'paragraphs',
       monsterDamage: 7,
-      attackInterval: 3500  // Increase from 1000ms to 3500ms (3.5 seconds)
+      attackInterval: 3500
     }
   },
   {
@@ -121,11 +121,11 @@ const levels: Level[] = [
       initialHealth: 500,
       healAmount: 0,
       regenerateAmount: 7,
-      damageAmount: 1,
+      // damageAmount: 1, // <--- Удалено
       healOnMistake: 15,
       language: 'mixed',
       monsterDamage: 8,
-      attackInterval: 3000  // Increase from 1000ms to 3000ms (3 seconds)
+      attackInterval: 3000
     }
   }
 ];

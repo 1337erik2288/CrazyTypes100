@@ -1,76 +1,32 @@
 .equipment-stats-container {
-  display: flex;
-  flex-direction: row; /* Всегда в один ряд */
-  gap: 0.5rem;
-  padding: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.7);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  width: auto;
-  min-width: 0;
-  max-width: 100%;
-  justify-content: center;
-  align-items: stretch;
-  flex-wrap: nowrap; /* Запрещаем перенос */
-  height: auto; /* Убираем адаптивность по высоте */
+  /* Ваши существующие стили могут быть здесь (например, background-color, color, padding, border-radius) */
+  /* Пример существующих стилей, которые вы могли бы иметь: */
+  padding: 15px;
+  margin: 10px auto; /* auto для горизонтального центрирования, если родитель шире max-width */
+  background-color: #2c2c2c; /* Пример фона из вашего скриншота */
+  color: #f0f0f0; /* Пример цвета текста */
+  border: 1px solid #444; /* Пример рамки */
+  border-radius: 8px; /* Пример скругления углов */
+
+  /* Новые/измененные стили для отзывчивости: */
+  width: 100%; /* Растягиваем на всю доступную ширину родительского контейнера */
+  max-width: 700px; /* Максимальная ширина, чтобы контейнер не был слишком широким на больших экранах. Можете изменить это значение. */
+  min-width: 280px; /* Минимальная ширина для обеспечения читаемости на малых экранах. Можете изменить это значение. */
+  box-sizing: border-box; /* Важно, чтобы padding и border не увеличивали фактическую ширину за пределы 100% или max-width */
 }
 
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-width: 80px;
-  max-width: 110px;
-  padding: 0.2rem 0.1rem; /* Минимальные отступы */
-  border-bottom: none;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  background: #333;
-  border-radius: 8px;
-  font-size: 0.8rem;
-  box-sizing: border-box;
-  margin: 0;
-  white-space: nowrap; /* Запрещаем перенос текста */
-  overflow: hidden;
-  text-overflow: ellipsis;
+.stats-summary {
+  list-style-type: none;
+  padding-left: 0;
 }
 
-.stat-item:last-child {
-  border-right: none;
+.stats-summary li {
+  margin-bottom: 5px;
 }
 
-.stat-value {
-  font-weight: bold;
-  color: #4caf50;
-  font-size: 0.75rem;
-  margin-bottom: 0.1rem;
-}
-
-.stat-label {
-  color: #e0e0e0;
-  font-size: 0.6rem;
-  line-height: 1.1;
-  white-space: nowrap; /* Запрещаем перенос текста */
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-@media (max-width: 768px) {
-  .equipment-stats-container {
-    gap: 0.2rem;
-    padding: 0.2rem;
-  }
-  .stat-item {
-    min-width: 60px;
-    max-width: 90px;
-    font-size: 0.7rem;
-    padding: 0.1rem 0.05rem;
-  }
-  .stat-value {
-    font-size: 0.65rem;
-  }
-  .stat-label {
-    font-size: 0.5rem;
-  }
+/* Стили для заголовка, если нужны */
+.equipment-stats-container h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #f0e68c; /* Пример цвета для заголовка, как на скриншоте */
 }

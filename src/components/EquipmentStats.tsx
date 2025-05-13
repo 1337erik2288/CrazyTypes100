@@ -1,56 +1,98 @@
 import React from 'react';
-import { Equipment } from '../services/equipmentService';
 import './EquipmentStats.css';
+import { Equipment } from '../data/equipmentData'; // Импортируем EquipmentEffects
 
 interface EquipmentStatsProps {
   equipment: Equipment[];
 }
 
+// interface TotalStats extends EquipmentEffects { // <-- REMOVE THIS LINE
+//   // Можно добавить сюда другие общие статы, если они появятся
+// }
+
+// Define TotalStats with required number properties
+interface TotalStats { // <-- ADD THIS BLOCK
+  playerDamageBonus: number;
+  playerHealBonus: number;
+  monsterDamageReduction: number;
+  monsterHealReduction: number;
+  monsterRegenReduction: number;
+}
+
 const EquipmentStats: React.FC<EquipmentStatsProps> = ({ equipment }) => {
-  // Calculate total stats from equipment
-  const calculateTotalStats = () => {
-    let damageBonus = 0;
-    let healBonus = 0;
-    let regenerateBonus = 0;
-    let mistakePenaltyReduction = 0;
+  console.log('EquipmentStats received equipment:', equipment); 
+
+  const calculateTotalStats = (): TotalStats => {
+    let playerDamageBonus = 0;
+    let playerHealBonus = 0;
+    let monsterDamageReduction = 0;
+    let monsterHealReduction = 0;
+    let monsterRegenReduction = 0;
     
-    equipment.forEach(item => {
-      if (item.effects) {
-        damageBonus += item.effects.damageBonus || 0;
-        healBonus += item.effects.healBonus || 0;
-        regenerateBonus += item.effects.regenerateBonus || 0;
-        mistakePenaltyReduction += item.effects.mistakePenaltyReduction || 0;
+    equipment.forEach((item, index) => {
+      // Используем 'as any' для доступа к свойствам, которые могут отсутствовать в строгом типе EquipmentEffects,
+      // но присутствуют в фактических данных согласно логам.
+      const effects = item.effects as any; 
+      
+      console.log(`Item ${index} (${item.name}):`, JSON.parse(JSON.stringify(item))); 
+      if (effects) {
+        console.log(`Item ${index} (${item.name}) effects:`, JSON.parse(JSON.stringify(effects))); 
+        
+        playerDamageBonus += effects.damageBonus || 0; // Используем 'damageBonus' из логов
+        playerHealBonus += effects.healBonus || 0;   // Используем 'healBonus' из логов
+        
+        // Для этих свойств в логах нет альтернативных имен, используем стандартные
+        monsterDamageReduction += effects.monsterDamageReduction || 0; 
+        
+        monsterHealReduction += effects.mistakePenaltyReduction || 0; // Используем 'mistakePenaltyReduction' из логов
+        
+        // Для этого свойства в логах нет альтернативного имени, используем стандартное
+        monsterRegenReduction += effects.monsterRegenReduction || 0;
+      } else {
+        console.log(`Item ${index} (${item.name}) has NO effects property or it is undefined.`);
       }
     });
     
     return {
-      damageBonus,
-      healBonus,
-      regenerateBonus,
-      mistakePenaltyReduction
+      playerDamageBonus,
+      playerHealBonus,
+      monsterDamageReduction,
+      monsterHealReduction,
+      monsterRegenReduction
     };
   };
-  
-  const stats = calculateTotalStats();
-  
+
+  const totalStats = calculateTotalStats();
+  console.log('Calculated totalStats:', totalStats); 
+
+  const noBonusesFromEquipment = Object.values(totalStats).every(value => value === 0);
+
   return (
     <div className="equipment-stats-container">
-      <div className="stat-item">
-        <span className="stat-value">+{stats.damageBonus}</span>
-        <span className="stat-label">Урон</span>
-      </div>
-      <div className="stat-item">
-        <span className="stat-value">+{stats.healBonus}</span>
-        <span className="stat-label">Лечение</span>
-      </div>
-      <div className="stat-item">
-        <span className="stat-value">+{stats.regenerateBonus}</span>
-        <span className="stat-label">Регенерация</span>
-      </div>
-      <div className="stat-item">
-        <span className="stat-value">-{stats.mistakePenaltyReduction}</span>
-        <span className="stat-label">Лечение Монстра</span>
-      </div>
+      <h4>Общие бонусы от экипировки:</h4>
+      {equipment.length === 0 ? (
+        <p>Нет экипированных предметов.</p>
+      ) : noBonusesFromEquipment ? (
+        <p>Экипированные предметы не дают активных бонусов.</p>
+      ) : (
+        <ul className="stats-summary">
+          {totalStats.playerDamageBonus > 0 && (
+            <li>Урон игрока: +{totalStats.playerDamageBonus}</li>
+          )}
+          {totalStats.playerHealBonus > 0 && (
+            <li>Лечение игрока: +{totalStats.playerHealBonus}</li>
+          )}
+          {totalStats.monsterDamageReduction > 0 && (
+            <li>Урон монстра: -{totalStats.monsterDamageReduction}</li>
+          )}
+          {totalStats.monsterHealReduction > 0 && (
+            <li>Лечение монстра: -{totalStats.monsterHealReduction}</li>
+          )}
+          {totalStats.monsterRegenReduction > 0 && (
+            <li>Реген. монстра: -{totalStats.monsterRegenReduction}</li>
+          )}
+        </ul>
+      )}
     </div>
   );
 };

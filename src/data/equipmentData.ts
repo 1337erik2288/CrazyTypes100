@@ -1,3 +1,11 @@
+export interface EquipmentEffects {
+  playerDamageBonus?: number;       // 1. бонус к урону игрока
+  playerHealBonus?: number;         // 2. бонус к лечению игрока
+  monsterDamageReduction?: number;  // 3. уменьшение урона от монстра (абсолютное значение)
+  monsterHealReduction?: number;    // 4. уменьшение лечения монстра (при ошибке игрока)
+  monsterRegenReduction?: number;   // 4. уменьшение регенерации монстра
+}
+
 export interface Equipment {
   id: string;
   name: string;
@@ -5,13 +13,8 @@ export interface Equipment {
   icon: string;
   type: 'weapon' | 'armor' | 'accessory';
   price: number;
-  stats: string[];
-  effects?: {
-    damageBonus?: number;
-    healBonus?: number;
-    regenerateBonus?: number;
-    mistakePenaltyReduction?: number;
-  };
+  stats: string[]; // Строки для отображения бонусов предмета
+  effects?: EquipmentEffects; // Используем новый интерфейс
 }
 
 // Available equipment in the shop
@@ -23,9 +26,9 @@ export const AVAILABLE_EQUIPMENT: Equipment[] = [
     icon: '🗡️',
     type: 'weapon',
     price: 100,
-    stats: ['+1 Урон'],
+    stats: ['Урон игрока +1'],
     effects: {
-      damageBonus: 1
+      playerDamageBonus: 1
     }
   },
   {
@@ -35,9 +38,9 @@ export const AVAILABLE_EQUIPMENT: Equipment[] = [
     icon: '🪄',
     type: 'weapon',
     price: 250,
-    stats: ['+3 Урон'],
+    stats: ['Урон игрока +3'],
     effects: {
-      damageBonus: 3
+      playerDamageBonus: 3
     }
   },
   {
@@ -47,9 +50,9 @@ export const AVAILABLE_EQUIPMENT: Equipment[] = [
     icon: '🥋',
     type: 'armor',
     price: 150,
-    stats: ['-1 Лечение Монстра'],
+    stats: ['Лечение монстра -1'], // Ранее "mistakePenaltyReduction"
     effects: {
-      mistakePenaltyReduction: 1
+      monsterHealReduction: 1
     }
   },
   {
@@ -59,9 +62,9 @@ export const AVAILABLE_EQUIPMENT: Equipment[] = [
     icon: '🛡️',
     type: 'armor',
     price: 300,
-    stats: ['-3 Лечение Монстра'],
+    stats: ['Лечение монстра -3'], // Ранее "mistakePenaltyReduction"
     effects: {
-      mistakePenaltyReduction: 3
+      monsterHealReduction: 3
     }
   },
   {
@@ -71,21 +74,34 @@ export const AVAILABLE_EQUIPMENT: Equipment[] = [
     icon: '📿',
     type: 'accessory',
     price: 200,
-    stats: ['+2 Лечение'],
+    stats: ['Лечение игрока +2'],
     effects: {
-      healBonus: 2
+      playerHealBonus: 2
     }
   },
   {
     id: 'accessory_2',
-    name: 'Кольцо Регенерации',
-    description: 'Кольцо, которое увеличивает вашу регенерацию здоровья.',
+    name: 'Ослабляющее Кольцо', // Переименовано с "Кольцо Регенерации"
+    description: 'Кольцо, которое уменьшает регенерацию здоровья монстра.',
     icon: '💍',
     type: 'accessory',
     price: 350,
-    stats: ['+2 Регенерация'],
+    stats: ['Реген. монстра -1'], // Новый эффект
     effects: {
-      regenerateBonus: 2
+      monsterRegenReduction: 1 // Пример значения
+    }
+  },
+  // Новый предмет для уменьшения урона от монстра
+  {
+    id: 'shield_1',
+    name: 'Прочный Щит',
+    description: 'Щит, уменьшающий урон, получаемый от монстров.',
+    icon: '🔰', // Другая иконка для щита
+    type: 'accessory', // Можно сделать тип 'shield', но пока оставим 'accessory'
+    price: 220,
+    stats: ['Урон монстра -2'],
+    effects: {
+      monsterDamageReduction: 2 // Пример значения, уменьшает урон на 2
     }
   }
 ];
