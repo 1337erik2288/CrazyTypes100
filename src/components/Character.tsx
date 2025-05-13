@@ -99,6 +99,12 @@ const Character: React.FC<CharacterProps> = ({ equipment, ownedEquipment = [], o
               <div key={item.id} className="equipped-stat">
                 <span className="stat-icon">{item.icon}</span>
                 <span className="stat-name">{item.name}</span>
+                {/* Добавляем отображение бонусов для экипированного предмета */}
+                <div className="item-bonuses">
+                  {item.stats.map((stat, index) => (
+                    <span key={index} className="bonus-stat">{stat}</span>
+                  ))}
+                </div>
                 {showEquipControls && (
                   <button 
                     className="unequip-button" 
@@ -126,6 +132,12 @@ const Character: React.FC<CharacterProps> = ({ equipment, ownedEquipment = [], o
                   <div key={item.id} className="available-item">
                     <span className="item-icon">{item.icon}</span>
                     <span className="item-name">{item.name}</span>
+                    {/* Добавляем отображение бонусов для доступного предмета */}
+                    <div className="item-bonuses">
+                      {item.stats.map((stat, index) => (
+                        <span key={index} className="bonus-stat">{stat}</span>
+                      ))}
+                    </div>
                     <button 
                       className="equip-button" 
                       onClick={() => handleEquip(item)}
@@ -145,6 +157,12 @@ const Character: React.FC<CharacterProps> = ({ equipment, ownedEquipment = [], o
                   <div key={item.id} className="available-item">
                     <span className="item-icon">{item.icon}</span>
                     <span className="item-name">{item.name}</span>
+                    {/* Добавляем отображение бонусов для доступного предмета */}
+                    <div className="item-bonuses">
+                      {item.stats.map((stat, index) => (
+                        <span key={index} className="bonus-stat">{stat}</span>
+                      ))}
+                    </div>
                     <button 
                       className="equip-button" 
                       onClick={() => handleEquip(item)}
@@ -164,6 +182,12 @@ const Character: React.FC<CharacterProps> = ({ equipment, ownedEquipment = [], o
                   <div key={item.id} className="available-item">
                     <span className="item-icon">{item.icon}</span>
                     <span className="item-name">{item.name}</span>
+                    {/* Добавляем отображение бонусов для доступного предмета */}
+                    <div className="item-bonuses">
+                      {item.stats.map((stat, index) => (
+                        <span key={index} className="bonus-stat">{stat}</span>
+                      ))}
+                    </div>
                     <button 
                       className="equip-button" 
                       onClick={() => handleEquip(item)}
@@ -175,6 +199,7 @@ const Character: React.FC<CharacterProps> = ({ equipment, ownedEquipment = [], o
                 ))}
               </div>
             )}
+            
           </div>
         )}
       </div>
