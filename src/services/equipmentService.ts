@@ -1,20 +1,21 @@
 import { getPlayerProgress, savePlayerProgress, PlayerProgress } from './playerService';
+import { AVAILABLE_EQUIPMENT, Equipment } from '../data/equipmentData'; // <--- ИЗМЕНЕНИЕ: Импорт из нового файла
 
-export interface Equipment {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  type: 'weapon' | 'armor' | 'accessory';
-  price: number;
-  stats: string[];
-  effects?: {
-    damageBonus?: number;
-    healBonus?: number;
-    regenerateBonus?: number;
-    mistakePenaltyReduction?: number;
-  };
-}
+// export interface Equipment { // <--- УДАЛЕНО: Интерфейс теперь импортируется
+//   id: string;
+//   name: string;
+//   description: string;
+//   icon: string;
+//   type: 'weapon' | 'armor' | 'accessory';
+//   price: number;
+//   stats: string[];
+//   effects?: {
+//     damageBonus?: number;
+//     healBonus?: number;
+//     regenerateBonus?: number;
+//     mistakePenaltyReduction?: number;
+//   };
+// }
 
 interface PlayerEquipment {
   owned: Equipment[];
@@ -30,80 +31,21 @@ interface PurchaseResult {
 }
 
 // Available equipment in the shop
-const AVAILABLE_EQUIPMENT: Equipment[] = [
-  {
-    id: 'weapon_1',
-    name: 'Простой Меч',
-    description: 'Простой меч, который увеличивает ваш урон.',
-    icon: '🗡️',
-    type: 'weapon',
-    price: 100,
-    stats: ['+1 Урон'],
-    effects: {
-      damageBonus: 1
-    }
-  },
-  {
-    id: 'weapon_2',
-    name: 'Магический Жезл',
-    description: 'Магический жезл, который значительно увеличивает ваш урон.',
-    icon: '🪄',
-    type: 'weapon',
-    price: 250,
-    stats: ['+3 Урон'],
-    effects: {
-      damageBonus: 3
-    }
-  },
-  {
-    id: 'armor_1',
-    name: 'Кожаная Броня',
-    description: 'Базовая защита, которая уменьшает лечение монстра при ошибках.',
-    icon: '🥋',
-    type: 'armor',
-    price: 150,
-    stats: ['-1 Лечение Монстра'],
-    effects: {
-      mistakePenaltyReduction: 1
-    }
-  },
-  {
-    id: 'armor_2',
-    name: 'Стальная Кираса',
-    description: 'Тяжелая броня, которая значительно уменьшает лечение монстра при ошибках.',
-    icon: '🛡️',
-    type: 'armor',
-    price: 300,
-    stats: ['-3 Лечение Монстра'],
-    effects: {
-      mistakePenaltyReduction: 3
-    }
-  },
-  {
-    id: 'accessory_1',
-    name: 'Амулет Лечения',
-    description: 'Амулет, который увеличивает вашу силу лечения.',
-    icon: '📿',
-    type: 'accessory',
-    price: 200,
-    stats: ['+2 Лечение'],
-    effects: {
-      healBonus: 2
-    }
-  },
-  {
-    id: 'accessory_2',
-    name: 'Кольцо Регенерации',
-    description: 'Кольцо, которое увеличивает вашу регенерацию здоровья.',
-    icon: '💍',
-    type: 'accessory',
-    price: 350,
-    stats: ['+2 Регенерация'],
-    effects: {
-      regenerateBonus: 2
-    }
-  }
-];
+// const AVAILABLE_EQUIPMENT: Equipment[] = [ // <--- УДАЛЕНО: Список теперь импортируется
+//   {
+//     id: 'weapon_1',
+//     name: 'Простой Меч',
+//     description: 'Простой меч, который увеличивает ваш урон.',
+//     icon: '🗡️',
+//     type: 'weapon',
+//     price: 100,
+//     stats: ['+1 Урон'],
+//     effects: {
+//       damageBonus: 1
+//     }
+//   },
+//   // ... остальная часть списка снаряжения была здесь
+// ];
 
 // Get player's equipment from localStorage
 export const getPlayerEquipment = (): PlayerEquipment => {
@@ -137,7 +79,7 @@ export const getPlayerEquipment = (): PlayerEquipment => {
   }
   
   // Filter available equipment to exclude owned items
-  const availableEquipment = AVAILABLE_EQUIPMENT.filter(item => 
+  const availableEquipment = AVAILABLE_EQUIPMENT.filter(item =>  // <--- Используется импортированный AVAILABLE_EQUIPMENT
     !ownedEquipment.some(owned => owned.id === item.id)
   );
   
@@ -170,7 +112,8 @@ export const purchaseEquipment = (equipmentId: string): PurchaseResult => {
   const playerEquipment = getPlayerEquipment();
   
   // Find the equipment in available items
-  const itemToPurchase = playerEquipment.available.find(item => item.id === equipmentId);
+  // playerEquipment.available уже содержит отфильтрованный список на основе импортированного AVAILABLE_EQUIPMENT
+  const itemToPurchase = playerEquipment.available.find(item => item.id === equipmentId); 
   
   if (!itemToPurchase) {
     return {
@@ -198,18 +141,19 @@ export const purchaseEquipment = (equipmentId: string): PurchaseResult => {
   const updatedOwnedEquipment = [...playerEquipment.owned, itemToPurchase];
   
   // Update available equipment
+  // Эта логика остается прежней, так как playerEquipment.available уже правильно инициализирован
   const updatedAvailableEquipment = playerEquipment.available.filter(
     item => item.id !== equipmentId
   );
   
   // Save changes
   savePlayerProgress(playerProgress);
-  savePlayerEquipment(updatedOwnedEquipment);
+  savePlayerEquipment(updatedOwnedEquipment); // Сохраняем только купленные предметы
   
   // Create updated player equipment state
   const updatedPlayerEquipment = {
     owned: updatedOwnedEquipment,
-    equipped: playerEquipment.equipped,
+    equipped: playerEquipment.equipped, // Экипированные не меняются при покупке
     available: updatedAvailableEquipment
   };
   
@@ -308,7 +252,7 @@ export const unequipItem = (itemId: string): PurchaseResult => {
 };
 
 // Apply equipment effects to game configuration
-export const applyEquipmentEffects = (config: any, equipment: Equipment[]): any => {
+export const applyEquipmentEffects = (config: any, equipment: Equipment[]): any => { // <--- Equipment здесь это импортированный тип
   const updatedConfig = { ...config };
   
   equipment.forEach(item => {
