@@ -13,7 +13,7 @@ import { LevelReward } from '../services/playerService';
 import { getPlayerEquipment, applyEquipmentEffects } from '../services/equipmentService';
 import { mathExpressions } from '../data/math-expressions';
 import PlayerHealthBar from './PlayerHealthBar';
-import { getPlayerHealth, getMaxPlayerHealth, damagePlayer, healPlayerToMax } from '../services/playerService';
+import { getPlayerHealth, getMaxPlayerHealth, damagePlayer, healPlayerToMax, getPlayerBaseDamage } from '../services/playerService'; // Ensure getPlayerBaseDamage is imported
 import { saveLevelResult } from '../services/progressService';
 
 interface Monster {
@@ -42,7 +42,7 @@ export interface GamePlayConfig {
   initialHealth: number;
   healAmount: number;
   regenerateAmount: number;
-  damageAmount: number;
+  // damageAmount: number; // Убедитесь, что это поле УДАЛЕНО
   healOnMistake: number;
   language: Language;
   monsterDamage?: number; // Урон, наносимый монстром игроку
@@ -95,9 +95,9 @@ const GamePlay: React.FC<GamePlayProps> = ({
   }));
   
   const [currentDamage, setCurrentDamage] = useState(0);
-  // Удаляем неиспользуемую переменную baseDamage
   const [bonusDamageActive, setBonusDamageActive] = useState(false);
   const [bonusDamagePercent, setBonusDamagePercent] = useState(0);
+  const [playerBaseDamage, setPlayerBaseDamage] = useState<number>(0); // <--- Add state for player's base damage
 
   // Добавляем состояния для здоровья игрока
   const [playerHealth, setPlayerHealth] = useState<number>(getPlayerHealth());
@@ -175,8 +175,8 @@ const GamePlay: React.FC<GamePlayProps> = ({
 
   useEffect(() => {
     generateNewWord();
-    
-    // Восстанавливаем здоровье игрока до максимума при начале нового уровня
+    setPlayerBaseDamage(getPlayerBaseDamage()); // <--- Initialize player's base damage
+
     healPlayerToMax();
     setPlayerHealth(getPlayerHealth());
     setMaxPlayerHealth(getMaxPlayerHealth());
@@ -253,7 +253,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
         clearInterval(monsterAttackInterval.current);
       }
     };
-  }, [config, monster.isDefeated]);
+  }, [config, monster.isDefeated, generateNewWord]); // Added generateNewWord to dependencies
   
   // Функция обработки поражения игрока
   const handleDefeat = () => {
@@ -313,11 +313,28 @@ const GamePlay: React.FC<GamePlayProps> = ({
         }));
 
         setMonster(prev => {
-          const newHealth = Math.max(0, prev.health - config.damageAmount);
+          if (prev.isDefeated) return prev; // Prevent further damage if already defeated
+
+          // Calculate damage with equipment bonuses
+          const equipmentDamageBonus = playerEquipment.equipped.reduce(
+            (sum, item) => sum + (item.effects?.damageBonus || 0),
+            0
+          );
+          
+          const baseDamageToApply = playerBaseDamage + equipmentDamageBonus; // <--- Use playerBaseDamage + equipment
+
+          const damageWithActiveBonus = bonusDamageActive 
+            ? baseDamageToApply * (1 + bonusDamagePercent / 100) 
+            : baseDamageToApply;
+          
+          const finalDamageToApply = parseFloat(damageWithActiveBonus.toFixed(2));
+
+          const newHealth = Math.max(0, prev.health - finalDamageToApply); // <--- Apply calculated damage
           const isDefeated = newHealth === 0;
+
           if (isDefeated) {
             setShowVictory(true);
-            setGameStats(prev => ({ ...prev, endTime: Date.now() }));
+            setGameStats(prevStats => ({ ...prevStats, endTime: Date.now() }));
             onLevelComplete();
           }
           const monsterElement = document.querySelector('.monster') as HTMLElement;
@@ -327,14 +344,8 @@ const GamePlay: React.FC<GamePlayProps> = ({
             monsterElement.classList.add('damage-animation');
           }
           
-          // Рассчитываем урон с учетом накопительного бонуса за своевременный ввод
-          const damageToApply = bonusDamageActive 
-            ? config.damageAmount * (1 + bonusDamagePercent / 100) 
-            : config.damageAmount;
-          
-          // Показываем текущий урон в случайном месте с точностью до сотых
-          setCurrentDamage(parseFloat(damageToApply.toFixed(2)));
-          setTimeout(() => setCurrentDamage(0), 1330); // Увеличиваем время отображения на 33% (было 1000мс)
+          setCurrentDamage(finalDamageToApply); // <--- Show the actual damage applied
+          setTimeout(() => setCurrentDamage(0), 1330);
           
           return { ...prev, health: newHealth, isDefeated };
         });

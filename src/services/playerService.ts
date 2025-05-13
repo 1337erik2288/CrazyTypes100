@@ -135,6 +135,7 @@ export const calculatePlayerRating = (speed: number, accuracy: number): number =
 // Базовое здоровье игрока
 const BASE_PLAYER_HEALTH = 100;
 const HEALTH_PER_LEVEL = 10;
+const BASE_PLAYER_DAMAGE = 10; // <--- Новый базовый урон игрока
 
 // Получение текущего уровня игрока
 export const getPlayerLevel = (): number => {
@@ -146,6 +147,12 @@ export const getPlayerLevel = (): number => {
 export const getMaxPlayerHealth = (): number => {
   const playerLevel = getPlayerLevel();
   return BASE_PLAYER_HEALTH + (playerLevel * HEALTH_PER_LEVEL);
+};
+
+// Получение базового урона игрока
+export const getPlayerBaseDamage = (): number => {
+  // В будущем здесь можно будет учитывать бонусы от уровня или постоянных улучшений
+  return BASE_PLAYER_DAMAGE;
 };
 
 // Получение текущего здоровья игрока
