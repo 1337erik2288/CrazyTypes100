@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
-const Casino = ({ onClose, onWin }) => {
+interface CasinoProps {
+  onClose: () => void;
+  onWin: (amount: number) => void;
+}
+
+const Casino: React.FC<CasinoProps> = ({ onClose, onWin }) => {
   const [spinning, setSpinning] = useState(false);
   const [slots, setSlots] = useState([0, 0, 0]);
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<string | null>(null);
   const [winAmount, setWinAmount] = useState(0);
   const monsterImages = [
     '/src/image/monster/Cartoon Monster Design 3.png',
@@ -43,7 +48,7 @@ const Casino = ({ onClose, onWin }) => {
     }, intervalTime);
   };
 
-  const checkWin = (newSlots) => {
+  const checkWin = (newSlots: number[]) => {
     if (newSlots[0] === newSlots[1] && newSlots[1] === newSlots[2]) {
       const amount = Math.floor(Math.random() * (150 - 30 + 1)) + 30;
       setResult('Jackpot! 🎉');

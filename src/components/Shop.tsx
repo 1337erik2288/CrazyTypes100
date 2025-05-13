@@ -5,7 +5,7 @@ import Character from './Character';
 import { Equipment } from '../data/equipmentData'; // <--- Импорт Equipment
 import { getOwnedEquipment, addOwnedItem, getAvailableForPurchaseEquipment } from '../services/inventoryService'; // <--- Новый сервис инвентаря
 import { getEquippedItems, equipItem as equipItemService, unequipItem as unequipItemService } from '../services/equippedGearService'; // <--- Новый сервис экипировки
-import Casino from './Casino';
+import Casino from './Secret';
 import './Casino.css';
 import './Shop.css';
 
