@@ -1,56 +1,89 @@
 import React, { useState, useEffect } from 'react';
-import { PlayerProgress, addRewards } from '../services/playerService';
+import { PlayerProgress, addRewards, getPlayerProgress, savePlayerProgress } from '../services/playerService'; // getPlayerProgress, savePlayerProgress
 import Character from './Character';
-import { Equipment, getPlayerEquipment, purchaseEquipment, equipItem, unequipItem } from '../services/equipmentService';
+// import { Equipment, getPlayerEquipment, purchaseEquipment, equipItem, unequipItem } from '../services/equipmentService'; // <--- УДАЛИТЬ ЭТОТ ИМПОРТ
+import { Equipment } from '../data/equipmentData'; // <--- Импорт Equipment
+import { getOwnedEquipment, addOwnedItem, getAvailableForPurchaseEquipment } from '../services/inventoryService'; // <--- Новый сервис инвентаря
+import { getEquippedItems, equipItem as equipItemService, unequipItem as unequipItemService } from '../services/equippedGearService'; // <--- Новый сервис экипировки
 import Casino from './Casino';
 import './Casino.css';
 import './Shop.css';
 
 interface ShopProps {
-  playerProgress: PlayerProgress;
+  // playerProgress: PlayerProgress; // Удалено, так как не используется напрямую
   onReturnToMenu: () => void;
   onEquipmentPurchased: (updatedProgress: PlayerProgress) => void;
 }
 
-const Shop: React.FC<ShopProps> = ({ playerProgress, onReturnToMenu, onEquipmentPurchased }) => {
-  const [availableEquipment, setAvailableEquipment] = useState<Equipment[]>([]);
-  const [playerEquipment, setPlayerEquipment] = useState<Equipment[]>([]);
+const Shop: React.FC<ShopProps> = ({ /* playerProgress, */ onReturnToMenu, onEquipmentPurchased }) => { // playerProgress удален из деструктуризации
+  const [currentGold, setCurrentGold] = useState<number>(0);
+  const [availableForPurchase, setAvailableForPurchase] = useState<Equipment[]>([]);
+  const [ownedEquipment, setOwnedEquipment] = useState<Equipment[]>([]);
   const [equippedItems, setEquippedItems] = useState<Equipment[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [showCasino, setShowCasino] = useState<boolean>(false);
 
   useEffect(() => {
-    // Load player's equipment and available equipment for purchase
-    const equipment = getPlayerEquipment();
-    setPlayerEquipment(equipment.owned);
-    setEquippedItems(equipment.equipped);
-    setAvailableEquipment(equipment.available);
+    const progress = getPlayerProgress(); // Загружаем актуальный прогресс
+    setCurrentGold(progress.gold);
+
+    setOwnedEquipment(getOwnedEquipment());
+    setEquippedItems(getEquippedItems());
+    setAvailableForPurchase(getAvailableForPurchaseEquipment());
   }, []);
 
-  const handlePurchase = (item: Equipment) => {
-    if (playerProgress.gold < item.price) {
-      setErrorMessage('Not enough gold!');
+  const refreshShopData = () => {
+    const progress = getPlayerProgress();
+    setCurrentGold(progress.gold);
+    setOwnedEquipment(getOwnedEquipment());
+    setEquippedItems(getEquippedItems());
+    setAvailableForPurchase(getAvailableForPurchaseEquipment());
+  };
+
+  const handlePurchase = (itemToPurchase: Equipment) => {
+    let progress = getPlayerProgress(); // Получаем текущий прогресс
+
+    if (progress.gold < itemToPurchase.price) {
+      setErrorMessage('Недостаточно золота!');
       setTimeout(() => setErrorMessage(''), 2000);
       return;
     }
 
-    const result = purchaseEquipment(item.id);
-    if (result.success) {
-      setPlayerEquipment(result.playerEquipment.owned);
-      setEquippedItems(result.playerEquipment.equipped);
-      setAvailableEquipment(result.playerEquipment.available);
-      onEquipmentPurchased(result.playerProgress);
-      setErrorMessage('');
-    } else {
-      setErrorMessage(result.message || 'Failed to purchase item');
-      setTimeout(() => setErrorMessage(''), 2000);
-    }
+    // Вычитаем золото
+    progress.gold -= itemToPurchase.price;
+    savePlayerProgress(progress); // Сохраняем обновленный прогресс (золото)
+
+    // Добавляем предмет в инвентарь
+    const updatedOwned = addOwnedItem(itemToPurchase);
+    setOwnedEquipment(updatedOwned);
+
+    // Обновляем список доступных для покупки
+    setAvailableForPurchase(getAvailableForPurchaseEquipment());
+    setCurrentGold(progress.gold); // Обновляем золото в UI
+
+    // Note: playerProgress passed to onEquipmentPurchased might be stale here if it was from props.
+    // It's better to pass the 'progress' variable that was just updated.
+    onEquipmentPurchased(progress); 
+    setErrorMessage('');
   };
   
-  // Handle equipment change (equip/unequip)
-  const handleEquipmentChange = (updatedEquipment: Equipment[]) => {
-    setEquippedItems(updatedEquipment);
+  const handleEquipmentChange = (item: Equipment, action: 'equip' | 'unequip') => {
+    if (action === 'equip') {
+      const result = equipItemService(item, ownedEquipment); 
+      if (result.success) {
+        setEquippedItems(result.equipped);
+      } else if (result.message) { // Check for message only on equip action result
+        setErrorMessage(result.message);
+        setTimeout(() => setErrorMessage(''), 2000);
+      }
+    } else { // action === 'unequip'
+      const result = unequipItemService(item.id); // This result does not have a 'message' property
+      if (result.success) {
+        setEquippedItems(result.equipped);
+      }
+      // If unequipItemService could fail with a message, its return type and handling here would need adjustment.
+    }
   };
   
   // Обработчик для открытия/закрытия казино
@@ -60,13 +93,16 @@ const Shop: React.FC<ShopProps> = ({ playerProgress, onReturnToMenu, onEquipment
   
   // Обработчик выигрыша в казино
   const handleCasinoWin = (amount: number) => {
-    const updatedProgress = addRewards(0, amount);
+    const updatedProgress = addRewards(0, amount); // addRewards уже сохраняет прогресс
+    // Note: playerProgress passed to onEquipmentPurchased might be stale here if it was from props.
+    // It's better to pass the 'updatedProgress' variable that was just updated.
     onEquipmentPurchased(updatedProgress);
+    refreshShopData(); // Обновляем данные магазина после выигрыша
   };
 
   const filteredEquipment = selectedCategory === 'all' 
-    ? availableEquipment 
-    : availableEquipment.filter(item => item.type === selectedCategory);
+    ? availableForPurchase
+    : availableForPurchase.filter(item => item.type === selectedCategory);
 
   return (
     <div className="shop-container" style={{ position: 'relative' }}>
@@ -79,13 +115,16 @@ const Shop: React.FC<ShopProps> = ({ playerProgress, onReturnToMenu, onEquipment
         <div className="character-preview">
           <Character 
             equipment={equippedItems} 
-            ownedEquipment={playerEquipment}
-            onEquipmentChange={handleEquipmentChange}
+            ownedEquipment={ownedEquipment} // Передаем купленное снаряжение
+            // Следующая строка вызовет ошибку TypeScript до тех пор, пока тип onEquipmentChange
+            // в CharacterProps (в файле Character.tsx) не будет изменен на:
+            // (item: Equipment, action: 'equip' | 'unequip') => void;
+            onEquipmentChange={handleEquipmentChange} 
             showEquipControls={true}
           />
           <div className="player-gold">
             <span className="gold-icon">💰</span>
-            <span className="gold-amount">{playerProgress.gold}</span>
+            <span className="gold-amount">{currentGold}</span> {/* Используем currentGold */}
           </div>
         </div>
 
@@ -121,9 +160,9 @@ const Shop: React.FC<ShopProps> = ({ playerProgress, onReturnToMenu, onEquipment
 
           <div className="equipment-grid">
             {filteredEquipment.map(item => {
-              const isOwned = playerEquipment.some(equip => equip.id === item.id);
+              // const isOwned = ownedEquipment.some(equip => equip.id === item.id); // Уже отфильтровано в availableForPurchase
               return (
-                <div key={item.id} className={`equipment-item ${isOwned ? 'owned' : ''}`}>
+                <div key={item.id} className={`equipment-item`}> {/* Удален класс 'owned', т.к. показываем только доступные */}
                   <div className="equipment-icon">{item.icon}</div>
                   <div className="equipment-details">
                     <h3>{item.name}</h3>
@@ -141,9 +180,9 @@ const Shop: React.FC<ShopProps> = ({ playerProgress, onReturnToMenu, onEquipment
                   <button 
                     className="purchase-button" 
                     onClick={() => handlePurchase(item)}
-                    disabled={isOwned || playerProgress.gold < item.price}
+                    disabled={currentGold < item.price} // Проверяем по currentGold
                   >
-                    {isOwned ? 'Куплено' : 'Купить'}
+                    Купить
                   </button>
                 </div>
               );

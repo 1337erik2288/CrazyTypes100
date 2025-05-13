@@ -10,7 +10,8 @@ import EquipmentStats from './EquipmentStats';
 import { getAdditionalWords } from '../services/wordsService';
 import { getRandomCodeLine } from '../services/codeService';
 import { LevelReward } from '../services/playerService';
-import { getPlayerEquipment, applyEquipmentEffects } from '../services/equipmentService';
+// import { getPlayerEquipment, applyEquipmentEffects } from '../services/equipmentService'; // <--- УДАЛИТЬ
+import { getEquippedItems, applyEquipmentEffects } from '../services/equippedGearService'; // <--- ИСПОЛЬ НОВЫЙ СЕРВИС
 import { mathExpressions } from '../data/math-expressions';
 import PlayerHealthBar from './PlayerHealthBar';
 import { getPlayerHealth, getMaxPlayerHealth, damagePlayer, healPlayerToMax, getPlayerBaseDamage } from '../services/playerService'; // Ensure getPlayerBaseDamage is imported
@@ -36,7 +37,7 @@ interface GameStats {
 
 export type Language = 'en' | 'ru' | 'code' | 'key-combos' | 'simple-words' | 'phrases' | 'math' | 'paragraphs' | 'mixed';
 
-export interface GamePlayConfig {
+export interface GamePlayConfig { // Убедитесь, что этот интерфейс экспортируется или доступен для equippedGearService
   backgroundImage: string;
   monsterImage: string;
   initialHealth: number;
@@ -60,19 +61,20 @@ interface GamePlayProps {
 }
 
 const GamePlay: React.FC<GamePlayProps> = ({
-  config,
+  config: initialConfig, // config is destructured to initialConfig
   onRestart,
   onReturnToMenu,
   onLevelComplete,
   rewards,
   isFirstCompletion = false,
-  levelId // <--- Destructured levelId
+  levelId
 }) => {
   // Apply equipment effects to the game configuration
-  const [playerEquipment] = useState(() => getPlayerEquipment());
+  const [equippedPlayerItems] = useState(() => getEquippedItems()); // <--- FIX: Use getEquippedItems and rename state
   
   const [gameConfig] = useState(() => {
-    return applyEquipmentEffects(config, playerEquipment.equipped);
+    // return applyEquipmentEffects(config, playerEquipment.equipped); // <--- OLD
+    return applyEquipmentEffects(initialConfig, equippedPlayerItems); // <--- FIX: Use initialConfig and equippedPlayerItems
   });
   
   const [currentWord, setCurrentWord] = useState('');
@@ -109,14 +111,14 @@ const GamePlay: React.FC<GamePlayProps> = ({
   const monsterAttackInterval = useRef<NodeJS.Timeout | null>(null);
 
   const generateNewWord = useCallback(() => {
-    if (config.language === 'code') {
+    if (initialConfig.language === 'code') { // <--- FIX: Use initialConfig
       getRandomCodeLine('javascript').then((codeLine: string) => {
         setCurrentWord(codeLine);
         setUserInput('');
       });
-    } else if (config.language === 'math') {
+    } else if (initialConfig.language === 'math') { // <--- FIX: Use initialConfig
       // Специальная обработка для математических выражений
-      getAdditionalWords(config.language).then(newWords => {
+      getAdditionalWords(initialConfig.language).then(newWords => { // <--- FIX: Use initialConfig
         if (newWords.length > 0) {
           const randomIndex = Math.floor(Math.random() * newWords.length);
           const newWord = newWords[randomIndex];
@@ -141,7 +143,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
         }
       });
     } else {
-      getAdditionalWords(config.language).then(newWords => {
+      getAdditionalWords(initialConfig.language).then(newWords => { // <--- FIX: Use initialConfig
         if (newWords.length > 0) {
           const randomIndex = Math.floor(Math.random() * newWords.length);
           const newWord = newWords[randomIndex];
@@ -150,13 +152,13 @@ const GamePlay: React.FC<GamePlayProps> = ({
         }
       });
     }
-  }, [config.language]);
+  }, [initialConfig.language]); // <--- FIX: Use initialConfig.language in dependency array
 
   const restartGame = () => {
     setMonster({
-      health: config.initialHealth,
-      maxHealth: config.initialHealth,
-      imagePath: config.monsterImage,
+      health: initialConfig.initialHealth, // <--- FIX: Use initialConfig
+      maxHealth: initialConfig.initialHealth, // <--- FIX: Use initialConfig
+      imagePath: initialConfig.monsterImage, // <--- FIX: Use initialConfig
       isDefeated: false,
       takingDamage: false
     });
@@ -188,12 +190,12 @@ const GamePlay: React.FC<GamePlayProps> = ({
     }
     
     // Добавляем отладочный вывод для проверки параметров уровня
-    console.log('Уровень:', config);
-    console.log('Урон монстра:', config.monsterDamage);
-    console.log('Интервал атаки:', config.attackInterval);
+    console.log('Уровень:', initialConfig); // <--- FIX: Use initialConfig
+    console.log('Урон монстра:', initialConfig.monsterDamage); // <--- FIX: Use initialConfig
+    console.log('Интервал атаки:', initialConfig.attackInterval); // <--- FIX: Use initialConfig
     
     // Запускаем таймер атаки монстра, если уровень предусматривает урон
-    if (config.monsterDamage && config.monsterDamage > 0 && config.attackInterval && config.attackInterval > 0) {
+    if (initialConfig.monsterDamage && initialConfig.monsterDamage > 0 && initialConfig.attackInterval && initialConfig.attackInterval > 0) { // <--- FIX: Use initialConfig
       // Добавляем задержку перед первой атакой (7 секунд)
       const initialDelay = 7000; 
       
@@ -214,7 +216,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
           // Монстр атакует только если не побежден
           if (!monster.isDefeated) {
             // Ограничиваем урон монстра до максимум 10 единиц за атаку
-            const actualDamage = Math.min(config.monsterDamage || 0, 10);
+            const actualDamage = Math.min(initialConfig.monsterDamage || 0, 10); // <--- FIX: Use initialConfig
             
             console.log('Монстр атакует! Урон:', actualDamage);
             
@@ -235,7 +237,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
               handleDefeat();
             }
           }
-        }, config.attackInterval);
+        }, initialConfig.attackInterval); // <--- FIX: Use initialConfig
       }, initialDelay);
       
       // Очистка таймера начальной задержки при размонтировании
@@ -253,7 +255,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
         clearInterval(monsterAttackInterval.current);
       }
     };
-  }, [config, monster.isDefeated, generateNewWord]); // Added generateNewWord to dependencies
+  }, [initialConfig, monster.isDefeated, generateNewWord]); // <--- FIX: Use initialConfig in dependency array
   
   // Функция обработки поражения игрока
   const handleDefeat = () => {
@@ -271,7 +273,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
     const lastCharIndex = value.length - 1;
     
     // Проверяем, является ли текущее слово математическим выражением
-    const isMathExpression = config.language === 'math' && currentWord.includes('=?');
+    const isMathExpression = initialConfig.language === 'math' && currentWord.includes('=?'); // <--- FIX: Use initialConfig
     
     // Если это математическое выражение, находим ожидаемый ответ
     let expectedAnswer = currentWord;
@@ -300,7 +302,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
           }));
           
           setMonster(prev => {
-            const newHealth = Math.min(config.initialHealth, prev.health + config.healOnMistake);
+            const newHealth = Math.min(initialConfig.initialHealth, prev.health + initialConfig.healOnMistake); // <--- FIX: Use initialConfig
             return { ...prev, health: newHealth };
           });
           return;
@@ -313,15 +315,15 @@ const GamePlay: React.FC<GamePlayProps> = ({
         }));
 
         setMonster(prev => {
-          if (prev.isDefeated) return prev; // Prevent further damage if already defeated
+          if (prev.isDefeated) return prev;
 
-          // Calculate damage with equipment bonuses
-          const equipmentDamageBonus = playerEquipment.equipped.reduce(
+          // Расчет урона с бонусами от снаряжения
+          const equipmentDamageBonus = equippedPlayerItems.reduce( // <--- Используем equippedPlayerItems
             (sum, item) => sum + (item.effects?.damageBonus || 0),
             0
           );
           
-          const baseDamageToApply = playerBaseDamage + equipmentDamageBonus; // <--- Use playerBaseDamage + equipment
+          const baseDamageToApply = playerBaseDamage + equipmentDamageBonus;
 
           const damageWithActiveBonus = bonusDamageActive 
             ? baseDamageToApply * (1 + bonusDamagePercent / 100) 
@@ -400,11 +402,11 @@ const GamePlay: React.FC<GamePlayProps> = ({
           )}
           <HealthBar 
             health={monster.health}
-            initialHealth={config.initialHealth}
+            initialHealth={initialConfig.initialHealth} // <--- FIX: Use initialConfig
             canHeal={true}
-            healAmount={config.healAmount}
+            healAmount={initialConfig.healAmount} // <--- FIX: Use initialConfig
             canRegenerate={true}
-            regenerateAmount={config.regenerateAmount}
+            regenerateAmount={initialConfig.regenerateAmount} // <--- FIX: Use initialConfig
             isDefeated={monster.isDefeated}
             onHealthChange={(newHealth) => setMonster(prev => ({ ...prev, health: newHealth }))}
           />
@@ -459,7 +461,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
             />
             <div className="equipment-stats-bottom">
               <EquipmentStats 
-                equipment={playerEquipment.equipped} 
+                equipment={equippedPlayerItems} // <--- FIX: Use equippedPlayerItems directly
               />
             </div>
           </>

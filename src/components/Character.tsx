@@ -1,11 +1,11 @@
 import React from 'react';
 import './Character.css';
-import { Equipment, equipItem, unequipItem } from '../services/equipmentService';
+import { Equipment } from '../data/equipmentData';
 
 interface CharacterProps {
   equipment: Equipment[];
   ownedEquipment?: Equipment[];
-  onEquipmentChange?: (updatedEquipment: Equipment[]) => void;
+  onEquipmentChange?: (item: Equipment, action: 'equip' | 'unequip') => void;
   showEquipControls?: boolean;
 }
 
@@ -23,20 +23,22 @@ const Character: React.FC<CharacterProps> = ({ equipment, ownedEquipment = [], o
   const handleEquip = (item: Equipment) => {
     if (!onEquipmentChange) return;
     
-    const result = equipItem(item.id);
-    if (result.success) {
-      onEquipmentChange(result.playerEquipment.equipped);
-    }
+    // const result = equipItem(item.id); // <-- REMOVE THIS LINE
+    // if (result.success) { // <-- REMOVE THIS LINE
+    //   onEquipmentChange(result.playerEquipment.equipped); // <-- REMOVE THIS LINE
+    // } // <-- REMOVE THIS LINE
+    onEquipmentChange(item, 'equip'); // <-- ADD THIS LINE
   };
   
   // Handle unequipping an item
   const handleUnequip = (item: Equipment) => {
     if (!onEquipmentChange) return;
     
-    const result = unequipItem(item.id);
-    if (result.success) {
-      onEquipmentChange(result.playerEquipment.equipped);
-    }
+    // const result = unequipItem(item.id); // <-- REMOVE THIS LINE
+    // if (result.success) { // <-- REMOVE THIS LINE
+    //   onEquipmentChange(result.playerEquipment.equipped); // <-- REMOVE THIS LINE
+    // } // <-- REMOVE THIS LINE
+    onEquipmentChange(item, 'unequip'); // <-- ADD THIS LINE
   };
   
   // Get available items by type that are not equipped
