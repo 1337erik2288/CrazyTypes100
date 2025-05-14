@@ -112,8 +112,30 @@ const GamePlay: React.FC<GamePlayProps> = ({
 
   // Рассчитываем суммарное снижение урона от монстра (MOVED TO TOP LEVEL)
   const totalMonsterDamageReduction = useMemo(() => {
-    return equippedPlayerItems.reduce((sum, item) => sum + (item.effects?.monsterDamageReduction || 0), 0);
+    return equippedPlayerItems.reduce((sum: number, item: any) => sum + (item.effects?.monsterDamageReduction || 0), 0);
   }, [equippedPlayerItems]);
+
+  // Эффект автолечения игрока по бонусу снаряжения
+  useEffect(() => {
+    // Суммируем бонусы к лечению игрока со всего надетого снаряжения
+    const totalPlayerHealBonus = equippedPlayerItems.reduce(
+      (sum: number, item: any) => sum + (item.effects?.playerHealBonus || 0),
+      0
+    );
+
+    if (totalPlayerHealBonus > 0 && !showVictory && !showDefeatScreen) {
+      const healInterval = setInterval(() => {
+        setPlayerHealth((prev: number) => {
+          const healed = Math.min(maxPlayerHealth, prev + totalPlayerHealBonus);
+          return healed;
+        });
+      }, 5000);
+
+      return () => clearInterval(healInterval);
+    }
+    // Если бонуса нет или игра завершена — ничего не делаем
+    return undefined;
+  }, [equippedPlayerItems, maxPlayerHealth, showVictory, showDefeatScreen]);
 
   const generateNewWord = useCallback(() => {
     if (initialConfig.language === 'code') { // Получаем список всех доступных языков из сервиса или вручную
@@ -217,41 +239,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
       
       // Таймер для первой атаки с задержкой
       const initialAttackTimer = setTimeout(() => {
-        // Рассчитываем суммарное снижение урона от монстра
-        // const totalMonsterDamageReduction = useMemo(() => { // <-- REMOVE THIS useMemo from here
-        //   return equippedPlayerItems.reduce((sum, item) => sum + (item.effects?.monsterDamageReduction || 0), 0);
-        // }, [equippedPlayerItems]);
         
-        // useEffect(() => { // <-- REMOVE THIS NESTED useEffect
-        //   generateNewWord();
-        //   setPlayerBaseDamage(getPlayerBaseDamage());
-      
-        //   // Монстр атакует только если не побежден
-        //   if (!monster.isDefeated) {
-        //     // Ограничиваем урон монстра до максимум 10 единиц за атаку
-        //     const actualDamage = Math.min(initialConfig.monsterDamage || 0, 10); 
-            
-        //     console.log('Монстр атакует! Урон:', actualDamage);
-            
-        //     const newHealth = damagePlayer(actualDamage);
-        //     console.log('Новое здоровье игрока:', newHealth);
-            
-        //     setPlayerHealth(newHealth);
-        //     setPlayerDamageAnimation(true);
-            
-        //     // Сбрасываем анимацию получения урона
-        //     setTimeout(() => {
-        //       setPlayerDamageAnimation(false);
-        //     }, 300);
-            
-        //     // Проверяем, не проиграл ли игрок
-        //     if (newHealth <= 0) {
-        //       // Игрок проиграл
-        //       handleDefeat();
-        //     }
-        //   }
-        // }, initialConfig.attackInterval); // <-- REMOVE THIS (and its incorrect dependency)
-
         // Define the attack logic once
         const performMonsterAttack = () => {
           if (!monster.isDefeated && !showVictory && !showDefeatScreen) {
@@ -349,7 +337,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
           setMonster(prev => {
             // Sum up monster heal reduction from equipment
             const totalHealReduction = equippedPlayerItems.reduce(
-              (sum, item) => sum + (item.effects?.monsterHealReduction || 0),
+              (sum: number, item: any) => sum + (item.effects?.monsterHealReduction || 0),
               0
             );
             

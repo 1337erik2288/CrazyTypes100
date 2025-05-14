@@ -37,10 +37,10 @@ const EquipmentStats: React.FC<EquipmentStatsProps> = ({ equipment }) => {
         console.log(`Item ${index} (${item.name}) effects:`, JSON.parse(JSON.stringify(effects))); 
         
         // Используем имена свойств из логов:
-        playerDamageBonus += effects.damageBonus || 0; 
-        playerHealBonus += effects.healBonus || 0;
+        playerDamageBonus += effects.playerDamageBonus || 0; 
+        playerHealBonus += effects.playerHealBonus || 0; // <-- Исправлено здесь!
         monsterDamageReduction += effects.monsterDamageReduction || 0;
-        monsterHealReduction += effects.monsterHealReduction || 0; // <-- Исправлено имя свойства
+        monsterHealReduction += effects.monsterHealReduction || 0;
         monsterRegenReduction += effects.monsterRegenReduction || 0;
       } else {
         console.log(`Item ${index} (${item.name}) has NO effects property or it is undefined.`);
