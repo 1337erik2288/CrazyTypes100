@@ -143,5 +143,24 @@ export const levelResources: LevelResource[] = [
       monsterDamage: 8,
       attackInterval: 3000
     }
+  },
+  {
+    id: 8,
+    name: 'test',
+    description: 'test',
+    content: 'Фразы и сложные слова',
+    difficulty: 'test',
+    diffClass: 'hard',
+    config: {
+      backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (2).jpg',
+      monsterImage: '/src/image/monster/Cartoon Monster Design.png',
+      initialHealth: 1000,
+      healAmount: 0,
+      regenerateAmount: 10,
+      healOnMistake: 10,
+      language: 'phrases',
+      monsterDamage: 0,
+      attackInterval: 3000
+    }
   }
 ];

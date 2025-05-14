@@ -116,16 +116,15 @@ const GamePlay: React.FC<GamePlayProps> = ({
   }, [equippedPlayerItems]);
 
   const generateNewWord = useCallback(() => {
-    if (initialConfig.language === 'code') {
-      // Получаем список всех доступных языков из сервиса или вручную
+    if (initialConfig.language === 'code') { // Получаем список всех доступных языков из сервиса или вручную
       const codeLanguages = ['javascript', 'python', 'typescript', 'java', 'csharp']; // Пример, замените на актуальные
+      // хочу гулять...
       const randomLang = codeLanguages[Math.floor(Math.random() * codeLanguages.length)];
       getRandomCodeLine(randomLang).then((codeLine: string) => {
         setCurrentWord(codeLine);
         setUserInput('');
       });
-    } else if (initialConfig.language === 'math') {
-      // Специальная обработка для математических выражений
+    } else if (initialConfig.language === 'math') { // Специальная обработка для математических выражений
       getAdditionalWords(initialConfig.language).then(newWords => { // <--- FIX: Use initialConfig
         if (newWords.length > 0) {
           const randomIndex = Math.floor(Math.random() * newWords.length);

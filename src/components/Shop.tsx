@@ -6,7 +6,7 @@ import { Equipment } from '../data/equipmentData'; // <--- Импорт Equipmen
 import { getOwnedEquipment, addOwnedItem, getAvailableForPurchaseEquipment } from '../services/inventoryService'; // <--- Новый сервис инвентаря
 import { getEquippedItems, equipItem as equipItemService, unequipItem as unequipItemService } from '../services/equippedGearService'; // <--- Новый сервис экипировки
 import Casino from './Secret';
-import './Casino.css';
+import './Secret.css';
 import './Shop.css';
 
 interface ShopProps {

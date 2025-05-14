@@ -50,7 +50,7 @@ export const AVAILABLE_EQUIPMENT: Equipment[] = [
     icon: '🥋',
     type: 'armor',
     price: 150,
-    stats: ['Лечение монстра -1'], // Ранее "mistakePenaltyReduction"
+    stats: ['Лечение монстра -1'], 
     effects: {
       monsterHealReduction: 1
     }
@@ -62,7 +62,7 @@ export const AVAILABLE_EQUIPMENT: Equipment[] = [
     icon: '🛡️',
     type: 'armor',
     price: 300,
-    stats: ['Лечение монстра -3'], // Ранее "mistakePenaltyReduction"
+    stats: ['Лечение монстра -3'], 
     effects: {
       monsterHealReduction: 3
     }
