@@ -35,19 +35,29 @@ interface GameStats {
   accuracy?: number;   // Add this
 }
 
-export type Language = 'en' | 'ru' | 'code' | 'key-combos' | 'simple-words' | 'phrases' | 'math' | 'paragraphs' | 'mixed';
+// Предполагаемое местоположение и вид определения типа Language
+// Убедитесь, что вы нашли правильное определение в вашем файле
+export type Language =
+  | 'key-combos'
+  | 'simple-words'
+  | 'phrases'
+  | 'math'
+  | 'code'
+  | 'paragraphs'
+  | 'mixed'
+  // Добавьте сюда другие существующие значения, если они есть (например, 'ru', 'en')
+  | 'keyboard-training'; // <--- Добавлено это значение
 
-export interface GamePlayConfig { // Убедитесь, что этот интерфейс экспортируется или доступен для equippedGearService
+export interface GamePlayConfig {
   backgroundImage: string;
   monsterImage: string;
   initialHealth: number;
   healAmount: number;
   regenerateAmount: number;
-  // damageAmount: number; // Убедитесь, что это поле УДАЛЕНО
   healOnMistake: number;
-  language: Language;
-  monsterDamage?: number; // Урон, наносимый монстром игроку
-  attackInterval?: number; // Интервал атаки монстра в миллисекундах
+  language: Language; // Теперь 'keyboard-training' будет допустимым значением
+  monsterDamage?: number;
+  attackInterval?: number;
 }
 
 interface GamePlayProps {

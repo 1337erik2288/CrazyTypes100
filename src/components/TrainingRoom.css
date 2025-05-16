@@ -1,0 +1,146 @@
+.training-room-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  height: calc(100vh - 40px); /* Учитываем padding */
+  box-sizing: border-box;
+  background-color: #e8f0fe; /* Светло-голубой фон */
+  position: relative;
+}
+
+.menu-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 10px 15px;
+  background-color: #4CAF50; /* Зеленый */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.menu-button:hover {
+  background-color: #45a049;
+}
+
+.training-room-container h2 {
+  color: #333;
+  margin-top: 40px; /* Отступ от кнопки меню */
+  margin-bottom: 30px;
+}
+
+.word-display-container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  margin-bottom: 25px;
+  min-width: 300px;
+  text-align: center;
+}
+
+.word-display {
+  font-size: 2.8em;
+  letter-spacing: 2px;
+  min-height: 60px; /* Для предотвращения скачков высоты */
+  display: inline-block; /* Чтобы контейнер облегал текст */
+}
+
+.char-display {
+  margin: 0 1px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.char-display.correct {
+  color: #28a745; /* Зеленый для правильных */
+  background-color: #e6ffe6;
+}
+
+.char-display.incorrect {
+  color: #dc3545; /* Красный для неправильных */
+  background-color: #ffe6e6;
+  text-decoration: underline;
+  text-decoration-color: #dc3545;
+}
+
+.char-display.current {
+  background-color: #cfe2ff; /* Голубоватый для текущего символа */
+  outline: 2px solid #007bff;
+}
+
+.text-input-field {
+  width: 80%;
+  max-width: 600px;
+  padding: 15px;
+  font-size: 1.2em;
+  margin-bottom: 20px;
+  border: 2px solid #007bff;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.text-input-field:focus {
+  outline: none;
+  border-color: #0056b3;
+  box-shadow: 0 0 5px rgba(0,123,255,0.5);
+}
+
+.next-word-button {
+  padding: 12px 25px;
+  font-size: 1.1em;
+  background-color: #007bff; /* Синий */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.next-word-button:hover {
+  background-color: #0056b3;
+}
+
+.virtual-keyboard {
+  margin-top: auto; /* Прижимает клавиатуру к низу, если есть место */
+  padding: 20px;
+  border-top: 2px solid #ccc;
+  background-color: #f8f9fa;
+  width: 100%;
+  max-width: 900px; /* Ограничение ширины клавиатуры */
+  box-sizing: border-box;
+  border-radius: 8px;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+}
+
+/* Дополнительные стили для самой виртуальной клавиатуры (клавиши, ряды, подсветка) 
+   нужно будет добавить в VirtualKeyboard.css или здесь, когда реализуете VirtualKeyboard */
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+
+.key {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px 15px;
+  margin: 2px;
+  font-size: 1em;
+  cursor: default; /* или pointer, если кликабельные */
+  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+.key.highlight {
+  background-color: #007bff;
+  color: white;
+  border-color: #0056b3;
+}

@@ -324,3 +324,87 @@
   background: #bdbdbd;
   cursor: not-allowed;
 }
+
+.level-select-container {
+  display: flex; /* Позволит разместить основной контент и карточку тренировки */
+  justify-content: center; /* Центрирование, если есть место */
+  gap: 20px; /* Пространство между списком уровней и карточкой тренировки */
+  padding: 20px;
+}
+
+.level-select {
+  /* Стили для основного блока выбора уровня, если он должен быть ограничен по ширине */
+  /* Например: max-width: 800px; */
+  /* flex-grow: 1; /* Позволит ему занимать доступное место, если карточка тренировки фиксированной ширины */
+}
+
+.levels-and-training-wrapper {
+  display: flex;
+  flex-direction: row; /* Располагаем список уровней и карточку тренировки в ряд */
+  align-items: flex-start; /* Выравниваем по верху */
+  gap: 20px; /* Пространство между ними */
+}
+
+.level-path-rect {
+  /* Существующие стили для списка уровней */
+  /* Возможно, потребуется ограничить его ширину или высоту, если он становится слишком большим */
+  /* max-width: 600px; */ /* Например */
+  /* flex-grow: 1; */ /* Чтобы занимал доступное место */
+}
+
+.training-room-card-rect {
+  background-color: #f0f8ff; /* AliceBlue, например, для отличия */
+  border: 2px solid #4a90e2; /* Синяя рамка */
+  border-radius: 10px;
+  padding: 20px;
+  width: 280px; /* Фиксированная ширина или по содержимому */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px; /* Пространство между элементами внутри карточки */
+}
+
+.training-room-card-rect .level-title {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: #333;
+}
+
+.training-room-card-rect .training-icon {
+  font-size: 3em; /* Размер иконки */
+  margin: 10px 0;
+}
+
+.training-room-card-rect .level-content {
+  font-size: 0.95em;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.training-room-card-rect .training-start-btn {
+  background-color: #5cb85c; /* Зеленый цвет для кнопки тренировки */
+  color: white;
+  width: 100%; /* Кнопка на всю ширину карточки */
+  padding: 12px 0;
+  font-size: 1.1em;
+}
+
+.training-room-card-rect .training-start-btn:hover {
+  background-color: #4cae4c;
+}
+
+/* Адаптивность: если экран узкий, можно расположить карточку тренировки под списком уровней */
+@media (max-width: 900px) { /* Подберите значение breakpoint */
+  .levels-and-training-wrapper {
+    flex-direction: column;
+    align-items: center; /* Центрируем карточки, когда они в колонке */
+  }
+
+  .training-room-card-rect {
+    width: 90%; /* Шире на маленьких экранах */
+    max-width: 400px; /* Но не слишком широко */
+    margin-top: 20px;
+  }
+}

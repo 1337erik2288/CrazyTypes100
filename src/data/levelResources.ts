@@ -12,7 +12,7 @@ export interface LevelResource {
 
 export const levelResources: LevelResource[] = [
   {
-    id: 1,
+    id: 1, // Убедитесь, что ID уникален, например, следующий по порядку
     name: 'Основы быстрого набора',
     description: 'Начальный уровень для освоения основ быстрого набора.',
     content: 'Комбинации клавиш',
@@ -145,7 +145,7 @@ export const levelResources: LevelResource[] = [
     }
   },
   {
-    id: 8,
+    id: 8, // Убедитесь, что ID уникален, например, следующий по порядку
     name: 'test',
     description: 'test',
     content: 'Фразы и сложные слова',
@@ -161,6 +161,26 @@ export const levelResources: LevelResource[] = [
       language: 'phrases',
       monsterDamage: 0,
       attackInterval: 3000
+    }
+  },
+  { // Новый уровень для тренировочной комнаты
+    id: 9, // Используйте следующий доступный ID
+    name: 'Тренировочная комната',
+    description: 'Обучение слепому набору текста и правильному расположению пальцев.',
+    content: 'Клавиатурный тренажер',
+    difficulty: 'Обучение', // Или любой другой подходящий
+    diffClass: 'training', // Можно добавить новый класс для стилизации карточки уровня
+    config: {
+      backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (4).jpg', // Подберите подходящий фон
+      monsterImage: '', // Монстр не нужен
+      initialHealth: 0, // Здоровье монстра не нужно
+      healAmount: 0,
+      regenerateAmount: 0,
+      healOnMistake: 0,
+      language: 'keyboard-training', // Уникальный идентификатор типа уровня
+      monsterDamage: 0, // Урон монстра не нужен
+      attackInterval: 0 // Интервал атаки не нужен
+      // Можно добавить специфичные для тренажера параметры, если нужно
     }
   }
 ];
