@@ -2,30 +2,95 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  min-height: 100vh;
   padding: 20px;
-  font-family: Arial, sans-serif;
-  height: calc(100vh - 40px); /* Учитываем padding */
   box-sizing: border-box;
-  background-color: #e8f0fe; /* Светло-голубой фон */
-  position: relative;
+  background-size: cover;
+  background-position: center;
+  color: #fff; /* Общий цвет текста, если фон темный */
 }
 
-.menu-button {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  padding: 10px 15px;
-  background-color: #4CAF50; /* Зеленый */
+.training-room-content {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Можно настроить этот отступ между всеми элементами */
+}
+
+.wpm-display {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  /* margin-bottom: 10px; */ /* Убрали, так как gap должен справиться, или можно вернуть, если нужно больше отступа */
+}
+
+.wpm-counter {
+  font-size: 1.5em; /* Немного уменьшим шрифт, если оба счетчика */
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: rgba(0,0,0,0.2);
+}
+
+.average-wpm {
+  color: #66BB6A; /* Зеленый для средней */
+}
+
+.current-wpm {
+  color: #4FC3F7; /* Голубой для текущей */
+}
+
+.text-display-area {
+  font-size: 2em; /* Можно настроить размер шрифта для слов */
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  min-height: 60px; /* Минимальная высота, чтобы не прыгало */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier New', Courier, monospace; /* Моноширинный шрифт для лучшего восприятия */
+}
+
+.text-display-area .correct-text {
+  color: #a5d6a7; /* Светло-зеленый для правильной части */
+}
+
+.text-display-area .incorrect-text {
+  color: #ef9a9a; /* Светло-красный для неправильной части */
+  text-decoration: underline;
+}
+
+.text-input-field {
+  width: 80%;
+  padding: 12px 15px;
+  font-size: 1.2em;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-bottom: 25px;
+  box-sizing: border-box;
+}
+
+.return-to-menu-btn {
+  padding: 12px 25px;
+  font-size: 1.1em;
   color: white;
+  background-color: #f44336; /* Красный */
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 1em;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: background-color 0.3s ease;
 }
 
-.menu-button:hover {
-  background-color: #45a049;
+.return-to-menu-btn:hover {
+  background-color: #d32f2f;
 }
 
 .training-room-container h2 {

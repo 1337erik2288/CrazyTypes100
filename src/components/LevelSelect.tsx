@@ -3,7 +3,7 @@ import './LevelSelect.css';
 import PlayerStats from './PlayerStats';
 import { PlayerProgress } from '../services/playerService'; // Импортируем обновленный тип
 import OverallStatsModal from './level_select/OverallStatsModal';
-import { getOverallStats } from '../services/overallStatsService';
+import { getOverallStats, OverallPlayerStats } from '../services/overallStatsService';
 import { useState } from 'react';
 import { levelResources } from '../data/levelResources'; // Убедитесь, что импорт есть
 import { GamePlayConfig } from './GamePlay'; // Если еще не импортирован
@@ -132,98 +132,85 @@ const levels: Level[] = [
 ];
 
 interface LevelSelectProps {
-  onLevelSelect: (config: GamePlayConfig, levelId: number) => void;
-  completedLevels: string[]; // Было number[]
+  onLevelSelect: (config: GamePlayConfig, levelId: number) => void; // GamePlayConfig используется здесь
+  completedLevels: string[];
   playerProgress: PlayerProgress;
   onOpenShop: () => void;
 }
 
-// Удаляем эту неиспользуемую переменную
-// const levelDescriptions: Record<number, { difficulty: string; content: string; diffClass: string }> = {
-//   1: { difficulty: 'Легко', content: 'Комбинации клавиш', diffClass: 'easy' },
-//   2: { difficulty: 'Легко', content: 'Простые слова', diffClass: 'easy' },
-//   3: { difficulty: 'Средне', content: 'Фразы и сложные слова', diffClass: 'medium' },
-//   4: { difficulty: 'Средне', content: 'Числа и математика', diffClass: 'medium' },
-//   5: { difficulty: 'Сложно', content: 'Кодовые строки', diffClass: 'hard' },
-//   6: { difficulty: 'Сложно', content: 'Сложные тексты', diffClass: 'hard' },
-//   7: { difficulty: 'Сложно', content: 'Смешанный режим', diffClass: 'hard' }
-// };
-
 const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevels, playerProgress, onOpenShop }) => {
   const [showStatsModal, setShowStatsModal] = useState<boolean>(false);
-  const [overallStats, setOverallStats] = useState<any | null>(null);
+  // Строка 143 (или около того, где возникает ошибка):
+  // Убедитесь, что здесь используется OverallPlayerStats, а не 'any'
+  const [overallStats, setOverallStats] = useState<OverallPlayerStats | null>(null);
 
-  // Отделяем тренировочную комнату от остальных уровней
   const trainingRoomLevel = levelResources.find(level => level.config.language === 'keyboard-training');
   const regularLevels = levelResources
     .filter(level => level.config.language !== 'keyboard-training')
     .sort((a, b) => a.id - b.id);
 
   return (
-    <div className="level-select-container"> {/* Общий контейнер для flex */}
-      <div className="level-select">
-        <h1>Выберите испытание</h1>
-        <PlayerStats playerProgress={playerProgress} onOpenShop={onOpenShop} />
-        <button
-          onClick={() => {
-            setOverallStats(getOverallStats());
-            setShowStatsModal(true);
-          }}
-          className="open-stats-btn"
-        >
-          Общая статистика
-        </button>
-        {showStatsModal && overallStats && (
-          <OverallStatsModal stats={overallStats} onClose={() => setShowStatsModal(false)} />
-        )}
-        <div className="levels-and-training-wrapper"> {/* Новый wrapper */}
-          <div className="level-path-rect">
-            {regularLevels.map((level) => { // Используем regularLevels
-              const isCompleted = completedLevels.includes(level.id.toString());
-              const stats = playerProgress.levelStats?.[level.id.toString()];
-              return (
-                <div key={level.id} className={`level-card-rect ${isCompleted ? 'completed' : ''}`}>
-                  <div className="level-title">{level.name}</div>
-                  <div className={`level-difficulty ${level.diffClass}`}>Сложность: <b>{level.difficulty}</b></div>
-                  <div className="level-content">Содержание: {level.content}</div>
-                  <div className="level-stats">
-                    {stats ? (
-                      <>
-                        <div>Скорость: <b>{stats.speed.toFixed(2)} зн./мин</b></div>
-                        <div>Точность: <b>{stats.accuracy.toFixed(2)}%</b></div>
-                      </>
-                    ) : (
-                      <div>Нет данных</div>
-                    )}
-                  </div>
-                  <button
-                    className="level-start-btn"
-                    onClick={() => onLevelSelect(level.config, level.id)}
-                    disabled={level.id > Math.max(...completedLevels.map(id => parseInt(id, 10)), 0) + 1 && completedLevels.length > 0 || (completedLevels.length === 0 && level.id > 1)}
-                  >
-                    {isCompleted ? 'Повторить' : 'Начать'}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
+    <div className="level-select">
+      <h1>Выберите испытание</h1>
 
-          {trainingRoomLevel && (
-            <div className="training-room-card-rect">
-              <div className="level-title">{trainingRoomLevel.name}</div>
-              {/* Можно добавить иконку или специальный значок */}
-              <div className="training-icon">🏋️</div> 
-              <div className="level-content">{trainingRoomLevel.description}</div>
-              {/* Статистика здесь не нужна */}
+      <div className="top-section-wrapper">
+        <PlayerStats playerProgress={playerProgress} onOpenShop={onOpenShop} />
+        {trainingRoomLevel && (
+          <div className="training-room-shortcut-card">
+            <div className="level-title">{trainingRoomLevel.name}</div>
+            <div className="training-icon-small">🏋️</div>
+            <div className="level-content-small">{trainingRoomLevel.description}</div>
+            <button
+              className="level-start-btn training-start-btn"
+              onClick={() => onLevelSelect(trainingRoomLevel.config, trainingRoomLevel.id)}
+            >
+              Тренироваться
+            </button>
+          </div>
+        )}
+      </div>
+
+      <button
+        onClick={() => {
+          setOverallStats(getOverallStats());
+          setShowStatsModal(true);
+        }}
+        className="open-stats-btn"
+      >
+        Общая статистика
+      </button>
+      {showStatsModal && overallStats && (
+        <OverallStatsModal stats={overallStats} onClose={() => setShowStatsModal(false)} />
+      )}
+      <div className="level-path-rect">
+        {regularLevels.map((level) => {
+          const isCompleted = completedLevels.includes(level.id.toString());
+          const stats = playerProgress.levelStats?.[level.id.toString()];
+          return (
+            <div key={level.id} className={`level-card-rect ${isCompleted ? 'completed' : ''}`}>
+              <div className="level-title">{level.name}</div>
+              <div className={`level-difficulty ${level.diffClass}`}>Сложность: <b>{level.difficulty}</b></div>
+              <div className="level-content">Содержание: {level.content}</div>
+              <div className="level-stats">
+                {stats ? (
+                  <>
+                    <div>Скорость: <b>{stats.speed.toFixed(2)} зн./мин</b></div>
+                    <div>Точность: <b>{stats.accuracy.toFixed(2)}%</b></div>
+                  </>
+                ) : (
+                  <div>Нет данных</div>
+                )}
+              </div>
               <button
-                className="level-start-btn training-start-btn"
-                onClick={() => onLevelSelect(trainingRoomLevel.config, trainingRoomLevel.id)}
+                className="level-start-btn"
+                onClick={() => onLevelSelect(level.config, level.id)}
+                disabled={level.id > Math.max(...completedLevels.map(id => parseInt(id, 10)), 0) + 1 && completedLevels.length > 0 || (completedLevels.length === 0 && level.id > 1)}
               >
-                Тренироваться
+                {isCompleted ? 'Повторить' : 'Начать'}
               </button>
             </div>
-          )}
-        </div>
+          );
+        })}
       </div>
     </div>
   );

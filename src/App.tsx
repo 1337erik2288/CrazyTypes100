@@ -5,6 +5,7 @@ import GamePlay, { GamePlayConfig, Language } from './components/GamePlay'
 import LevelSelect, { levels, Level } from './components/LevelSelect'
 import Shop from './components/Shop'
 import { getPlayerProgress, savePlayerProgress, addRewards, calculateLevelReward, PlayerProgress } from './services/playerService'
+import TrainingRoom from './components/TrainingRoom';
 
 const monsterImages = [
   '/src/image/monster/Cartoon Monster Design 3.png',
@@ -23,7 +24,7 @@ const backgroundImages = [
 ]
 
 function App() {
-  const [currentScreen, setCurrentScreen] = useState<'levelSelect' | 'playing' | 'shop'>('levelSelect');
+  const [currentScreen, setCurrentScreen] = useState<'levelSelect' | 'playing' | 'shop' | 'trainingRoom'>('levelSelect'); // ИЗМЕНЕНО: добавлен 'trainingRoom'
   const [playerProgress, setPlayerProgress] = useState<PlayerProgress>(getPlayerProgress());
   const [currentLevelId, setCurrentLevelId] = useState<number | null>(null);
   const [currentRewards, setCurrentRewards] = useState<{ experience: number; gold: number } | null>(null);
@@ -50,15 +51,13 @@ function App() {
 
   const handleLevelSelect = (config: GamePlayConfig, levelId: number) => {
     const selectedLevel = levels.find(level => level.id === levelId) || null;
-    setGameConfig(config);
+    setGameConfig(prevConfig => ({ ...prevConfig, ...config })); // Объединяем конфиги
     setCurrentLevelId(levelId);
     setCurrentLevel(selectedLevel);
     
-    // Check if this level is being played for the first time
-    const isFirstTime = !playerProgress.completedLevels.includes(levelId.toString()); // Changed: levelId to levelId.toString()
+    const isFirstTime = !playerProgress.completedLevels.includes(levelId.toString());
     setIsFirstCompletion(isFirstTime);
     
-    // Calculate potential rewards if this is the first completion
     if (isFirstTime && selectedLevel) {
       const rewards = calculateLevelReward(selectedLevel);
       setCurrentRewards(rewards);
@@ -66,11 +65,16 @@ function App() {
       setCurrentRewards(null);
     }
     
-    setCurrentScreen('playing');
+    // ИЗМЕНЕНО: Логика выбора экрана
+    if (config.language === 'keyboard-training') { // Предполагаем, что у тренировочной комнаты такой язык в конфиге
+      setCurrentScreen('trainingRoom');
+    } else {
+      setCurrentScreen('playing');
+    }
   };
 
   const handleReturnToMenu = () => {
-    setPlayerProgress(getPlayerProgress()); // обновить прогресс из localStorage
+    setPlayerProgress(getPlayerProgress());
     setCurrentScreen('levelSelect');
   };
   
@@ -120,7 +124,7 @@ function App() {
             onLevelComplete={handleLevelComplete}
             rewards={currentRewards || undefined}
             isFirstCompletion={isFirstCompletion}
-            levelId={currentLevelId} // Pass currentLevelId to GamePlay
+            levelId={currentLevelId}
           />
         );
       case 'shop':
@@ -129,6 +133,13 @@ function App() {
             playerProgress={playerProgress}
             onReturnToMenu={handleReturnToMenu}
             onEquipmentPurchased={handleEquipmentPurchased}
+          />
+        );
+      case 'trainingRoom': // ДОБАВЛЕНО: случай для тренировочной комнаты
+        return (
+          <TrainingRoom
+            onReturnToMenu={handleReturnToMenu}
+            config={gameConfig} // Передаем текущий gameConfig
           />
         );
       case 'levelSelect':

@@ -1,113 +1,249 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import './TrainingRoom.css'; // Стили будут созданы ниже
-
-// Заглушка для компонента виртуальной клавиатуры
-// Вам нужно будет создать этот компонент или использовать готовую библиотеку
-// Props:
-// - highlightedKey: string | null - символ клавиши для подсветки
-// - fingerPlacement: any - данные для отображения правильного расположения пальцев (если реализуете)
-const VirtualKeyboard: React.FC<{ highlightedKey: string | null; fingerPlacement: any }> = ({ highlightedKey }) => {
-  // Этот компонент будет отображать клавиатуру, подсвечивать клавиши
-  // и, возможно, показывать правильное расположение пальцев.
-  return (
-    <div className="virtual-keyboard">
-      <p style={{ textAlign: 'center', fontStyle: 'italic', color: '#777' }}>
-        (Здесь будет виртуальная клавиатура)
-      </p>
-      {highlightedKey && <p style={{ textAlign: 'center', fontWeight: 'bold' }}>Нажмите: {highlightedKey.toUpperCase()}</p>}
-      {/* 
-        Примерная структура для ряда клавиш:
-        <div className="keyboard-row">
-          <div className={`key ${highlightedKey === 'q' ? 'highlight' : ''}`}>Q</div>
-          // ... другие клавиши
-        </div>
-      */}
-    </div>
-  );
-};
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { getAdditionalWords } from '../services/wordsService';
+import { GamePlayConfig } from './GamePlay';
+import './TrainingRoom.css';
 
 interface TrainingRoomProps {
   onReturnToMenu: () => void;
-  // Можно добавить другие props, если они понадобятся из конфига уровня
+  config: GamePlayConfig;
 }
 
-const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu }) => {
-  const [currentWord, setCurrentWord] = useState<string>("");
-  const [userInput, setUserInput] = useState<string>("");
-  const [nextKeyToPress, setNextKeyToPress] = useState<string | null>(null);
-  // TODO: Добавить состояние для информации о расположении пальцев, если будете реализовывать
+const ROLLING_WINDOW_SECONDS = 3; // Определяет, за сколько последних секунд усредняется текущая WPM
 
-  const wordsToPractice = ["привет", "мир", "клавиатура", "тренировка", "скорость", "набор", "текст", "пальцы", "обучение"];
+const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) => {
+  const [words, setWords] = useState<string[]>([]);
+  const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
+  const [userInput, setUserInput] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const loadNewWord = useCallback(() => {
-    const randomIndex = Math.floor(Math.random() * wordsToPractice.length);
-    setCurrentWord(wordsToPractice[randomIndex]);
-    setUserInput("");
-  }, [wordsToPractice]); // wordsToPractice можно вынести в константы вне компонента, если они не меняются
+  // Для средней скорости за сессию
+  const [averageWpm, setAverageWpm] = useState<number>(0);
+  const totalCorrectCharsInSessionRef = useRef<number>(0);
+  const sessionStartTimeRef = useRef<number>(Date.now());
 
+  // Для текущей (мгновенной) скорости на основе скользящего окна
+  const [currentWpm, setCurrentWpm] = useState<number>(0);
+  const charsInLastSecondForRollingWpmRef = useRef<number>(0); // Символы, набранные за последнюю секунду для скользящего окна
+  const charHistoryForRollingWpmRef = useRef<number[]>([]); // История количества символов за последние ROLLING_WINDOW_SECONDS
+
+  const currentTextToType = words[currentWordIndex] || '';
+
+  // Расчет средней WPM за сессию (обновляется каждую секунду)
   useEffect(() => {
-    loadNewWord(); // Загружаем первое слово при монтировании компонента
-  }, [loadNewWord]);
+    const intervalId = setInterval(() => {
+      const currentTime = Date.now();
+      const elapsedMilliseconds = currentTime - sessionStartTimeRef.current;
+      
+      if (elapsedMilliseconds <= 0 || totalCorrectCharsInSessionRef.current === 0) {
+        setAverageWpm(0);
+        return;
+      }
+      const elapsedSeconds = elapsedMilliseconds / 1000;
+      const calculatedAverageWpm = (totalCorrectCharsInSessionRef.current * 12) / elapsedSeconds;
+      setAverageWpm(Math.round(calculatedAverageWpm * 10) / 10); // Округление до десятых
+    }, 1000);
 
+    return () => clearInterval(intervalId);
+  }, []);
+
+  // Расчет текущей (мгновенной) WPM на основе скользящего окна (обновляется каждую секунду)
   useEffect(() => {
-    if (userInput.length < currentWord.length) {
-      setNextKeyToPress(currentWord[userInput.length]);
-    } else {
-      setNextKeyToPress(null);
+    const intervalId = setInterval(() => {
+      const newCharsThisTick = charsInLastSecondForRollingWpmRef.current;
+      
+      // Добавляем количество символов за последнюю секунду в историю
+      charHistoryForRollingWpmRef.current.push(newCharsThisTick);
+      
+      // Поддерживаем размер окна
+      if (charHistoryForRollingWpmRef.current.length > ROLLING_WINDOW_SECONDS) {
+        charHistoryForRollingWpmRef.current.shift(); // Удаляем самый старый элемент
+      }
+      
+      const totalCharsInWindow = charHistoryForRollingWpmRef.current.reduce((sum, count) => sum + count, 0);
+      const effectiveSecondsInWindow = charHistoryForRollingWpmRef.current.length;
+
+      if (effectiveSecondsInWindow === 0 || totalCharsInWindow === 0) {
+        setCurrentWpm(0);
+      } else {
+        // WPM = (Total Chars in Window / 5) / (Effective Seconds in Window / 60)
+        // WPM = (totalCharsInWindow * 12) / effectiveSecondsInWindow
+        const calculatedCurrentWpm = (totalCharsInWindow * 12) / effectiveSecondsInWindow;
+        setCurrentWpm(Math.round(calculatedCurrentWpm * 10) / 10); // Округление до десятых
+      }
+      
+      // Сбрасываем счетчик символов для следующей секунды
+      charsInLastSecondForRollingWpmRef.current = 0;
+
+    }, 1000); // Обновляем текущую WPM каждую секунду
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+
+  const fetchWords = useCallback(async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+    try {
+      const newWords = await getAdditionalWords('keyboard-training');
+      setWords(prevWords => [...prevWords, ...newWords.filter(nw => !prevWords.includes(nw))]); // Добавляем только новые слова
+    } catch (error) {
+      console.error("Failed to fetch words for training room:", error);
+      if (words.length === 0) { // Добавляем слова по умолчанию, если первоначальная загрузка не удалась
+        setWords(["ошибка", "загрузки", "слов", "попробуйте", "позже"]);
+      }
+    } finally {
+      setIsLoading(false);
     }
-  }, [currentWord, userInput]);
+  }, [isLoading, words.length]);
+
+  useEffect(() => {
+    fetchWords();
+    inputRef.current?.focus();
+    // Сброс счетчиков и времени при монтировании/перезаходе
+    sessionStartTimeRef.current = Date.now();
+    totalCorrectCharsInSessionRef.current = 0;
+    
+    charsInLastSecondForRollingWpmRef.current = 0;
+    charHistoryForRollingWpmRef.current = []; // Очищаем историю
+    
+    setAverageWpm(0);
+    setCurrentWpm(0);
+  }, []); // fetchWords будет вызван один раз при монтировании, т.к. его зависимости (isLoading, words.length) не меняются от этого useEffect
+
+  useEffect(() => {
+    if (words.length > 0 && currentWordIndex >= words.length - 3 && !isLoading) {
+      fetchWords();
+    }
+  }, [currentWordIndex, words.length, fetchWords, isLoading]);
+
+  const advanceToNextWord = useCallback(() => {
+    setUserInput('');
+    setCurrentWordIndex(prevIndex => prevIndex + 1);
+    inputRef.current?.focus();
+  }, [setCurrentWordIndex, setUserInput]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const typedValue = event.target.value;
-    setUserInput(typedValue);
+    const newValue = event.target.value;
+    const prevValue = userInput;
 
-    // Проверка на полное совпадение слова для автоматического перехода или кнопки "Далее"
-    if (typedValue === currentWord && currentWord.length > 0) {
-      // Можно автоматически загружать новое слово или показать кнопку "Далее"
-      // loadNewWord(); // Например, авто-переход
+    if (currentTextToType && newValue.length > prevValue.length) {
+      const typedCharIndex = newValue.length - 1;
+      if (typedCharIndex < currentTextToType.length && newValue[typedCharIndex] === currentTextToType[typedCharIndex]) {
+        totalCorrectCharsInSessionRef.current += 1; 
+        charsInLastSecondForRollingWpmRef.current += 1; // Считаем символы для текущего секундного тика
+      }
+    }
+
+    setUserInput(newValue);
+
+    if (currentTextToType && newValue === currentTextToType) {
+      advanceToNextWord();
     }
   };
 
-  return (
-    <div className="training-room-container">
-      <button onClick={onReturnToMenu} className="menu-button">Вернуться в меню</button>
-      <h2>Тренировка набора текста</h2>
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault(); // Предотвращаем стандартное поведение (например, пробел не должен вводиться, если слово уже завершено)
       
-      <div className="word-display-container">
-        <div className="word-display">
-          {currentWord.split('').map((char, index) => (
-            <span
-              key={index}
-              className={`
-                char-display
-                ${index < userInput.length && userInput[index] === char ? 'correct' : ''}
-                ${index < userInput.length && userInput[index] !== char ? 'incorrect' : ''}
-                ${index === userInput.length && currentWord.length > 0 ? 'current' : ''}
-              `}
-            >
-              {char}
-            </span>
-          ))}
+      // Если пользователь нажал пробел/Enter, а слово введено неверно или не до конца
+      if (currentTextToType && userInput.trim() !== '' && userInput.trim() !== currentTextToType.trim()) {
+        console.log("Попытка перейти (пробел/Enter) при неверном вводе.");
+        // Здесь можно добавить логику для обработки такой ситуации, например, встряхивание поля ввода или очистку.
+        // setUserInput(''); // Например, очистить поле при ошибке и нажатии пробела
+      }
+      // Если слово уже было правильно введено, advanceToNextWord уже был вызван из handleInputChange.
+      // Дополнительных действий здесь не требуется.
+    }
+  };
+  
+  const getHighlightedText = () => {
+    let correctPart = '';
+    let incorrectPart = '';
+    let remainingPart = currentTextToType;
+
+    for (let i = 0; i < currentTextToType.length; i++) {
+      if (i < userInput.length) {
+        if (userInput[i] === currentTextToType[i]) {
+          correctPart += currentTextToType[i];
+        } else {
+          incorrectPart = currentTextToType.substring(i);
+          break;
+        }
+      } else {
+        remainingPart = currentTextToType.substring(i);
+        break;
+      }
+    }
+    
+    // Эта часть логики обрабатывает случай, когда пользователь ввел больше символов, чем в целевом слове
+    let trailingIncorrectInput = '';
+    if (userInput.length > currentTextToType.length && correctPart === currentTextToType) {
+      trailingIncorrectInput = userInput.substring(currentTextToType.length);
+      incorrectPart = ''; // Если все целевое слово введено верно, то оно не может быть "неправильной частью"
+      remainingPart = '';
+    } else if (userInput.length > correctPart.length && correctPart.length < currentTextToType.length) {
+      // Пользователь начал делать ошибки до конца слова или ввел больше символов с ошибками
+      const userTypedAfterCorrect = userInput.substring(correctPart.length);
+      const remainingTargetAfterCorrect = currentTextToType.substring(correctPart.length);
+      let commonLength = Math.min(userTypedAfterCorrect.length, remainingTargetAfterCorrect.length);
+      let displayIncorrectTarget = '';
+      for(let i=0; i < commonLength; i++) {
+        if(userTypedAfterCorrect[i] !== remainingTargetAfterCorrect[i]) {
+           displayIncorrectTarget += remainingTargetAfterCorrect[i];
+        } else {
+           // This case is tricky, means user typed correctly into what should be incorrect part
+           // For simplicity, we might just show the target's incorrect part
+           displayIncorrectTarget += remainingTargetAfterCorrect[i];
+        }
+      }
+      incorrectPart = displayIncorrectTarget + remainingTargetAfterCorrect.substring(commonLength);
+      remainingPart = ''; // Все, что дальше - это либо часть incorrectPart, либо уже нерелевантно
+      if(userTypedAfterCorrect.length > remainingTargetAfterCorrect.length) {
+        trailingIncorrectInput = userTypedAfterCorrect.substring(remainingTargetAfterCorrect.length);
+      }
+    }
+
+
+    return (
+      <>
+        <span className="correct-text">{correctPart}</span>
+        {/* Отображаем красным ту часть целевого слова, где ошибка, ИЛИ лишние введенные символы */}
+        <span className="incorrect-text">{incorrectPart || trailingIncorrectInput}</span>
+        <span>{remainingPart}</span>
+      </>
+    );
+  };
+
+
+  return (
+    <div className="training-room-container" style={{ backgroundImage: `url(${config.backgroundImage})` }}>
+      <div className="training-room-content">
+        <div className="wpm-display">
+          <div className="wpm-counter average-wpm">
+            Средняя: {averageWpm.toFixed(1)} WPM 
+          </div>
+          <div className="wpm-counter current-wpm">
+            Текущая: {currentWpm.toFixed(1)} WPM
+          </div>
         </div>
+        <div className="text-display-area">
+          {isLoading && words.length === 0 ? <p>Загрузка слов...</p> : getHighlightedText()}
+        </div>
+        <input
+          ref={inputRef}
+          type="text"
+          value={userInput}
+          onChange={handleInputChange}
+          onKeyPress={handleKeyPress}
+          className="text-input-field"
+          placeholder="Начните печатать здесь..."
+          autoFocus
+        />
+        <button onClick={onReturnToMenu} className="return-to-menu-btn">
+          Выход в меню
+        </button>
       </div>
-
-      <input
-        type="text"
-        value={userInput}
-        onChange={handleInputChange}
-        className="text-input-field"
-        placeholder="Начните печатать здесь..."
-        autoFocus
-      />
-
-      {userInput.length === currentWord.length && userInput === currentWord && currentWord.length > 0 && (
-        <button onClick={loadNewWord} className="next-word-button">Следующее слово</button>
-      )}
-
-      <VirtualKeyboard 
-        highlightedKey={nextKeyToPress} 
-        fingerPlacement={null /* Передайте сюда данные о расположении пальцев */} 
-      />
     </div>
   );
 };

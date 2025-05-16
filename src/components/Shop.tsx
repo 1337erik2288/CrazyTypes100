@@ -9,8 +9,8 @@ import Casino from './Secret';
 import './Secret.css';
 import './Shop.css';
 
-interface ShopProps {
-  // playerProgress: PlayerProgress; // Удалено, так как не используется напрямую
+export interface ShopProps { // Убедитесь, что интерфейс экспортируется, если он используется в App.tsx напрямую
+  playerProgress: PlayerProgress; // <--- ДОБАВЬТЕ ИЛИ УБЕДИТЕСЬ, ЧТО ЭТА СТРОКА ЕСТЬ
   onReturnToMenu: () => void;
   onEquipmentPurchased: (updatedProgress: PlayerProgress) => void;
 }
