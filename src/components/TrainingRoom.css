@@ -68,6 +68,14 @@
   text-decoration: underline;
 }
 
+.text-display-area .current-char {
+  background-color: #fff; /* Белый фон для текущего символа */
+  color: #000; /* Черный текст для текущего символа */
+  padding: 0 2px;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
 .text-input-field {
   width: 80%;
   padding: 12px 15px;
@@ -208,4 +216,114 @@
   background-color: #007bff;
   color: white;
   border-color: #0056b3;
+}
+
+.training-room-input {
+  width: 80%;
+  padding: 12px;
+  font-size: 1.5em;
+  border-radius: 5px;
+  border: 2px solid #ddd;
+  text-align: center;
+  font-family: 'Courier New', Courier, monospace;
+  align-self: center;
+}
+
+/* === Стили для контейнера react-simple-keyboard === */
+.simple-keyboard-container {
+  width: 100%; 
+  max-width: 900px; 
+  min-height: 250px; 
+  padding: 15px; 
+  background-color: #ffffff; /* Белый фон для контейнера клавиатуры */
+  border: 2px solid #cccccc; 
+  border-radius: 8px; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+  box-sizing: border-box; 
+  margin-top: 20px; 
+  margin-bottom: 20px; 
+}
+
+/* Адаптация самой клавиатуры (библиотека simple-keyboard) */
+.simple-keyboard {
+  width: 100% !important; 
+  height: auto !important; 
+  font-size: 1em; 
+  background-color: transparent !important; /* Убедимся, что фон самой клавиатуры не мешает */
+}
+
+.simple-keyboard .hg-button {
+  height: 50px; 
+  background-color: #f0f0f0 !important; /* Светло-серый фон для обычных клавиш, делаем приоритетным */
+  color: #000000 !important; /* Черный цвет для букв, уже был приоритетным */
+  border: 1px solid #b0b0b0 !important; /* Граница для разделения клавиш, делаем приоритетной */
+  border-radius: 4px !important; /* Скругление углов, делаем приоритетным */
+  box-shadow: 0 1px 1px rgba(0,0,0,0.1) !important; /* Легкая тень для объема, делаем приоритетной */
+  display: inline-flex !important; /* Используем flex для центрирования содержимого клавиши */
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 5px !important; /* Добавим внутренний отступ для текста */
+  box-sizing: border-box !important; /* Чтобы padding не влиял на общую высоту */
+}
+
+/* Убираем фон для специальных функциональных кнопок, чтобы они могли использовать иконки или другой текст */
+.simple-keyboard .hg-button.hg-functionBtn {
+    /* background-color: #d0d0d0 !important; /* Можно сделать их немного темнее, если нужно */
+}
+
+/* Стили для отображения текста на клавишах (если он есть) */
+.simple-keyboard .hg-button span {
+  color: #000000 !important; /* Убедимся, что текст внутри span тоже черный */
+}
+
+
+/* Подсветка следующей клавиши */
+.simple-keyboard .hg-button.next-key-highlight {
+  background-color: #4caf50 !important; /* Зеленый фон для подсветки */
+  color: white !important; /* Белый текст на подсвеченной клавише */
+  border-color: #388e3c !important; /* Более темная граница для подсвеченной клавиши */
+}
+
+/* Адаптивность для меньших экранов */
+@media (max-width: 768px) {
+  .training-room-content {
+    padding: 15px;
+    gap: 10px;
+  }
+  .simple-keyboard-container {
+    padding: 10px;
+    min-height: 200px; /* Немного уменьшаем минимальную высоту на маленьких экранах */
+  }
+  .simple-keyboard .hg-button {
+    height: 45px; /* Немного уменьшаем высоту клавиш */
+    font-size: 0.9em; /* Уменьшаем шрифт на клавишах */
+  }
+  .text-display-area {
+    font-size: 1.3em;
+    min-height: 50px;
+  }
+  .text-input-field {
+    font-size: 1.1em;
+    padding: 10px;
+  }
+  .wpm-display {
+    font-size: 1em;
+    flex-direction: column; /* WPM счетчики друг под другом */
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .simple-keyboard .hg-button {
+    height: 40px; /* Еще немного уменьшаем высоту клавиш */
+    font-size: 0.8em; /* И шрифт */
+  }
+  .text-display-area {
+    font-size: 1.1em;
+  }
+  .return-to-menu-btn {
+    padding: 10px 20px;
+    font-size: 0.9em;
+  }
 }

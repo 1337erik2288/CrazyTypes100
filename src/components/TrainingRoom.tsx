@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import Keyboard from 'simple-keyboard'; // Импортируем клавиатуру
+import 'simple-keyboard/build/css/index.css'; // Импортируем стили клавиатуры
 import { getAdditionalWords } from '../services/wordsService';
 import { GamePlayConfig } from './GamePlay';
 import './TrainingRoom.css';
@@ -8,7 +10,47 @@ interface TrainingRoomProps {
   config: GamePlayConfig;
 }
 
-const ROLLING_WINDOW_SECONDS = 3; // Определяет, за сколько последних секунд усредняется текущая WPM
+const ROLLING_WINDOW_SECONDS = 3;
+
+// Определение раскладки и атрибутов для цветовой разметки пальцев
+const keyboardLayout = {
+  default: [
+    "` 1 2 3 4 5 6 7 8 9 0 - = {bksp}",
+    "{tab} q w e r t y u i o p [ ] \\",
+    "{lock} a s d f g h j k l ; ' {enter}",
+    "{shiftleft} z x c v b n m , . / {shiftright}",
+    "{controlleft} {altleft} {space} {altright} {controlright}"
+  ],
+  shift: [
+    "~ ! @ # $ % ^ & * ( ) _ + {bksp}",
+    "{tab} Q W E R T Y U I O P { } |",
+    "{lock} A S D F G H J K L : \" {enter}",
+    "{shiftleft} Z X C V B N M < > ? {shiftright}",
+    "{controlleft} {altleft} {space} {altright} {controlright}"
+  ]
+};
+
+const keyboardButtonAttributes = [
+  // Левая рука
+  { attribute: "data-finger", value: "pinky-left", buttons: "` 1 q a z {tab} {lock} {shiftleft} {controlleft}" },
+  { attribute: "data-finger", value: "ring-left", buttons: "2 w s x" },
+  { attribute: "data-finger", value: "middle-left", buttons: "3 e d c" },
+  { attribute: "data-finger", value: "index-left", buttons: "4 r f v 5 t g b" },
+  // Правая рука
+  { attribute: "data-finger", value: "index-right", buttons: "6 y h n 7 u j m" },
+  { attribute: "data-finger", value: "middle-right", buttons: "8 i k ," },
+  { attribute: "data-finger", value: "ring-right", buttons: "9 o l ." },
+  { attribute: "data-finger", value: "pinky-right", buttons: "0 p ; / - = [ ] ' \\ {bksp} {enter} {shiftright} {altright} {controlright}" },
+  // Большие пальцы
+  { attribute: "data-finger", value: "thumb", buttons: "{space} {altleft}" }
+];
+
+const charToButtonMap: { [key: string]: string } = {
+  ' ': '{space}',
+  '\n': '{enter}',
+  '\t': '{tab}'
+};
+
 
 const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) => {
   const [words, setWords] = useState<string[]>([]);
@@ -24,8 +66,12 @@ const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) =
 
   // Для текущей (мгновенной) скорости на основе скользящего окна
   const [currentWpm, setCurrentWpm] = useState<number>(0);
-  const charsInLastSecondForRollingWpmRef = useRef<number>(0); // Символы, набранные за последнюю секунду для скользящего окна
-  const charHistoryForRollingWpmRef = useRef<number[]>([]); // История количества символов за последние ROLLING_WINDOW_SECONDS
+  const charsInLastSecondForRollingWpmRef = useRef<number>(0);
+  const charHistoryForRollingWpmRef = useRef<number[]>([]);
+
+  const keyboardRef = useRef<Keyboard | null>(null);
+  const keyboardContainerRef = useRef<HTMLDivElement>(null);
+  const highlightedNextKeyRef = useRef<string | null>(null);
 
   const currentTextToType = words[currentWordIndex] || '';
 
@@ -51,15 +97,10 @@ const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) =
   useEffect(() => {
     const intervalId = setInterval(() => {
       const newCharsThisTick = charsInLastSecondForRollingWpmRef.current;
-      
-      // Добавляем количество символов за последнюю секунду в историю
       charHistoryForRollingWpmRef.current.push(newCharsThisTick);
-      
-      // Поддерживаем размер окна
       if (charHistoryForRollingWpmRef.current.length > ROLLING_WINDOW_SECONDS) {
-        charHistoryForRollingWpmRef.current.shift(); // Удаляем самый старый элемент
+        charHistoryForRollingWpmRef.current.shift();
       }
-      
       const totalCharsInWindow = charHistoryForRollingWpmRef.current.reduce((sum, count) => sum + count, 0);
       const effectiveSecondsInWindow = charHistoryForRollingWpmRef.current.length;
 
@@ -157,59 +198,123 @@ const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) =
     }
   };
   
+  // Инициализация клавиатуры
+  useEffect(() => {
+    const currentContainer = keyboardContainerRef.current;
+    if (currentContainer && !keyboardRef.current) {
+      const options = {
+        layout: keyboardLayout, // Используется
+        buttonAttributes: keyboardButtonAttributes, // Используется
+        theme: "hg-theme-default hg-layout-default",
+        debug: false,
+        display: {
+          "{bksp}": "⌫",
+          "{enter}": "⏎",
+          "{tab}": "⇥",
+          "{shiftleft}": "⇧",
+          "{shiftright}": "⇧",
+          "{lock}": "⇪",
+          "{space}": "␣",
+          '{controlleft}': 'Ctrl',
+          '{controlright}': 'Ctrl',
+          '{altleft}': 'Alt',
+          '{altright}': 'Alt',
+        },
+      };
+      const keyboard = new Keyboard(currentContainer, options);
+      keyboardRef.current = keyboard; // Используется
+    }
+
+    return () => {
+      keyboardRef.current?.destroy();
+      keyboardRef.current = null;
+    };
+  }, []); // Пустой массив зависимостей, чтобы выполнилось один раз при монтировании
+
+  // Обновление клавиатуры: отображение ввода и подсветка следующей клавиши
+  useEffect(() => {
+    if (keyboardRef.current) {
+      const currentKbd = keyboardRef.current;
+
+      // 1. Отображение текущего ввода пользователя на виртуальной клавиатуре
+      currentKbd.setInput(userInput);
+
+      // 2. Логика подсветки следующей клавиши
+      const nextCharIndex = userInput.length;
+      let nextButtonToHighlight: string | null = null;
+
+      if (nextCharIndex < currentTextToType.length) {
+        const nextChar = currentTextToType[nextCharIndex];
+        // Используем charToButtonMap для спецсимволов, иначе сам символ
+        nextButtonToHighlight = charToButtonMap[nextChar] || nextChar; // charToButtonMap используется
+      }
+
+      // Снять подсветку с предыдущей клавиши
+      if (highlightedNextKeyRef.current && highlightedNextKeyRef.current !== nextButtonToHighlight) {
+        currentKbd.removeButtonTheme(highlightedNextKeyRef.current, "next-key-highlight");
+      }
+
+      // Подсветить новую следующую клавишу
+      if (nextButtonToHighlight && nextButtonToHighlight !== highlightedNextKeyRef.current) {
+        currentKbd.addButtonTheme(nextButtonToHighlight, "next-key-highlight");
+        highlightedNextKeyRef.current = nextButtonToHighlight; // highlightedNextKeyRef используется
+      } else if (!nextButtonToHighlight && highlightedNextKeyRef.current) {
+        // Если нет следующей клавиши для подсветки, убираем подсветку
+        currentKbd.removeButtonTheme(highlightedNextKeyRef.current, "next-key-highlight");
+        highlightedNextKeyRef.current = null;
+      }
+    }
+  }, [userInput, currentTextToType, words]); // Зависимости для обновления
+
   const getHighlightedText = () => {
     let correctPart = '';
     let incorrectPart = '';
-    let remainingPart = currentTextToType;
+    let trailingIncorrectInput = '';
+    let remainingPart = '';
 
-    for (let i = 0; i < currentTextToType.length; i++) {
-      if (i < userInput.length) {
-        if (userInput[i] === currentTextToType[i]) {
-          correctPart += currentTextToType[i];
+    const target = currentTextToType;
+    const input = userInput;
+
+    for (let i = 0; i < target.length; i++) {
+      if (i < input.length) {
+        if (input[i] === target[i]) {
+          correctPart += target[i];
         } else {
-          incorrectPart = currentTextToType.substring(i);
+          incorrectPart = target.substring(i);
           break;
         }
       } else {
-        remainingPart = currentTextToType.substring(i);
+        remainingPart = target.substring(i);
         break;
       }
     }
-    
-    // Эта часть логики обрабатывает случай, когда пользователь ввел больше символов, чем в целевом слове
-    let trailingIncorrectInput = '';
-    if (userInput.length > currentTextToType.length && correctPart === currentTextToType) {
-      trailingIncorrectInput = userInput.substring(currentTextToType.length);
-      incorrectPart = ''; // Если все целевое слово введено верно, то оно не может быть "неправильной частью"
-      remainingPart = '';
-    } else if (userInput.length > correctPart.length && correctPart.length < currentTextToType.length) {
-      // Пользователь начал делать ошибки до конца слова или ввел больше символов с ошибками
-      const userTypedAfterCorrect = userInput.substring(correctPart.length);
-      const remainingTargetAfterCorrect = currentTextToType.substring(correctPart.length);
-      let commonLength = Math.min(userTypedAfterCorrect.length, remainingTargetAfterCorrect.length);
-      let displayIncorrectTarget = '';
-      for(let i=0; i < commonLength; i++) {
-        if(userTypedAfterCorrect[i] !== remainingTargetAfterCorrect[i]) {
-           displayIncorrectTarget += remainingTargetAfterCorrect[i];
-        } else {
-           // This case is tricky, means user typed correctly into what should be incorrect part
-           // For simplicity, we might just show the target's incorrect part
-           displayIncorrectTarget += remainingTargetAfterCorrect[i];
-        }
-      }
-      incorrectPart = displayIncorrectTarget + remainingTargetAfterCorrect.substring(commonLength);
-      remainingPart = ''; // Все, что дальше - это либо часть incorrectPart, либо уже нерелевантно
-      if(userTypedAfterCorrect.length > remainingTargetAfterCorrect.length) {
-        trailingIncorrectInput = userTypedAfterCorrect.substring(remainingTargetAfterCorrect.length);
-      }
-    }
 
+    if (input.length > target.length && correctPart === target) {
+      trailingIncorrectInput = input.substring(target.length);
+      incorrectPart = '';
+      remainingPart = '';
+    } else if (input.length > correctPart.length && correctPart.length < target.length) {
+      const afterCorrectInput = input.substring(correctPart.length);
+      const afterCorrectTarget = target.substring(correctPart.length);
+
+      incorrectPart = ''; // Переинициализация для построения заново
+      const commonLength = Math.min(afterCorrectInput.length, afterCorrectTarget.length);
+      for (let i = 0; i < commonLength; i++) {
+        incorrectPart += afterCorrectTarget[i];
+      }
+      incorrectPart += afterCorrectTarget.substring(commonLength); // Добавляем остальную часть некорректной части цели
+
+      if (afterCorrectInput.length > afterCorrectTarget.length) {
+        trailingIncorrectInput = afterCorrectInput.substring(afterCorrectTarget.length);
+      }
+
+      remainingPart = '';
+    }
 
     return (
       <>
         <span className="correct-text">{correctPart}</span>
-        {/* Отображаем красным ту часть целевого слова, где ошибка, ИЛИ лишние введенные символы */}
-        <span className="incorrect-text">{incorrectPart || trailingIncorrectInput}</span>
+        <span className="incorrect-text">{incorrectPart + trailingIncorrectInput}</span>
         <span>{remainingPart}</span>
       </>
     );
@@ -227,23 +332,29 @@ const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) =
             Текущая: {currentWpm.toFixed(1)} WPM
           </div>
         </div>
-        <div className="text-display-area">
-          {isLoading && words.length === 0 ? <p>Загрузка слов...</p> : getHighlightedText()}
-        </div>
+        {/* Поле ввода текста */}
         <input
           ref={inputRef}
           type="text"
           value={userInput}
           onChange={handleInputChange}
           onKeyPress={handleKeyPress}
-          className="text-input-field"
+          className="text-input-field" // У вас здесь "text-input-field", ранее мы использовали "training-room-input"
           placeholder="Начните печатать здесь..."
           autoFocus
+          // disabled={isLoading && words.length === 0} // Раскомментируйте, если нужно
         />
+        {/* Область отображения текста для набора */}
+        <div className="text-display-area">
+          {isLoading && words.length === 0 ? <p>Загрузка слов...</p> : getHighlightedText()}
+        </div>
+
         <button onClick={onReturnToMenu} className="return-to-menu-btn">
           Выход в меню
         </button>
       </div>
+      {/* Контейнер для клавиатуры должен быть здесь, как отдельный дочерний элемент training-room-container */}
+      <div ref={keyboardContainerRef} className="simple-keyboard-container"></div>
     </div>
   );
 };
