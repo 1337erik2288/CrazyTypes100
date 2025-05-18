@@ -34,6 +34,54 @@
   position: relative;
 }
 
+/* Обновленные стили для отображения слов и поля ввода */
+.word-display-container,
+.typing-input {
+  font-family: 'Press Start 2P', system-ui, sans-serif !important;
+  -webkit-font-smoothing: none !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: geometricPrecision !important;
+  color: #fff; /* Белый текст */
+  background-color: rgba(0, 0, 0, 0.65); /* Слегка менее прозрачный темный фон */
+  border: 1px solid #282828; /* Очень темная рамка, почти невидимая на темном фоне */
+  outline: 0 none !important; /* Полностью убираем outline, чтобы исключить его как причину белой рамки */
+  box-shadow: none !important; /* Полностью убираем тени, чтобы исключить их как причину */
+  padding: 4px 8px; /* Минимальные внутренние отступы */
+  border-radius: 2px; /* Небольшое скругление */
+  box-sizing: border-box;
+  text-align: center;
+  line-height: 1.3; /* Для лучшего вертикального выравнивания текста при маленьком шрифте */
+}
+
+.word-display-container {
+  margin-bottom: 0.7rem; /* Немного уменьшим отступ снизу */
+  min-height: auto; /* Высота по содержимому */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0; /* Убираем дополнительное расстояние между буквами для компактности */
+  font-size: 9px; /* Очень маленький фиксированный размер шрифта */
+}
+
+.typing-input {
+  width: 100%; /* Поле ввода на всю ширину родителя */
+  caret-color: #00ff00; /* Ярко-зеленая каретка */
+  font-size: 9px; /* Размер шрифта как у word-display-container */
+}
+
+.typing-input::placeholder {
+  color: #777; /* Цвет плейсхолдера */
+  opacity: 1; /* Убедимся, что плейсхолдер виден */
+  font-size: 9px; /* Размер шрифта плейсхолдера */
+}
+
+.typing-input:focus {
+  border-color: #5ce1e6; /* Яркая бирюзовая рамка при фокусе */
+  /* box-shadow был убран из-за конфликта с box-shadow: none !important; в общем правиле.
+     Если эффект свечения при фокусе нужен, добавляем !important и сюда: */
+  box-shadow: 0 0 4px rgba(92, 225, 230, 0.3) !important;
+}
+
 @media (min-width: 992px) {
   .game-container {
     flex-direction: row;

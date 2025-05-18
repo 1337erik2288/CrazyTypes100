@@ -48,11 +48,11 @@
 }
 
 .text-display-area {
-  font-size: 2em; /* Можно настроить размер шрифта для слов */
+  font-size: 2em;
   padding: 15px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.1); /* Очень светлый, полупрозрачный фон */
   border-radius: 5px;
-  min-height: 60px; /* Минимальная высота, чтобы не прыгало */
+  min-height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -81,7 +81,7 @@
   padding: 12px 15px;
   font-size: 1.2em;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid #ccc; /* Светло-серая рамка */
   margin-bottom: 25px;
   box-sizing: border-box;
 }
@@ -108,8 +108,8 @@
 }
 
 .word-display-container {
-  background-color: #fff;
-  padding: 20px;
+  background-color: #fff; /* Белый фон */
+  padding: 20px; /* Внутренние отступы, создающие эффект рамки */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   margin-bottom: 25px;

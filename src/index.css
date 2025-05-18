@@ -144,7 +144,7 @@ img {
   textarea {
     background-color: #fdfdfd;
     color: #213547;
-    border: 3px solid #cccccc;
+    border: 3px solid #cccccc; /* Светло-серая рамка */
   }
 
   input[type="text"]:focus,
