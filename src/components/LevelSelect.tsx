@@ -140,8 +140,6 @@ interface LevelSelectProps {
 
 const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevels, playerProgress, onOpenShop }) => {
   const [showStatsModal, setShowStatsModal] = useState<boolean>(false);
-  // Строка 143 (или около того, где возникает ошибка):
-  // Убедитесь, что здесь используется OverallPlayerStats, а не 'any'
   const [overallStats, setOverallStats] = useState<OverallPlayerStats | null>(null);
 
   const trainingRoomLevel = levelResources.find(level => level.config.language === 'keyboard-training');
@@ -149,12 +147,21 @@ const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevel
     .filter(level => level.config.language !== 'keyboard-training')
     .sort((a, b) => a.id - b.id);
 
+  const handleOpenOverallStats = () => {
+    setOverallStats(getOverallStats());
+    setShowStatsModal(true);
+  };
+
   return (
     <div className="level-select">
       <h1>Выберите испытание</h1>
 
       <div className="top-section-wrapper">
-        <PlayerStats playerProgress={playerProgress} onOpenShop={onOpenShop} />
+        <PlayerStats
+          playerProgress={playerProgress}
+          onOpenShop={onOpenShop}
+          onOpenOverallStats={handleOpenOverallStats} // Передаем новую функцию
+        />
         {trainingRoomLevel && (
           <div className="training-room-shortcut-card">
             <div className="level-title">{trainingRoomLevel.name}</div>
@@ -170,15 +177,7 @@ const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevel
         )}
       </div>
 
-      <button
-        onClick={() => {
-          setOverallStats(getOverallStats());
-          setShowStatsModal(true);
-        }}
-        className="open-stats-btn"
-      >
-        Общая статистика
-      </button>
+      {/* Кнопка open-stats-btn удалена отсюда */}
       {showStatsModal && overallStats && (
         <OverallStatsModal stats={overallStats} onClose={() => setShowStatsModal(false)} />
       )}

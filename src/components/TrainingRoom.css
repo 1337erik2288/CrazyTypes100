@@ -254,16 +254,35 @@
 
 .simple-keyboard .hg-button {
   height: 50px; 
-  background-color: #f0f0f0 !important; /* Светло-серый фон для обычных клавиш, делаем приоритетным */
-  color: #000000 !important; /* Черный цвет для букв, уже был приоритетным */
-  border: 1px solid #b0b0b0 !important; /* Граница для разделения клавиш, делаем приоритетной */
-  border-radius: 4px !important; /* Скругление углов, делаем приоритетным */
-  box-shadow: 0 1px 1px rgba(0,0,0,0.1) !important; /* Легкая тень для объема, делаем приоритетной */
-  display: inline-flex !important; /* Используем flex для центрирования содержимого клавиши */
+  background-color: #f0f0f0 !important; 
+  color: #000000 !important; 
+  border: 3px solid #a0a0a0 !important; /* Увеличиваем толщину границы и делаем ее чуть темнее */
+  border-radius: 4px !important; /* Сохраняем небольшое скругление */
+  box-shadow: none !important; /* Убираем стандартную тень, если она была */
+  display: inline-flex !important; 
   align-items: center !important;
   justify-content: center !important;
-  padding: 5px !important; /* Добавим внутренний отступ для текста */
-  box-sizing: border-box !important; /* Чтобы padding не влиял на общую высоту */
+  padding: 5px !important; 
+  box-sizing: border-box !important; 
+  /* Добавляем небольшую "вдавленную" тень для объема, если нужно */
+  /* box-shadow: inset 2px 2px 0px 0px rgba(0,0,0,0.1) !important; */
+}
+
+/* Стили для области отображения текста для набора (TextDisplayArea) */
+.text-display-area, /* Предполагаемый класс для контейнера текста */
+.text-display-area span, /* Стилизуем все span внутри, где могут быть слова/буквы */
+.word, /* Если есть класс для отдельного слова */
+.char, /* Если есть класс для отдельного символа */
+.current-word, /* Стиль для текущего слова */
+.typed-char, /* Стиль для набранных символов */
+.incorrect-char, /* Стиль для неправильно набранных символов */
+.pending-char /* Стиль для еще не набранных символов */ {
+  font-family: 'Press Start 2P', system-ui, Avenir, Helvetica, Arial, sans-serif !important;
+  -webkit-font-smoothing: none !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: geometricPrecision !important;
+  /* Возможно, потребуется настроить размер шрифта, если он отличается от глобального */
+  /* font-size: 1em; */ /* Пример */
 }
 
 /* Убираем фон для специальных функциональных кнопок, чтобы они могли использовать иконки или другой текст */
@@ -276,12 +295,51 @@
   color: #000000 !important; /* Убедимся, что текст внутри span тоже черный */
 }
 
+/* === Цветовая разметка для слепой печати === */
+/* Мизинец (левый/правый) */
+.simple-keyboard .hg-button.key-zone-pinky {
+  background-color: #FFC0CB !important; /* Pink */
+  color: #333333 !important;
+  border-color: #e0a8b3 !important; /* Более темный оттенок для границы */
+}
+/* Безымянный (левый/правый) */
+.simple-keyboard .hg-button.key-zone-ring {
+  background-color: #ADD8E6 !important; /* LightBlue */
+  color: #333333 !important;
+  border-color: #9cc2d1 !important;
+}
+/* Средний (левый/правый) */
+.simple-keyboard .hg-button.key-zone-middle {
+  background-color: #90EE90 !important; /* LightGreen */
+  color: #333333 !important;
+  border-color: #80d380 !important;
+}
+/* Указательный (левый/правый) */
+.simple-keyboard .hg-button.key-zone-index {
+  background-color: #FFFFE0 !important; /* LightYellow */
+  color: #333333 !important;
+  border-color: #e0e0c8 !important;
+}
+/* Большой палец (пробел, alt) */
+.simple-keyboard .hg-button.key-zone-thumb {
+  background-color: #DCDCDC !important; /* Немного другой оттенок серого для разнообразия */
+  color: #333333 !important;
+  border-color: #c0c0c0 !important;
+}
+
+/* Подсветка активной (нажатой) клавиши из текущего ввода */
+.simple-keyboard .hg-button.hg-active-button {
+  background-color: #b0bec5 !important; 
+  color: #ffffff !important;
+  border-color: #8a9bab !important; /* Граница для активной клавиши */
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.3) !important; 
+}
 
 /* Подсветка следующей клавиши */
 .simple-keyboard .hg-button.next-key-highlight {
-  background-color: #4caf50 !important; /* Зеленый фон для подсветки */
-  color: white !important; /* Белый текст на подсвеченной клавише */
-  border-color: #388e3c !important; /* Более темная граница для подсвеченной клавиши */
+  background-color: #4caf50 !important; 
+  color: white !important; 
+  border-color: #388e3c !important; 
 }
 
 /* Адаптивность для меньших экранов */

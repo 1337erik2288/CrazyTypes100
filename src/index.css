@@ -1,7 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* Используем пиксельный шрифт */
+  font-family: 'Press Start 2P', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
-  font-weight: 400;
+  font-weight: 400; /* Для пиксельных шрифтов обычно используется стандартная жирность */
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -9,9 +12,23 @@
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: none; /* Отключаем сглаживание для WebKit */
+  -moz-osx-font-smoothing: grayscale; /* Для Firefox, grayscale может дать более четкий вид */
+
+  /* Глобальное правило для рендеринга изображений */
+  image-rendering: -moz-crisp-edges; /* Firefox */
+  image-rendering: -webkit-optimize-contrast; /* Webkit (Chrome, Safari, Edge) */
+  image-rendering: crisp-edges; /* Стандартное свойство, но pixelated предпочтительнее для явного пиксель-арта */
+  image-rendering: pixelated; /* Предпочтительный вариант для пиксель-арта */
 }
+
+/* Убираем сглаживание для всех элементов, где это возможно */
+* {
+  -webkit-font-smoothing: none !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: geometricPrecision !important; /* Может помочь с четкостью текста */
+}
+
 
 a {
   font-weight: 500;
@@ -28,30 +45,73 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  /* Дополнительно для изображений, если они используются как фон */
+  background-size: auto; /* или конкретный размер, чтобы пикселизация была заметна */
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  font-size: 2em; /* Пиксельные шрифты могут требовать корректировки размеров */
+  line-height: 1.2;
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
+  border-radius: 4px; /* Небольшое скругление для "пиксельной округленности" */
+  border: 3px solid #1a1a1a; /* Толстая темная граница по умолчанию */
+  padding: 0.5em 1em; 
+  font-size: 0.8em; 
   font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+  font-family: inherit; 
+  background-color: #333333; /* Чуть светлее фона для контраста */
+  color: rgba(255, 255, 255, 0.87); /* Цвет текста на кнопке */
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: border-color 0.25s, background-color 0.25s;
+  box-shadow: none; 
 }
 button:hover {
-  border-color: #646cff;
+  border-color: #747bff; /* Цвет границы при наведении, как в оригинале */
+  background-color: #434343; /* Немного светлее при наведении */
 }
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 3px solid #747bff; /* Заменяем стандартный outline на более толстый */
+  outline-offset: 1px;
+  border-color: #747bff; /* Также подсвечиваем границу при фокусе */
+}
+
+/* Стили для полей ввода */
+input[type="text"],
+input[type="number"],
+input[type="password"],
+input[type="email"],
+textarea {
+  font-family: inherit; /* Наследуем пиксельный шрифт */
+  font-size: 0.9em; /* Можно настроить размер шрифта */
+  padding: 0.6em 0.8em;
+  background-color: #1e1e1e; /* Темный фон для поля ввода */
+  color: rgba(255, 255, 255, 0.87);
+  border: 3px solid #4a4a4a; /* Толстая граница */
+  border-radius: 4px; /* Небольшое скругление */
+  box-shadow: none;
+  outline: none; /* Убираем стандартный outline */
+  transition: border-color 0.25s;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+  border-color: #747bff; /* Цвет границы при фокусе */
+}
+
+
+/* Если у вас есть изображения в тегах <img> */
+img {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  /* Можно также задать width и height, чтобы браузер не пытался их "улучшить" при масштабировании */
 }
 
 @media (prefers-color-scheme: light) {
@@ -63,6 +123,35 @@ button:focus-visible {
     color: #747bff;
   }
   button {
-    background-color: #f9f9f9;
+    background-color: #f0f0f0; /* Светлый фон для кнопок */
+    color: #213547; /* Темный текст на кнопках */
+    border: 3px solid #cccccc; /* Толстая светлая граница */
+  }
+  button:hover {
+    border-color: #535bf2;
+    background-color: #e0e0e0;
+  }
+  button:focus,
+  button:focus-visible {
+    outline: 3px solid #535bf2;
+    border-color: #535bf2;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="password"],
+  input[type="email"],
+  textarea {
+    background-color: #fdfdfd;
+    color: #213547;
+    border: 3px solid #cccccc;
+  }
+
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  input[type="password"]:focus,
+  input[type="email"]:focus,
+  textarea:focus {
+    border-color: #535bf2;
   }
 }

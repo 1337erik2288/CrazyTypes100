@@ -1,674 +1,3051 @@
+/* --- Top Section Wrapper Styles --- */
+.top-section-wrapper {
+  width: 100vw;
+  max-width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: center; /* Изменено с stretch на center */
+  align-items: stretch;
+  gap: 20px;
+  box-sizing: border-box;
+  margin-left: calc(-1 * (100vw - 100%) / 2);
+}
+
+.top-section-wrapper > * {
+  flex: 0 1 auto; /* Изменено с 1 1 0 на 0 1 auto */
+  min-width: 0;
+}
+
+/* Общие стили для страницы выбора уровня */
 .level-select {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
-  width: 100vw;
+  padding: 20px;
+  width: 100%;
   min-height: 100vh;
-  margin: 0;
   box-sizing: border-box;
-  position: relative;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: auto;
-}
-
-.level-select h1 {
-  color: #fff;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  margin-bottom: 3rem;
-}
-
-.level-path {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6rem;
-  position: relative;
-  padding: 3rem;
-  background: transparent;
-  border-radius: 15px;
-  max-width: 600px;
-  width: 100%;
-  margin: 0 auto;
-  min-height: fit-content;
-  height: auto;
-  overflow-y: visible;
-  overflow-x: hidden; /* Prevents horizontal scrolling */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(100, 108, 255, 0.5) rgba(0, 0, 0, 0.2);
-  padding-bottom: 6rem; /* Add extra padding at bottom for better scrolling */
-}
-
-/* Custom scrollbar for level path */
-.level-path::-webkit-scrollbar {
-  width: 8px;
-}
-
-.level-path::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-}
-
-.level-path::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, rgba(100, 108, 255, 0.5), rgba(83, 91, 242, 0.5));
-  border-radius: 10px;
-}
-
-.level-path::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, rgba(100, 108, 255, 0.7), rgba(83, 91, 242, 0.7));
-}
-
-.level-path::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, rgba(100, 108, 255, 0.05), rgba(83, 91, 242, 0.05));
-  filter: blur(20px);
-  z-index: -1;
-  animation: glowPulse 4s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes glowPulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
-}
-
-.level-node {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0;
-  width: 100%;
-}
-
-.level-select::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, 
-    rgba(255, 123, 0, 0.3),
-    rgba(0, 217, 159, 0.3),
-    rgba(162, 0, 255, 0.3),
-    rgba(255, 61, 87, 0.3)
-  );
-  background-size: 400% 400%;
-  background-attachment: fixed;
-  animation: gradientBG 20s ease-in-out infinite;
-  z-index: -1;
-  opacity: 0.7;
-  pointer-events: none; /* Ensures clicks pass through to elements below */
-}
-
-@keyframes gradientBG {
-  0% { background-position: 0% 0%; }
-  25% { background-position: 100% 0%; }
-  50% { background-position: 100% 100%; }
-  75% { background-position: 0% 100%; }
-  100% { background-position: 0% 0%; }
-}
-
-.level-connector {
-  position: absolute;
-  width: 6px;
-  height: 100px;
-  background: linear-gradient(to bottom, #646cff, #535bf2);
-  top: -100px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 0;
-  border-radius: 3px;
-  box-shadow: 0 0 15px rgba(100, 108, 255, 0.4);
-  pointer-events: none;
-}
-
-.level-node:first-child .level-connector {
-  display: none;
-}
-
-.level-node:has(.level-circle.russian) + .level-node .level-connector {
-  background: linear-gradient(to bottom, #ff4646, #f23535);
-  box-shadow: 0 0 10px rgba(255, 70, 70, 0.3);
-}
-
-.level-node:has(.level-circle[data-language="code"]) + .level-node .level-connector {
-  background: linear-gradient(to bottom, #00ff9d, #00cc7d);
-  box-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
-}
-
-.level-circle {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.8);
-  border: 4px solid;
-  transition: all 0.3s ease;
-  gap: 0.5rem;
-  padding: 1rem;
-  cursor: pointer;
+  font-family: 'Press Start 2P', system-ui, sans-serif; /* Базовый пиксельный шрифт */
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision;
+  color: #fff; /* Базовый цвет текста */
   position: relative;
   z-index: 1;
 }
 
-.level-circle:not(.russian):not([data-language="code"]) {
-  border-color: #646cff;
-  background: linear-gradient(45deg, rgba(0, 0, 0, 0.8), rgba(100, 108, 255, 0.1));
+/* Цветной анимированный фон */
+.level-select::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(120deg, #6a82fb 0%, #fc5c7d 100%);
+  background-size: 400% 400%;
+  animation: gradientBG 18s ease infinite;
 }
 
-.level-circle:not(.russian):not([data-language="code"]):hover {
-  transform: scale(1.1);
-  border-color: #535bf2;
-  box-shadow: 0 0 25px rgba(100, 108, 255, 0.6);
-  background: linear-gradient(45deg, rgba(0, 0, 0, 0.8), rgba(100, 108, 255, 0.2));
+@keyframes gradientBG {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
 }
 
-.level-circle[data-language="code"] {
-  border-color: #00ff9d;
-  background: linear-gradient(45deg, rgba(0, 0, 0, 0.8), rgba(0, 255, 157, 0.1));
-}
-
-.level-circle[data-language="code"]:hover {
-  transform: scale(1.1);
-  border-color: #00cc7d;
-  box-shadow: 0 0 25px rgba(0, 255, 157, 0.6);
-  background: linear-gradient(45deg, rgba(0, 0, 0, 0.8), rgba(0, 255, 157, 0.2));
-}
-
-.level-circle.russian {
-  border-color: #ff4646;
-  background: linear-gradient(45deg, rgba(0, 0, 0, 0.8), rgba(255, 70, 70, 0.1));
-}
-
-.level-circle.russian:hover {
-  transform: scale(1.1);
-  border-color: #f23535;
-  box-shadow: 0 0 25px rgba(255, 70, 70, 0.6);
-  background: linear-gradient(45deg, rgba(0, 0, 0, 0.8), rgba(255, 70, 70, 0.2));
-}
-
-.level-number {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #fff;
-}
-
-.level-name {
-  font-size: 0.9rem;
-  color: #fff;
-  text-align: center;
-}
-
-.level-difficulty {
-  color: #ffd700;
-  font-size: 0.8rem;
-}
-
-.level-completed-indicator {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  width: 30px;
-  height: 30px;
-  background-color: #4caf50;
-  color: white;
-  border-radius: 50%;
+/* Универсальный стиль для иконки тренировочной комнаты */
+.training-icon,
+.training-icon-small {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  font-weight: bold;
-  box-shadow: 0 0 10px rgba(76, 175, 80, 0.6);
-  animation: pulse 2s infinite;
+  width: 54px;
+  height: 54px;
+  margin: 10px auto 16px auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+  font-size: 2.2em;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+.training-icon-small {
+  width: 36px;
+  height: 36px;
+  font-size: 1.3em;
+  margin: 0 0 8px 0;
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-
-.level-path-rect {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  justify-content: center;
-  margin-top: 32px;
-}
-
-.level-card-rect {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(60,60,60,0.10);
-  padding: 24px 32px;
-  min-width: 280px;
-  max-width: 320px;
-  min-height: 220px;
-  max-height: 260px;
+/* Карточка тренировочной комнаты */
+.training-room-card-rect,
+.training-room-shortcut-card {
+  background-color: rgba(50, 50, 50, 0.7);
+  border: 2px solid #666;
+  border-radius: 8px;
+  padding: 20px;
+  width: 100%;
+  max-width: 600px; /* Общая максимальная ширина */
+  box-sizing: border-box;
+  margin-bottom: 1.5rem;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  transition: box-shadow 0.2s, transform 0.2s;
-  border: 2px solid transparent;
-}
-
-.level-card-rect.completed {
-  border: 2px solid #4caf50;
-  background: linear-gradient(135deg, #e0ffe0 0%, #b2f7b2 100%);
-}
-
-.level-title {
-  font-size: 1.3em;
-  font-weight: bold;
-  margin-bottom: 8px;
-  color: #222;
-}
-
-.level-difficulty {
-  margin-bottom: 6px;
-  font-weight: 500;
-}
-
-.level-difficulty.easy {
-  color: #43a047; /* зелёный */
-}
-.level-difficulty.medium {
-  color: #ff9800; /* оранжевый */
-}
-.level-difficulty.hard {
-  color: #e53935; /* красный */
-}
-
-.level-content {
-  margin-bottom: 10px;
-  color: #555;
-}
-
-.level-stats {
-  margin: 10px 0;
-  background: #f5f5f5;
-  border-radius: 8px;
-  padding: 8px 12px;
-  width: 100%;
-  color: #222;
-}
-
-.level-start-btn {
-  margin-top: auto;
-  align-self: stretch;
-  padding: 10px 0;
-  background: #1976d2;
+  align-items: center;
+  text-align: center;
+  box-shadow: none;
   color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
+}
+
+/* Специфичные стили для training-room-shortcut-card для переопределения ширины */
+.training-room-shortcut-card {
+  max-width: 320px; /* Уменьшаем максимальную ширину для этой карточки */
+}
+
+.training-room-card-rect .level-title,
+.training-room-shortcut-card .level-title {
+  font-size: 1.2em; /* Общий размер для заголовка */
+  margin-bottom: 10px;
+}
+
+/* Специфичный размер шрифта для заголовка в training-room-shortcut-card */
+.training-room-shortcut-card .level-title {
+  font-size: 1.0em; /* Уменьшаем шрифт заголовка */
+}
+
+.training-room-card-rect .level-content,
+.training-room-shortcut-card .level-content,
+.training-room-shortcut-card .level-content-small {
+  font-size: 0.9em; /* Общий размер для контента */
+  color: #ccc;
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+/* Специфичный размер шрифта для контента в training-room-shortcut-card */
+.training-room-shortcut-card .level-content,
+.training-room-shortcut-card .level-content-small {
+  font-size: 0.8em; /* Уменьшаем шрифт описания */
+}
+
+.training-room-card-rect .training-start-btn,
+.training-room-shortcut-card .training-start-btn {
+  background-color: #5cb85c;
+  color: white;
+  width: auto;
+  padding: 10px 25px;
+  font-size: 0.9em;
+  border: 2px solid #4cae4c;
+  border-radius: 4px;
+  box-shadow: none;
   cursor: pointer;
+  margin-bottom: 10px;
   transition: background 0.2s;
 }
-
-.level-start-btn:disabled {
-  background: #bdbdbd;
-  cursor: not-allowed;
-}
-
-.level-select-container {
-  display: flex; /* Позволит разместить основной контент и карточку тренировки */
-  justify-content: center; /* Центрирование, если есть место */
-  gap: 20px; /* Пространство между списком уровней и карточкой тренировки */
-  padding: 20px;
-}
-
-.level-select {
-  /* Стили для основного блока выбора уровня, если он должен быть ограничен по ширине */
-  /* Например: max-width: 800px; */
-  /* flex-grow: 1; /* Позволит ему занимать доступное место, если карточка тренировки фиксированной ширины */
-}
-
-.levels-and-training-wrapper {
-  display: flex;
-  flex-direction: row; /* Располагаем список уровней и карточку тренировки в ряд */
-  align-items: flex-start; /* Выравниваем по верху */
-  gap: 20px; /* Пространство между ними */
-}
-
-.level-path-rect {
-  /* Существующие стили для списка уровней */
-  /* Возможно, потребуется ограничить его ширину или высоту, если он становится слишком большим */
-  /* max-width: 600px; */ /* Например */
-  /* flex-grow: 1; */ /* Чтобы занимал доступное место */
-}
-
-.training-room-card-rect {
-  background-color: #f0f8ff; /* AliceBlue, например, для отличия */
-  border: 2px solid #4a90e2; /* Синяя рамка */
-  border-radius: 10px;
-  padding: 20px;
-  width: 280px; /* Фиксированная ширина или по содержимому */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 10px; /* Пространство между элементами внутри карточки */
-}
-
-.training-room-card-rect .level-title {
-  font-size: 1.4em;
-  font-weight: bold;
-  color: #333;
-}
-
-.training-room-card-rect .training-icon {
-  font-size: 3em; /* Размер иконки */
-  margin: 10px 0;
-}
-
-.training-room-card-rect .level-content {
-  font-size: 0.95em;
-  color: #555;
-  margin-bottom: 15px;
-}
-
-.training-room-card-rect .training-start-btn {
-  background-color: #5cb85c; /* Зеленый цвет для кнопки тренировки */
-  color: white;
-  width: 100%; /* Кнопка на всю ширину карточки */
-  padding: 12px 0;
-  font-size: 1.1em;
-}
-
-.training-room-card-rect .training-start-btn:hover {
-  background-color: #4cae4c;
-}
-
-/* Адаптивность: если экран узкий, можно расположить карточку тренировки под списком уровней */
-@media (max-width: 900px) { /* Подберите значение breakpoint */
-  .levels-and-training-wrapper {
-    flex-direction: column;
-    align-items: center; /* Центрируем карточки, когда они в колонке */
-  }
-
-  .training-room-card-rect {
-    width: 90%; /* Шире на маленьких экранах */
-    max-width: 400px; /* Но не слишком широко */
-    margin-top: 20px;
-  }
-}
-
-.level-select h1 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #333;
-}
-
-.top-section-wrapper {
-  display: flex;
-  justify-content: space-around; /* Распределяет место между PlayerStats и TrainingCard */
-  align-items: flex-start; /* Выравнивание по верху */
-  gap: 20px; /* Пространство между элементами */
-  margin-bottom: 25px;
-  flex-wrap: wrap; /* Позволит переноситься на новую строку на маленьких экранах */
-}
-
-/* Стили для PlayerStats могут потребовать корректировки, если они конфликтуют */
-/* Например, если PlayerStats занимает всю ширину, нужно будет это изменить */
-/* .player-stats-container { */
-  /* flex-basis: 60%; /* Примерное распределение ширины */
-/* } */
-
-.training-room-shortcut-card {
-  background-color: #e6f7ff; /* Светло-голубой фон */
-  border: 1px solid #91d5ff; /* Голубая рамка */
-  border-radius: 8px;
-  padding: 15px;
-  /* flex-basis: 35%; /* Примерное распределение ширины */
-  min-width: 250px; /* Минимальная ширина карточки */
-  max-width: 300px; /* Максимальная ширина */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 8px;
-}
-
-.training-room-shortcut-card .level-title {
-  font-size: 1.2em; /* Немного меньше, чем у основных уровней */
-  font-weight: bold;
-  color: #0050b3; /* Темно-синий */
-}
-
-.training-room-shortcut-card .training-icon-small {
-  font-size: 1.8em; /* Уменьшенный размер иконки */
-  margin: 5px 0;
-  color: #007bff;
-}
-
-.training-room-shortcut-card .level-content-small {
-  font-size: 0.85em;
-  color: #555;
-  margin-bottom: 10px;
-  line-height: 1.4;
-}
-
-.training-room-shortcut-card .training-start-btn {
-  background-color: #28a745; /* Зеленый */
-  color: white;
-  width: 90%;
-  padding: 10px 0;
-  font-size: 1em;
-}
-
+.training-room-card-rect .training-start-btn:hover,
 .training-room-shortcut-card .training-start-btn:hover {
-  background-color: #218838;
+  background-color: #4a964a;
 }
 
-.open-stats-btn {
-  display: block;
-  margin: 0 auto 20px auto; /* Центрирование кнопки общей статистики */
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
+/* Глобально для всех элементов внутри .level-select */
+.level-select *, .level-select *:before, .level-select *:after {
+  font-family: 'Press Start 2P', system-ui, sans-serif !important;
+  -webkit-font-smoothing: none !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: geometricPrecision !important;
+  box-sizing: border-box;
 }
 
-.open-stats-btn:hover {
-  background-color: #0056b3;
-}
-
-.level-path-rect {
+/* Адаптивный список карточек уровней */
+.level-cards-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
+  width: 100vw;
+  max-width: none;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
+/* Карточка уровня — стандартное (яркое) оформление для пройденных */
 .level-card-rect {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(60,60,60,0.10);
-  padding: 24px 32px;
-  min-width: 280px;
-  max-width: 320px;
-  min-height: 220px;
-  max-height: 260px;
+  background: rgba(40, 70, 40, 0.85);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  padding: 22px 18px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  transition: box-shadow 0.2s, transform 0.2s;
-  border: 2px solid transparent;
-}
-
-.level-card-rect.completed {
-  border: 2px solid #4caf50;
-  background: linear-gradient(135deg, #e0ffe0 0%, #b2f7b2 100%);
-}
-
-.level-title {
-  font-size: 1.3em;
-  font-weight: bold;
-  margin-bottom: 8px;
-  color: #222;
-}
-
-.level-difficulty {
-  margin-bottom: 6px;
-  font-weight: 500;
-}
-
-.level-difficulty.easy {
-  color: #43a047; /* зелёный */
-}
-.level-difficulty.medium {
-  color: #ff9800; /* оранжевый */
-}
-.level-difficulty.hard {
-  color: #e53935; /* красный */
-}
-
-.level-content {
-  margin-bottom: 10px;
-  color: #555;
-}
-
-.level-stats {
-  margin: 10px 0;
-  background: #f5f5f5;
-  border-radius: 8px;
-  padding: 8px 12px;
-  width: 100%;
-  color: #222;
-}
-
-.level-start-btn {
-  margin-top: auto;
-  align-self: stretch;
-  padding: 10px 0;
-  background: #1976d2;
+  border: 2px solid #38761d;
   color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
+  box-sizing: border-box;
+  flex-grow: 0;
+  flex-shrink: 1;
+  width: fit-content;
+  min-width: 300px;
+  max-width: 370px;
+  margin: 10px;
+  overflow: hidden;
+  transition: transform 0.15s, background 0.3s, border-color 0.3s, opacity 0.3s;
+}
+
+/* Блеклый стиль для несыгранных уровней */
+.level-card-rect.level-unplayed {
+  background: rgba(60, 80, 60, 0.5);
+  border-color: #5a7d5a;
+  color: #cccccc;
+  opacity: 0.7;
+  filter: grayscale(0.2);
+}
+
+/* При наведении — чуть менее блеклый */
+.level-card-rect.level-unplayed:hover {
+  opacity: 0.85;
+  filter: grayscale(0.1);
+}
+
+/* Стили для кнопки внутри карточки уровня */
+.level-card-rect .training-start-btn { /* Предполагаем, что кнопка имеет этот класс */
+  align-self: center; /* Центрирует кнопку по горизонтали внутри flex-контейнера (карточки) */
+  /* ... остальные стили кнопки, которые уже есть или нужны ... */
+  background-color: #5cb85c; /* Пример зеленого цвета */
+  color: white;
+  padding: 10px 25px;
+  font-size: 0.9em;
+  border: 2px solid #4cae4c;
+  border-radius: 4px;
+  box-shadow: none;
   cursor: pointer;
-  transition: background 0.2s;
+  margin-top: auto; /* Отталкивает кнопку вниз, если карточка flex-column */
 }
 
-.level-start-btn:disabled {
-  background: #bdbdbd;
-  cursor: not-allowed;
+.level-card-rect .training-start-btn:hover {
+  background-color: #4a964a;
 }
 
-.level-select-container {
-  display: flex; /* Позволит разместить основной контент и карточку тренировки */
-  justify-content: center; /* Центрирование, если есть место */
-  gap: 20px; /* Пространство между списком уровней и карточкой тренировки */
-  padding: 20px;
+
+/* Стили для цветового выделения сложности */
+/* Эти классы (.level-easy, .level-medium, .level-hard) нужно будет добавить к элементу .level-card-rect в вашем React компоненте (.tsx) в зависимости от сложности уровня */
+.level-card-rect.level-easy {
+  border-color: #4CAF50; /* Зеленая граница для легкого уровня */
+  /* background: rgba(76, 175, 80, 0.85); */ /* Опционально: изменить фон */
 }
 
-.level-select {
-  /* Стили для основного блока выбора уровня, если он должен быть ограничен по ширине */
-  /* Например: max-width: 800px; */
-  /* flex-grow: 1; /* Позволит ему занимать доступное место, если карточка тренировки фиксированной ширины */
+.level-card-rect.level-medium {
+  border-color: #FFC107; /* Желтая граница для среднего уровня */
+  /* background: rgba(255, 193, 7, 0.85); */ /* Опционально: изменить фон */
 }
 
-.levels-and-training-wrapper {
+.level-card-rect.level-hard {
+  border-color: #F44336; /* Красная граница для сложного уровня */
+  /* background: rgba(244, 67, 54, 0.85); */ /* Опционально: изменить фон */
+}
+
+/* НОВЫЕ СТИЛИ: Для названия уровня в карточке */
+.level-card-rect .level-title {
+  font-size: 1.1em; /* Размер шрифта для названия */
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 10px; /* Отступ снизу */
+  width: 100%; /* Чтобы занимало всю ширину, если нужно выравнивание текста */
+  text-align: left; /* Выравнивание текста названия */
+}
+
+/* НОВЫЕ СТИЛИ: Для "отдельного окна" с данными о прохождении уровня */
+.level-card-rect .level-progress-box {
+  background-color: rgba(0, 0, 0, 0.3); /* Полупрозрачный темный фон для "окна" */
+  border-radius: 6px; /* Скругление углов "окна" */
+  padding: 12px 15px; /* Внутренние отступы "окна" */
+  margin-top: 10px; /* Отступ сверху от названия или другого элемента */
+  margin-bottom: 15px; /* Отступ снизу до кнопки "Начать" */
+  width: 100%; /* Занять всю ширину карточки */
+  box-sizing: border-box;
+}
+
+/* НОВЫЕ СТИЛИ: Для отдельных элементов данных внутри "окна" прогресса */
+.level-card-rect .level-progress-box .progress-data-item {
+  font-size: 0.85em;
+  color: #e0e0e0; /* Светлый цвет текста для данных */
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.level-card-rect .level-progress-box .progress-data-item:last-child {
+  margin-bottom: 0; /* Убрать отступ у последнего элемента данных */
+}
+
+
+.level-card-rect > *:not(:last-child) {
+  margin-bottom: 14px;
+}
+
+@media (max-width: 900px) {
+  .level-cards-list {
+    gap: 20px 12px;
+    max-width: 100vw;
+  }
+  .level-card-rect {
+    min-width: 180px;
+    max-width: 100%;
+    padding: 16px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .level-cards-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 2px 30px 2px;
+  }
+  .level-card-rect {
+    width: 98vw;
+    min-width: unset;
+    max-width: 99vw;
+    padding: 10px 2vw;
+  }
+}
+
+/* Остальные стили (player-info-card, training-room-card-rect и т.д.) оставляем без изменений */
+.level-select h1 {
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  color: #fff;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  margin-bottom: 2rem; /* Увеличим немного отступ */
+  font-size: 1.8em; /* Чуть уменьшим для баланса с пиксельным шрифтом */
+  text-align: center;
+}
+
+/* Контейнер для информации об игроке (Уровень, XP, Магазин) */
+.player-info-card { /* Предполагаемый класс, если это отдельный компонент */
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 15px 20px;
+  border-radius: 6px;
+  border: 2px solid #444;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+  box-shadow: none;
   display: flex;
-  flex-direction: row; /* Располагаем список уровней и карточку тренировки в ряд */
-  align-items: flex-start; /* Выравниваем по верху */
-  gap: 20px; /* Пространство между ними */
+  flex-direction: column;
+  align-items: center; /* Центрируем содержимое */
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto; /* Центрируем сам блок */
 }
 
-.level-path-rect {
-  /* Существующие стили для списка уровней */
-  /* Возможно, потребуется ограничить его ширину или высоту, если он становится слишком большим */
-  /* max-width: 600px; */ /* Например */
-  /* flex-grow: 1; */ /* Чтобы занимал доступное место */
+.training-room-card-rect .training-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin: 10px auto 16px auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+  font-size: 2.2em;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
 }
 
-.training-room-card-rect {
-  background-color: #f0f8ff; /* AliceBlue, например, для отличия */
-  border: 2px solid #4a90e2; /* Синяя рамка */
+.level-cards-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 32px 28px; /* вертикальный и горизонтальный gap */
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 10px 40px 10px;
+  box-sizing: border-box;
+}
+
+/* Карточка уровня */
+/* Убедитесь, что это единственное актуальное определение для .level-card-rect */
+.level-card-rect {
+  background: rgba(40, 70, 40, 0.85);
   border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Выравнивание дочерних элементов по левому краю */
+  border: 2px solid #38761d; /* Базовая граница, будет переопределена для сложности */
+  color: #fff;
+  box-sizing: border-box;
+  flex-grow: 0;
+  flex-shrink: 1;
+  width: fit-content;
+  min-width: 300px;
+  max-width: 370px;
+  margin: 10px; /* Если используете gap на .level-cards-list, это можно убрать или оставить для дополнительного контроля */
+  overflow: hidden;
+  transition: transform 0.15s;
+}
+
+/* Общий стиль для всех прямых потомков карточки, кроме последнего (кнопки) */
+.level-card-rect > *:not(:last-child) {
+  margin-bottom: 12px; /* Отступ между элементами внутри карточки */
+  width: 100%; /* Чтобы текстовые блоки занимали всю ширину */
+}
+
+/* Стили для названия уровня в карточке */
+.level-card-rect .level-title {
+  font-size: 1.2em; /* Увеличим немного для акцента */
+  font-weight: bold;
+  color: #fff;
+  text-align: left;
+}
+
+/* Стили для блока сложности */
+.level-card-rect .level-difficulty {
+  font-size: 0.9em;
+  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
+  text-align: left;
+}
+
+/* Цветовое выделение для текста сложности */
+.level-card-rect .level-difficulty.easy b {
+  color: #66bb6a; /* Зеленый */
+}
+.level-card-rect .level-difficulty.medium b {
+  color: #ffee58; /* Желтый */
+}
+.level-card-rect .level-difficulty.hard b {
+  color: #ef5350; /* Красный */
+}
+
+/* Стили для содержания уровня */
+.level-card-rect .level-content {
+  font-size: 0.9em;
+  color: #ccc;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* Стили для "отдельного окна" с данными о прохождении уровня (статистика) */
+.level-card-rect .level-stats {
+  background-color: rgba(0, 0, 0, 0.35); /* Полупрозрачный темный фон для "окна" */
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.85em;
+  color: #e0e0e0;
+  line-height: 1.4;
+  text-align: left; /* или center, если текст внутри этого блока должен быть по центру */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Тонкая светлая рамка для "окна" */
+}
+
+.level-card-rect .level-stats div { /* Если внутри level-stats есть еще div'ы для данных */
+  margin-bottom: 5px;
+}
+.level-card-rect .level-stats div:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Стили для кнопки "Начать" внутри карточки уровня */
+/* Используем класс .level-start-btn из вашей HTML структуры */
+.level-card-rect .level-start-btn {
+  align-self: center; /* Центрирует кнопку по горизонтали */
+  background-color: #5cb85c;
+  color: white;
+  padding: 10px 25px;
+  font-size: 0.95em; /* Немного увеличим для читаемости */
+  border: none; /* Уберем стандартную границу, если есть */
+  border-bottom: 3px solid #4a964a; /* "Объемная" граница снизу */
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  margin-top: auto; /* Отталкивает кнопку вниз, занимая доступное пространство */
+  font-family: 'Press Start 2P', system-ui, sans-serif; /* Убедимся, что шрифт применяется */
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.level-card-rect .level-start-btn:hover {
+  background-color: #4a964a;
+  border-bottom-color: #3e8e3e;
+}
+
+.level-card-rect .level-start-btn:active {
+  transform: translateY(1px); /* Эффект нажатия */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  border-bottom-width: 2px;
+}
+
+
+/* УДАЛИТЕ или ЗАКОММЕНТИРУЙТЕ старые стили для .level-card-rect.level-easy, .medium, .hard, если они меняли border всей карточки,
+   так как теперь мы стилизуем текст внутри .level-difficulty */
+/* Например:
+.level-card-rect.level-easy {
+  border-color: #4CAF50;
+}
+.level-card-rect.level-medium {
+  border-color: #FFC107;
+}
+.level-card-rect.level-hard {
+  border-color: #F44336;
+}
+*/
+
+@media (max-width: 900px) {
+  .level-cards-list {
+    gap: 20px 12px;
+    max-width: 100vw;
+  }
+  .level-card-rect {
+    min-width: 180px;
+    max-width: 100%;
+    padding: 16px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .level-cards-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 2px 30px 2px;
+  }
+  .level-card-rect {
+    width: 98vw;
+    min-width: unset;
+    max-width: 99vw;
+    padding: 10px 2vw;
+  }
+}
+
+/* Остальные стили (player-info-card, training-room-card-rect и т.д.) оставляем без изменений */
+.level-select h1 {
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  color: #fff;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  margin-bottom: 2rem; /* Увеличим немного отступ */
+  font-size: 1.8em; /* Чуть уменьшим для баланса с пиксельным шрифтом */
+  text-align: center;
+}
+
+/* Контейнер для информации об игроке (Уровень, XP, Магазин) */
+.player-info-card { /* Предполагаемый класс, если это отдельный компонент */
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 15px 20px;
+  border-radius: 6px;
+  border: 2px solid #444;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Центрируем содержимое */
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto; /* Центрируем сам блок */
+}
+
+.training-room-card-rect .training-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin: 10px auto 16px auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+  font-size: 2.2em;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.level-cards-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 32px 28px; /* вертикальный и горизонтальный gap */
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 10px 40px 10px;
+  box-sizing: border-box;
+}
+
+/* Карточка уровня */
+/* Убедитесь, что это единственное актуальное определение для .level-card-rect */
+.level-card-rect {
+  background: rgba(40, 70, 40, 0.85);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Выравнивание дочерних элементов по левому краю */
+  border: 2px solid #38761d; /* Базовая граница, будет переопределена для сложности */
+  color: #fff;
+  box-sizing: border-box;
+  flex-grow: 0;
+  flex-shrink: 1;
+  width: fit-content;
+  min-width: 300px;
+  max-width: 370px;
+  margin: 10px; /* Если используете gap на .level-cards-list, это можно убрать или оставить для дополнительного контроля */
+  overflow: hidden;
+  transition: transform 0.15s;
+}
+
+/* Общий стиль для всех прямых потомков карточки, кроме последнего (кнопки) */
+.level-card-rect > *:not(:last-child) {
+  margin-bottom: 12px; /* Отступ между элементами внутри карточки */
+  width: 100%; /* Чтобы текстовые блоки занимали всю ширину */
+}
+
+/* Стили для названия уровня в карточке */
+.level-card-rect .level-title {
+  font-size: 1.2em; /* Увеличим немного для акцента */
+  font-weight: bold;
+  color: #fff;
+  text-align: left;
+}
+
+/* Стили для блока сложности */
+.level-card-rect .level-difficulty {
+  font-size: 0.9em;
+  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
+  text-align: left;
+}
+
+/* Цветовое выделение для текста сложности */
+.level-card-rect .level-difficulty.easy b {
+  color: #66bb6a; /* Зеленый */
+}
+.level-card-rect .level-difficulty.medium b {
+  color: #ffee58; /* Желтый */
+}
+.level-card-rect .level-difficulty.hard b {
+  color: #ef5350; /* Красный */
+}
+
+/* Стили для содержания уровня */
+.level-card-rect .level-content {
+  font-size: 0.9em;
+  color: #ccc;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* Стили для "отдельного окна" с данными о прохождении уровня (статистика) */
+.level-card-rect .level-stats {
+  background-color: rgba(0, 0, 0, 0.35); /* Полупрозрачный темный фон для "окна" */
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.85em;
+  color: #e0e0e0;
+  line-height: 1.4;
+  text-align: left; /* или center, если текст внутри этого блока должен быть по центру */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Тонкая светлая рамка для "окна" */
+}
+
+.level-card-rect .level-stats div { /* Если внутри level-stats есть еще div'ы для данных */
+  margin-bottom: 5px;
+}
+.level-card-rect .level-stats div:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Стили для кнопки "Начать" внутри карточки уровня */
+/* Используем класс .level-start-btn из вашей HTML структуры */
+.level-card-rect .level-start-btn {
+  align-self: center; /* Центрирует кнопку по горизонтали */
+  background-color: #5cb85c;
+  color: white;
+  padding: 10px 25px;
+  font-size: 0.95em; /* Немного увеличим для читаемости */
+  border: none; /* Уберем стандартную границу, если есть */
+  border-bottom: 3px solid #4a964a; /* "Объемная" граница снизу */
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  margin-top: auto; /* Отталкивает кнопку вниз, занимая доступное пространство */
+  font-family: 'Press Start 2P', system-ui, sans-serif; /* Убедимся, что шрифт применяется */
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.level-card-rect .level-start-btn:hover {
+  background-color: #4a964a;
+  border-bottom-color: #3e8e3e;
+}
+
+.level-card-rect .level-start-btn:active {
+  transform: translateY(1px); /* Эффект нажатия */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  border-bottom-width: 2px;
+}
+
+
+/* УДАЛИТЕ или ЗАКОММЕНТИРУЙТЕ старые стили для .level-card-rect.level-easy, .medium, .hard, если они меняли border всей карточки,
+   так как теперь мы стилизуем текст внутри .level-difficulty */
+/* Например:
+.level-card-rect.level-easy {
+  border-color: #4CAF50;
+}
+.level-card-rect.level-medium {
+  border-color: #FFC107;
+}
+.level-card-rect.level-hard {
+  border-color: #F44336;
+}
+*/
+
+@media (max-width: 900px) {
+  .level-cards-list {
+    gap: 20px 12px;
+    max-width: 100vw;
+  }
+  .level-card-rect {
+    min-width: 180px;
+    max-width: 100%;
+    padding: 16px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .level-cards-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 2px 30px 2px;
+  }
+  .level-card-rect {
+    width: 98vw;
+    min-width: unset;
+    max-width: 99vw;
+    padding: 10px 2vw;
+  }
+}
+
+/* Остальные стили (player-info-card, training-room-card-rect и т.д.) оставляем без изменений */
+.level-select h1 {
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  color: #fff;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  margin-bottom: 2rem; /* Увеличим немного отступ */
+  font-size: 1.8em; /* Чуть уменьшим для баланса с пиксельным шрифтом */
+  text-align: center;
+}
+
+/* Контейнер для информации об игроке (Уровень, XP, Магазин) */
+.player-info-card { /* Предполагаемый класс, если это отдельный компонент */
+  background-color: rgba(0, 0, 0, 0.6); /* Темный фон как на скриншоте */
+  padding: 15px 20px;
+  border-radius: 6px; /* Небольшое "пиксельное" скругление */
+  border: 2px solid #444; /* Четкая граница */
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 500px; /* Ограничим ширину */
+  box-sizing: border-box;
+  box-shadow: none; /* Убираем сложные тени */
+}
+.player-info-card .level-text { /* Текст "Уровень X" */
+  font-size: 1em;
+  margin-bottom: 8px;
+}
+.player-info-card .xp-bar-container { /* Контейнер для XP бара */
+  height: 20px;
+  background-color: #555;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  border: 1px solid #333;
+}
+.player-info-card .xp-bar-fill { /* Заполнение XP бара */
+  height: 100%;
+  background-color: #4A90E2; /* Синий цвет XP */
+  border-radius: 3px;
+}
+.player-info-card .xp-text { /* Текст XP */
+  font-size: 0.7em;
+  margin-bottom: 12px;
+}
+.player-info-card .shop-button { /* Кнопка "Магазин" */
+  background-color: #f0ad4e; /* Оранжевый цвет кнопки */
+  color: #1a1a1a; /* Темный текст */
+  border: 2px solid #eea236;
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: none;
+}
+.player-info-card .shop-button:hover {
+  background-color: #ec971f;
+}
+
+
+/* Карточка тренировочной комнаты */
+.training-room-card-rect {
+  background-color: rgba(50, 50, 50, 0.7); /* Темно-серый фон как на скриншоте */
+  border: 2px solid #666;
+  border-radius: 6px;
   padding: 20px;
-  width: 280px; /* Фиксированная ширина или по содержимому */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 600px; /* Ограничим ширину */
+  box-sizing: border-box;
+  margin-bottom: 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 10px; /* Пространство между элементами внутри карточки */
+  box-shadow: none;
+  color: #fff; /* Белый текст для контраста */
 }
 
-.training-room-card-rect .level-title {
-  font-size: 1.4em;
-  font-weight: bold;
-  color: #333;
+.training-room-card-rect .level-title { /* Заголовок "Тренировочная комната" */
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+.training-room-card-rect .training-icon { /* Иконка кубка */
+  font-size: 2.5em;
+  margin: 10px 0;
+  color: #ffd700; /* Золотой цвет для кубка */
+}
+
+.training-room-card-rect .level-content { /* Описание */
+  font-size: 0.8em;
+  color: #ccc; /* Светло-серый для описания */
+  margin-bottom: 15px;
+  line-height: 1.5;
+  overflow-wrap: break-word; /* Перенос слов */
+}
+
+.training-room-card-rect .training-start-btn { /* Кнопка "Тренироваться" */
+  background-color: #5cb85c; /* Зеленый цвет кнопки */
+  color: white;
+  width: auto; /* Автоматическая ширина по контенту + padding */
+  padding: 10px 25px; /* Увеличим padding */
+  font-size: 0.9em;
+  border: 2px solid #4cae4c;
+  border-radius: 4px;
+  box-shadow: none;
+  cursor: pointer;
+  margin-bottom: 10px; /* Отступ снизу */
+}
+.training-room-card-rect .training-start-btn:hover {
+  background-color: #4a964a;
+}
+
+/* Кнопка "Общая статистика" */
+.open-stats-btn {
+  background-color: #747bff;
+  color: white;
+  padding: 10px 25px;
+  font-size: 0.9em;
+  border: 2px solid #535bf2;
+  border-radius: 4px;
+  box-shadow: none;
+  cursor: pointer;
+  margin-bottom: 2rem; /* Отступ снизу */
+}
+.open-stats-btn:hover {
+  background-color: #6069f0;
+}
+
+/* Контейнер для списка карточек уровней */
+.level-cards-list {
+  display: flex;
+  flex-wrap: wrap; /* Позволяет карточкам переноситься */
+  justify-content: center; /* Центрирует карточки */
+  gap: 20px; /* Промежуток между карточками */
+  width: 100%;
+  max-width: 1200px; /* Максимальная ширина для списка карточек */
+  padding: 0 10px; /* Небольшие отступы по бокам */
+  box-sizing: border-box;
+}
+
+/* ИСПРАВЛЕНО: Контейнер для пути/области с уровнями - ПРЯМОЙ РОДИТЕЛЬ КАРТОЧЕК */
+/* УБЕДИТЕСЬ, ЧТО ЭТО ЕДИНСТВЕННОЕ ОПРЕДЕЛЕНИЕ ДЛЯ .level-path-rect В ФАЙЛЕ! */
+.level-path-rect {
+  display: flex;             /* Включаем Flexbox для управления дочерними карточками */
+  flex-wrap: wrap;           /* Разрешаем перенос карточек на новые строки */
+  justify-content: center;   /* Выравниваем карточки по центру строки */
+  gap: 20px;                 /* Расстояние МЕЖДУ карточками (горизонтальное и вертикальное) */
+  width: 100%;               /* Занимает всю ширину родительского элемента */
+  max-width: none;           /* Снимаем ограничение максимальной ширины */
+  padding: 10px 0;           /* Небольшие вертикальные отступы для самого контейнера */
+  box-sizing: border-box;
+}
+
+/* ИСПРАВЛЕНО: Стили для отдельной карточки уровня */
+/* УБЕДИТЕСЬ, ЧТО ЭТО ЕДИНСТВЕННОЕ ОПРЕДЕЛЕНИЕ ДЛЯ .level-card-rect В ФАЙЛЕ! */
+.level-card-rect {
+  background: rgba(40, 70, 40, 0.85); /* Или ваш желаемый фон */
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18); /* Или ваш желаемый box-shadow */
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 2px solid #38761d; /* Или ваша желаемая граница */
+  color: #fff;
+  box-sizing: border-box;
+
+  flex-grow: 0;             /* Карточка не будет растягиваться */
+  flex-shrink: 1;           /* Карточка может сжиматься */
+  width: fit-content;       /* Ширина карточки определяется ее содержимым */
+  min-width: 300px;         /* Минимальная ширина карточки */
+  max-width: 370px;         /* Максимальная ширина, если нужно ограничить */
+  /* margin: 0; */          /* Внешние отступы не нужны, используется 'gap' на родителе */
+  overflow: hidden;
+  transition: transform 0.15s; /* Плавный переход при наведении/изменении */
+}
+
+/* Убедитесь, что определение .level-cards-list не имеет ограничивающего max-width, если оно является родителем для .level-path-rect */
+/* Например, если .level-cards-list оборачивает .level-path-rect, убедитесь, что у него нет max-width: 1200px; */
+.level-cards-list {
+  /* ... другие стили ... */
+  max-width: none; /* Уберите или измените это, если оно ограничивает ширину */
+  /* ... другие стили ... */
+}
+
+@media (max-width: 900px) {
+  .level-cards-list {
+    gap: 20px 12px;
+    max-width: 100vw;
+  }
+  .level-card-rect {
+    min-width: 180px;
+    max-width: 100%;
+    padding: 16px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .level-cards-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 2px 30px 2px;
+  }
+  .level-card-rect {
+    width: 98vw;
+    min-width: unset;
+    max-width: 99vw;
+    padding: 10px 2vw;
+  }
+}
+
+/* Остальные стили (player-info-card, training-room-card-rect и т.д.) оставляем без изменений */
+.level-select h1 {
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  color: #fff;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  margin-bottom: 2rem; /* Увеличим немного отступ */
+  font-size: 1.8em; /* Чуть уменьшим для баланса с пиксельным шрифтом */
+  text-align: center;
+}
+
+/* Контейнер для информации об игроке (Уровень, XP, Магазин) */
+.player-info-card { /* Предполагаемый класс, если это отдельный компонент */
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 15px 20px;
+  border-radius: 6px;
+  border: 2px solid #444;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Центрируем содержимое */
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto; /* Центрируем сам блок */
 }
 
 .training-room-card-rect .training-icon {
-  font-size: 3em; /* Размер иконки */
-  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin: 10px auto 16px auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+  font-size: 2.2em;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
 }
 
-.training-room-card-rect .level-content {
-  font-size: 0.95em;
-  color: #555;
-  margin-bottom: 15px;
+.level-cards-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 32px 28px; /* вертикальный и горизонтальный gap */
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 10px 40px 10px;
+  box-sizing: border-box;
 }
 
-.training-room-card-rect .training-start-btn {
-  background-color: #5cb85c; /* Зеленый цвет для кнопки тренировки */
+/* Карточка уровня */
+/* Убедитесь, что это единственное актуальное определение для .level-card-rect */
+.level-card-rect {
+  background: rgba(40, 70, 40, 0.85);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Выравнивание дочерних элементов по левому краю */
+  border: 2px solid #38761d; /* Базовая граница, будет переопределена для сложности */
+  color: #fff;
+  box-sizing: border-box;
+  flex-grow: 0;
+  flex-shrink: 1;
+  width: fit-content;
+  min-width: 300px;
+  max-width: 370px;
+  margin: 10px; /* Если используете gap на .level-cards-list, это можно убрать или оставить для дополнительного контроля */
+  overflow: hidden;
+  transition: transform 0.15s;
+}
+
+/* Общий стиль для всех прямых потомков карточки, кроме последнего (кнопки) */
+.level-card-rect > *:not(:last-child) {
+  margin-bottom: 12px; /* Отступ между элементами внутри карточки */
+  width: 100%; /* Чтобы текстовые блоки занимали всю ширину */
+}
+
+/* Стили для названия уровня в карточке */
+.level-card-rect .level-title {
+  font-size: 1.2em; /* Увеличим немного для акцента */
+  font-weight: bold;
+  color: #fff;
+  text-align: left;
+}
+
+/* Стили для блока сложности */
+.level-card-rect .level-difficulty {
+  font-size: 0.9em;
+  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
+  text-align: left;
+}
+
+/* Цветовое выделение для текста сложности */
+.level-card-rect .level-difficulty.easy b {
+  color: #66bb6a; /* Зеленый */
+}
+.level-card-rect .level-difficulty.medium b {
+  color: #ffee58; /* Желтый */
+}
+.level-card-rect .level-difficulty.hard b {
+  color: #ef5350; /* Красный */
+}
+
+/* Стили для содержания уровня */
+.level-card-rect .level-content {
+  font-size: 0.9em;
+  color: #ccc;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* Стили для "отдельного окна" с данными о прохождении уровня (статистика) */
+.level-card-rect .level-stats {
+  background-color: rgba(0, 0, 0, 0.35); /* Полупрозрачный темный фон для "окна" */
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.85em;
+  color: #e0e0e0;
+  line-height: 1.4;
+  text-align: left; /* или center, если текст внутри этого блока должен быть по центру */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Тонкая светлая рамка для "окна" */
+}
+
+.level-card-rect .level-stats div { /* Если внутри level-stats есть еще div'ы для данных */
+  margin-bottom: 5px;
+}
+.level-card-rect .level-stats div:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Стили для кнопки "Начать" внутри карточки уровня */
+/* Используем класс .level-start-btn из вашей HTML структуры */
+.level-card-rect .level-start-btn {
+  align-self: center; /* Центрирует кнопку по горизонтали */
+  background-color: #5cb85c;
   color: white;
-  width: 100%; /* Кнопка на всю ширину карточки */
-  padding: 12px 0;
-  font-size: 1.1em;
+  padding: 10px 25px;
+  font-size: 0.95em; /* Немного увеличим для читаемости */
+  border: none; /* Уберем стандартную границу, если есть */
+  border-bottom: 3px solid #4a964a; /* "Объемная" граница снизу */
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  margin-top: auto; /* Отталкивает кнопку вниз, занимая доступное пространство */
+  font-family: 'Press Start 2P', system-ui, sans-serif; /* Убедимся, что шрифт применяется */
+  transition: background-color 0.2s, transform 0.1s;
 }
 
-.training-room-card-rect .training-start-btn:hover {
-  background-color: #4cae4c;
+.level-card-rect .level-start-btn:hover {
+  background-color: #4a964a;
+  border-bottom-color: #3e8e3e;
 }
 
-/* Адаптивность: если экран узкий, можно расположить карточку тренировки под списком уровней */
-@media (max-width: 900px) { /* Подберите значение breakpoint */
-  .levels-and-training-wrapper {
+.level-card-rect .level-start-btn:active {
+  transform: translateY(1px); /* Эффект нажатия */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  border-bottom-width: 2px;
+}
+
+
+/* УДАЛИТЕ или ЗАКОММЕНТИРУЙТЕ старые стили для .level-card-rect.level-easy, .medium, .hard, если они меняли border всей карточки,
+   так как теперь мы стилизуем текст внутри .level-difficulty */
+/* Например:
+.level-card-rect.level-easy {
+  border-color: #4CAF50;
+}
+.level-card-rect.level-medium {
+  border-color: #FFC107;
+}
+.level-card-rect.level-hard {
+  border-color: #F44336;
+}
+*/
+
+@media (max-width: 900px) {
+  .level-cards-list {
+    gap: 20px 12px;
+    max-width: 100vw;
+  }
+  .level-card-rect {
+    min-width: 180px;
+    max-width: 100%;
+    padding: 16px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .level-cards-list {
     flex-direction: column;
-    align-items: center; /* Центрируем карточки, когда они в колонке */
+    align-items: center;
+    gap: 12px;
+    padding: 0 2px 30px 2px;
   }
-
-  .training-room-card-rect {
-    width: 90%; /* Шире на маленьких экранах */
-    max-width: 400px; /* Но не слишком широко */
-    margin-top: 20px;
+  .level-card-rect {
+    width: 98vw;
+    min-width: unset;
+    max-width: 99vw;
+    padding: 10px 2vw;
   }
 }
 
-/* Адаптивность для .top-section-wrapper */
-@media (max-width: 768px) { /* Точка перелома, когда элементы в top-section-wrapper станут в столбик */
-  .top-section-wrapper {
-    flex-direction: column;
-    align-items: center; /* Центрируем элементы, когда они в колонке */
-  }
+/* Остальные стили (player-info-card, training-room-card-rect и т.д.) оставляем без изменений */
+.level-select h1 {
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  color: #fff;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  margin-bottom: 2rem; /* Увеличим немного отступ */
+  font-size: 1.8em; /* Чуть уменьшим для баланса с пиксельным шрифтом */
+  text-align: center;
+}
 
-  .training-room-shortcut-card {
-    width: 80%; /* Занимает большую часть ширины на маленьких экранах */
-    max-width: 400px; /* Но не слишком широко */
-    margin-top: 15px; /* Отступ сверху, если PlayerStats выше */
+/* Контейнер для информации об игроке (Уровень, XP, Магазин) */
+.player-info-card { /* Предполагаемый класс, если это отдельный компонент */
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 15px 20px;
+  border-radius: 6px;
+  border: 2px solid #444;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Центрируем содержимое */
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto; /* Центрируем сам блок */
+}
+
+.training-room-card-rect .training-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin: 10px auto 16px auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+  font-size: 2.2em;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.level-cards-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 32px 28px; /* вертикальный и горизонтальный gap */
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 10px 40px 10px;
+  box-sizing: border-box;
+}
+
+/* Карточка уровня */
+/* Убедитесь, что это единственное актуальное определение для .level-card-rect */
+.level-card-rect {
+  background: rgba(40, 70, 40, 0.85);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Выравнивание дочерних элементов по левому краю */
+  border: 2px solid #38761d; /* Базовая граница, будет переопределена для сложности */
+  color: #fff;
+  box-sizing: border-box;
+  flex-grow: 0;
+  flex-shrink: 1;
+  width: fit-content;
+  min-width: 300px;
+  max-width: 370px;
+  margin: 10px; /* Если используете gap на .level-cards-list, это можно убрать или оставить для дополнительного контроля */
+  overflow: hidden;
+  transition: transform 0.15s;
+}
+
+/* Общий стиль для всех прямых потомков карточки, кроме последнего (кнопки) */
+.level-card-rect > *:not(:last-child) {
+  margin-bottom: 12px; /* Отступ между элементами внутри карточки */
+  width: 100%; /* Чтобы текстовые блоки занимали всю ширину */
+}
+
+/* Стили для названия уровня в карточке */
+.level-card-rect .level-title {
+  font-size: 1.2em; /* Увеличим немного для акцента */
+  font-weight: bold;
+  color: #fff;
+  text-align: left;
+}
+
+/* Стили для блока сложности */
+.level-card-rect .level-difficulty {
+  font-size: 0.9em;
+  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
+  text-align: left;
+}
+
+/* Цветовое выделение для текста сложности */
+.level-card-rect .level-difficulty.easy b {
+  color: #66bb6a; /* Зеленый */
+}
+.level-card-rect .level-difficulty.medium b {
+  color: #ffee58; /* Желтый */
+}
+.level-card-rect .level-difficulty.hard b {
+  color: #ef5350; /* Красный */
+}
+
+/* Стили для содержания уровня */
+.level-card-rect .level-content {
+  font-size: 0.9em;
+  color: #ccc;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* Стили для "отдельного окна" с данными о прохождении уровня (статистика) */
+.level-card-rect .level-stats {
+  background-color: rgba(0, 0, 0, 0.35); /* Полупрозрачный темный фон для "окна" */
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.85em;
+  color: #e0e0e0;
+  line-height: 1.4;
+  text-align: left; /* или center, если текст внутри этого блока должен быть по центру */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Тонкая светлая рамка для "окна" */
+}
+
+.level-card-rect .level-stats div { /* Если внутри level-stats есть еще div'ы для данных */
+  margin-bottom: 5px;
+}
+.level-card-rect .level-stats div:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Стили для кнопки "Начать" внутри карточки уровня */
+/* Используем класс .level-start-btn из вашей HTML структуры */
+.level-card-rect .level-start-btn {
+  align-self: center; /* Центрирует кнопку по горизонтали */
+  background-color: #5cb85c;
+  color: white;
+  padding: 10px 25px;
+  font-size: 0.95em; /* Немного увеличим для читаемости */
+  border: none; /* Уберем стандартную границу, если есть */
+  border-bottom: 3px solid #4a964a; /* "Объемная" граница снизу */
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  margin-top: auto; /* Отталкивает кнопку вниз, занимая доступное пространство */
+  font-family: 'Press Start 2P', system-ui, sans-serif; /* Убедимся, что шрифт применяется */
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.level-card-rect .level-start-btn:hover {
+  background-color: #4a964a;
+  border-bottom-color: #3e8e3e;
+}
+
+.level-card-rect .level-start-btn:active {
+  transform: translateY(1px); /* Эффект нажатия */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  border-bottom-width: 2px;
+}
+
+
+/* УДАЛИТЕ или ЗАКОММЕНТИРУЙТЕ старые стили для .level-card-rect.level-easy, .medium, .hard, если они меняли border всей карточки,
+   так как теперь мы стилизуем текст внутри .level-difficulty */
+/* Например:
+.level-card-rect.level-easy {
+  border-color: #4CAF50;
+}
+.level-card-rect.level-medium {
+  border-color: #FFC107;
+}
+.level-card-rect.level-hard {
+  border-color: #F44336;
+}
+*/
+
+@media (max-width: 900px) {
+  .level-cards-list {
+    gap: 20px 12px;
+    max-width: 100vw;
   }
+  .level-card-rect {
+    min-width: 180px;
+    max-width: 100%;
+    padding: 16px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .level-cards-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 2px 30px 2px;
+  }
+  .level-card-rect {
+    width: 98vw;
+    min-width: unset;
+    max-width: 99vw;
+    padding: 10px 2vw;
+  }
+}
+
+/* Остальные стили (player-info-card, training-room-card-rect и т.д.) оставляем без изменений */
+.level-select h1 {
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  color: #fff;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  margin-bottom: 2rem; /* Увеличим немного отступ */
+  font-size: 1.8em; /* Чуть уменьшим для баланса с пиксельным шрифтом */
+  text-align: center;
+}
+
+/* Контейнер для информации об игроке (Уровень, XP, Магазин) */
+.player-info-card { /* Предполагаемый класс, если это отдельный компонент */
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 15px 20px;
+  border-radius: 6px;
+  border: 2px solid #444;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Центрируем содержимое */
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto; /* Центрируем сам блок */
+}
+
+.training-room-card-rect .training-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin: 10px auto 16px auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+  font-size: 2.2em;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.level-cards-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 32px 28px; /* вертикальный и горизонтальный gap */
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 10px 40px 10px;
+  box-sizing: border-box;
+}
+
+/* Карточка уровня */
+/* Убедитесь, что это единственное актуальное определение для .level-card-rect */
+.level-card-rect {
+  background: rgba(40, 70, 40, 0.85);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Выравнивание дочерних элементов по левому краю */
+  border: 2px solid #38761d; /* Базовая граница, будет переопределена для сложности */
+  color: #fff;
+  box-sizing: border-box;
+  flex-grow: 0;
+  flex-shrink: 1;
+  width: fit-content;
+  min-width: 300px;
+  max-width: 370px;
+  margin: 10px; /* Если используете gap на .level-cards-list, это можно убрать или оставить для дополнительного контроля */
+  overflow: hidden;
+  transition: transform 0.15s;
+}
+
+/* Общий стиль для всех прямых потомков карточки, кроме последнего (кнопки) */
+.level-card-rect > *:not(:last-child) {
+  margin-bottom: 12px; /* Отступ между элементами внутри карточки */
+  width: 100%; /* Чтобы текстовые блоки занимали всю ширину */
+}
+
+/* Стили для названия уровня в карточке */
+.level-card-rect .level-title {
+  font-size: 1.2em; /* Увеличим немного для акцента */
+  font-weight: bold;
+  color: #fff;
+  text-align: left;
+}
+
+/* Стили для блока сложности */
+.level-card-rect .level-difficulty {
+  font-size: 0.9em;
+  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
+  text-align: left;
+}
+
+/* Цветовое выделение для текста сложности */
+.level-card-rect .level-difficulty.easy b {
+  color: #66bb6a; /* Зеленый */
+}
+.level-card-rect .level-difficulty.medium b {
+  color: #ffee58; /* Желтый */
+}
+.level-card-rect .level-difficulty.hard b {
+  color: #ef5350; /* Красный */
+}
+
+/* Стили для содержания уровня */
+.level-card-rect .level-content {
+  font-size: 0.9em;
+  color: #ccc;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* Стили для "отдельного окна" с данными о прохождении уровня (статистика) */
+.level-card-rect .level-stats {
+  background-color: rgba(0, 0, 0, 0.35); /* Полупрозрачный темный фон для "окна" */
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.85em;
+  color: #e0e0e0;
+  line-height: 1.4;
+  text-align: left; /* или center, если текст внутри этого блока должен быть по центру */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Тонкая светлая рамка для "окна" */
+}
+
+.level-card-rect .level-stats div { /* Если внутри level-stats есть еще div'ы для данных */
+  margin-bottom: 5px;
+}
+.level-card-rect .level-stats div:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Стили для кнопки "Начать" внутри карточки уровня */
+/* Используем класс .level-start-btn из вашей HTML структуры */
+.level-card-rect .level-start-btn {
+  align-self: center; /* Центрирует кнопку по горизонтали */
+  background-color: #5cb85c;
+  color: white;
+  padding: 10px 25px;
+  font-size: 0.95em; /* Немного увеличим для читаемости */
+  border: none; /* Уберем стандартную границу, если есть */
+  border-bottom: 3px solid #4a964a; /* "Объемная" граница снизу */
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  margin-top: auto; /* Отталкивает кнопку вниз, занимая доступное пространство */
+  font-family: 'Press Start 2P', system-ui, sans-serif; /* Убедимся, что шрифт применяется */
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.level-card-rect .level-start-btn:hover {
+  background-color: #4a964a;
+  border-bottom-color: #3e8e3e;
+}
+
+.level-card-rect .level-start-btn:active {
+  transform: translateY(1px); /* Эффект нажатия */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  border-bottom-width: 2px;
+}
+
+
+/* УДАЛИТЕ или ЗАКОММЕНТИРУЙТЕ старые стили для .level-card-rect.level-easy, .medium, .hard, если они меняли border всей карточки,
+   так как теперь мы стилизуем текст внутри .level-difficulty */
+/* Например:
+.level-card-rect.level-easy {
+  border-color: #4CAF50;
+}
+.level-card-rect.level-medium {
+  border-color: #FFC107;
+}
+.level-card-rect.level-hard {
+  border-color: #F44336;
+}
+*/
+
+@media (max-width: 900px) {
+  .level-cards-list {
+    gap: 20px 12px;
+    max-width: 100vw;
+  }
+  .level-card-rect {
+    min-width: 180px;
+    max-width: 100%;
+    padding: 16px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .level-cards-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 2px 30px 2px;
+  }
+  .level-card-rect {
+    width: 98vw;
+    min-width: unset;
+    max-width: 99vw;
+    padding: 10px 2vw;
+  }
+}
+
+/* Остальные стили (player-info-card, training-room-card-rect и т.д.) оставляем без изменений */
+.level-select h1 {
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  color: #fff;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  margin-bottom: 2rem; /* Увеличим немного отступ */
+  font-size: 1.8em; /* Чуть уменьшим для баланса с пиксельным шрифтом */
+  text-align: center;
+}
+
+/* Контейнер для информации об игроке (Уровень, XP, Магазин) */
+.player-info-card { /* Предполагаемый класс, если это отдельный компонент */
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 15px 20px;
+  border-radius: 6px;
+  border: 2px solid #444;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Центрируем содержимое */
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto; /* Центрируем сам блок */
+}
+
+.training-room-card-rect .training-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin: 10px auto 16px auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+  font-size: 2.2em;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.level-cards-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 32px 28px; /* вертикальный и горизонтальный gap */
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 10px 40px 10px;
+  box-sizing: border-box;
+}
+
+/* Карточка уровня */
+/* Убедитесь, что это единственное актуальное определение для .level-card-rect */
+.level-card-rect {
+  background: rgba(40, 70, 40, 0.85);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Выравнивание дочерних элементов по левому краю */
+  border: 2px solid #38761d; /* Базовая граница, будет переопределена для сложности */
+  color: #fff;
+  box-sizing: border-box;
+  flex-grow: 0;
+  flex-shrink: 1;
+  width: fit-content;
+  min-width: 300px;
+  max-width: 370px;
+  margin: 10px; /* Если используете gap на .level-cards-list, это можно убрать или оставить для дополнительного контроля */
+  overflow: hidden;
+  transition: transform 0.15s;
+}
+
+/* Общий стиль для всех прямых потомков карточки, кроме последнего (кнопки) */
+.level-card-rect > *:not(:last-child) {
+  margin-bottom: 12px; /* Отступ между элементами внутри карточки */
+  width: 100%; /* Чтобы текстовые блоки занимали всю ширину */
+}
+
+/* Стили для названия уровня в карточке */
+.level-card-rect .level-title {
+  font-size: 1.2em; /* Увеличим немного для акцента */
+  font-weight: bold;
+  color: #fff;
+  text-align: left;
+}
+
+/* Стили для блока сложности */
+.level-card-rect .level-difficulty {
+  font-size: 0.9em;
+  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
+  text-align: left;
+}
+
+/* Цветовое выделение для текста сложности */
+.level-card-rect .level-difficulty.easy b {
+  color: #66bb6a; /* Зеленый */
+}
+.level-card-rect .level-difficulty.medium b {
+  color: #ffee58; /* Желтый */
+}
+.level-card-rect .level-difficulty.hard b {
+  color: #ef5350; /* Красный */
+}
+
+/* Стили для содержания уровня */
+.level-card-rect .level-content {
+  font-size: 0.9em;
+  color: #ccc;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* Стили для "отдельного окна" с данными о прохождении уровня (статистика) */
+.level-card-rect .level-stats {
+  background-color: rgba(0, 0, 0, 0.35); /* Полупрозрачный темный фон для "окна" */
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.85em;
+  color: #e0e0e0;
+  line-height: 1.4;
+  text-align: left; /* или center, если текст внутри этого блока должен быть по центру */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Тонкая светлая рамка для "окна" */
+}
+
+.level-card-rect .level-stats div { /* Если внутри level-stats есть еще div'ы для данных */
+  margin-bottom: 5px;
+}
+.level-card-rect .level-stats div:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Стили для кнопки "Начать" внутри карточки уровня */
+/* Используем класс .level-start-btn из вашей HTML структуры */
+.level-card-rect .level-start-btn {
+  align-self: center; /* Центрирует кнопку по горизонтали */
+  background-color: #5cb85c;
+  color: white;
+  padding: 10px 25px;
+  font-size: 0.95em; /* Немного увеличим для читаемости */
+  border: none; /* Уберем стандартную границу, если есть */
+  border-bottom: 3px solid #4a964a; /* "Объемная" граница снизу */
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  margin-top: auto; /* Отталкивает кнопку вниз, занимая доступное пространство */
+  font-family: 'Press Start 2P', system-ui, sans-serif; /* Убедимся, что шрифт применяется */
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.level-card-rect .level-start-btn:hover {
+  background-color: #4a964a;
+  border-bottom-color: #3e8e3e;
+}
+
+.level-card-rect .level-start-btn:active {
+  transform: translateY(1px); /* Эффект нажатия */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  border-bottom-width: 2px;
+}
+
+
+/* УДАЛИТЕ или ЗАКОММЕНТИРУЙТЕ старые стили для .level-card-rect.level-easy, .medium, .hard, если они меняли border всей карточки,
+   так как теперь мы стилизуем текст внутри .level-difficulty */
+/* Например:
+.level-card-rect.level-easy {
+  border-color: #4CAF50;
+}
+.level-card-rect.level-medium {
+  border-color: #FFC107;
+}
+.level-card-rect.level-hard {
+  border-color: #F44336;
+}
+*/
+
+@media (max-width: 900px) {
+  .level-cards-list {
+    gap: 20px 12px;
+    max-width: 100vw;
+  }
+  .level-card-rect {
+    min-width: 180px;
+    max-width: 100%;
+    padding: 16px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .level-cards-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 2px 30px 2px;
+  }
+  .level-card-rect {
+    width: 98vw;
+    min-width: unset;
+    max-width: 99vw;
+    padding: 10px 2vw;
+  }
+}
+
+/* Остальные стили (player-info-card, training-room-card-rect и т.д.) оставляем без изменений */
+.level-select h1 {
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  color: #fff;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  margin-bottom: 2rem; /* Увеличим немного отступ */
+  font-size: 1.8em; /* Чуть уменьшим для баланса с пиксельным шрифтом */
+  text-align: center;
+}
+
+/* Контейнер для информации об игроке (Уровень, XP, Магазин) */
+.player-info-card { /* Предполагаемый класс, если это отдельный компонент */
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 15px 20px;
+  border-radius: 6px;
+  border: 2px solid #444;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Центрируем содержимое */
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto; /* Центрируем сам блок */
+}
+
+.training-room-card-rect .training-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin: 10px auto 16px auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+  font-size: 2.2em;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.level-cards-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 32px 28px; /* вертикальный и горизонтальный gap */
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 10px 40px 10px;
+  box-sizing: border-box;
+}
+
+/* Карточка уровня */
+/* Убедитесь, что это единственное актуальное определение для .level-card-rect */
+.level-card-rect {
+  background: rgba(40, 70, 40, 0.85);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Выравнивание дочерних элементов по левому краю */
+  border: 2px solid #38761d; /* Базовая граница, будет переопределена для сложности */
+  color: #fff;
+  box-sizing: border-box;
+  flex-grow: 0;
+  flex-shrink: 1;
+  width: fit-content;
+  min-width: 300px;
+  max-width: 370px;
+  margin: 10px; /* Если используете gap на .level-cards-list, это можно убрать или оставить для дополнительного контроля */
+  overflow: hidden;
+  transition: transform 0.15s;
+}
+
+/* Общий стиль для всех прямых потомков карточки, кроме последнего (кнопки) */
+.level-card-rect > *:not(:last-child) {
+  margin-bottom: 12px; /* Отступ между элементами внутри карточки */
+  width: 100%; /* Чтобы текстовые блоки занимали всю ширину */
+}
+
+/* Стили для названия уровня в карточке */
+.level-card-rect .level-title {
+  font-size: 1.2em; /* Увеличим немного для акцента */
+  font-weight: bold;
+  color: #fff;
+  text-align: left;
+}
+
+/* Стили для блока сложности */
+.level-card-rect .level-difficulty {
+  font-size: 0.9em;
+  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
+  text-align: left;
+}
+
+/* Цветовое выделение для текста сложности */
+.level-card-rect .level-difficulty.easy b {
+  color: #66bb6a; /* Зеленый */
+}
+.level-card-rect .level-difficulty.medium b {
+  color: #ffee58; /* Желтый */
+}
+.level-card-rect .level-difficulty.hard b {
+  color: #ef5350; /* Красный */
+}
+
+/* Стили для содержания уровня */
+.level-card-rect .level-content {
+  font-size: 0.9em;
+  color: #ccc;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* Стили для "отдельного окна" с данными о прохождении уровня (статистика) */
+.level-card-rect .level-stats {
+  background-color: rgba(0, 0, 0, 0.35); /* Полупрозрачный темный фон для "окна" */
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.85em;
+  color: #e0e0e0;
+  line-height: 1.4;
+  text-align: left; /* или center, если текст внутри этого блока должен быть по центру */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Тонкая светлая рамка для "окна" */
+}
+
+.level-card-rect .level-stats div { /* Если внутри level-stats есть еще div'ы для данных */
+  margin-bottom: 5px;
+}
+.level-card-rect .level-stats div:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Стили для кнопки "Начать" внутри карточки уровня */
+/* Используем класс .level-start-btn из вашей HTML структуры */
+.level-card-rect .level-start-btn {
+  align-self: center; /* Центрирует кнопку по горизонтали */
+  background-color: #5cb85c;
+  color: white;
+  padding: 10px 25px;
+  font-size: 0.95em; /* Немного увеличим для читаемости */
+  border: none; /* Уберем стандартную границу, если есть */
+  border-bottom: 3px solid #4a964a; /* "Объемная" граница снизу */
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  margin-top: auto; /* Отталкивает кнопку вниз, занимая доступное пространство */
+  font-family: 'Press Start 2P', system-ui, sans-serif; /* Убедимся, что шрифт применяется */
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.level-card-rect .level-start-btn:hover {
+  background-color: #4a964a;
+  border-bottom-color: #3e8e3e;
+}
+
+.level-card-rect .level-start-btn:active {
+  transform: translateY(1px); /* Эффект нажатия */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  border-bottom-width: 2px;
+}
+
+
+/* УДАЛИТЕ или ЗАКОММЕНТИРУЙТЕ старые стили для .level-card-rect.level-easy, .medium, .hard, если они меняли border всей карточки,
+   так как теперь мы стилизуем текст внутри .level-difficulty */
+/* Например:
+.level-card-rect.level-easy {
+  border-color: #4CAF50;
+}
+.level-card-rect.level-medium {
+  border-color: #FFC107;
+}
+.level-card-rect.level-hard {
+  border-color: #F44336;
+}
+*/
+
+@media (max-width: 900px) {
+  .level-cards-list {
+    gap: 20px 12px;
+    max-width: 100vw;
+  }
+  .level-card-rect {
+    min-width: 180px;
+    max-width: 100%;
+    padding: 16px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .level-cards-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 2px 30px 2px;
+  }
+  .level-card-rect {
+    width: 98vw;
+    min-width: unset;
+    max-width: 99vw;
+    padding: 10px 2vw;
+  }
+}
+
+/* Остальные стили (player-info-card, training-room-card-rect и т.д.) оставляем без изменений */
+.level-select h1 {
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  color: #fff;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  margin-bottom: 2rem; /* Увеличим немного отступ */
+  font-size: 1.8em; /* Чуть уменьшим для баланса с пиксельным шрифтом */
+  text-align: center;
+}
+
+/* Контейнер для информации об игроке (Уровень, XP, Магазин) */
+.player-info-card { /* Предполагаемый класс, если это отдельный компонент */
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 15px 20px;
+  border-radius: 6px;
+  border: 2px solid #444;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Центрируем содержимое */
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto; /* Центрируем сам блок */
+}
+
+.training-room-card-rect .training-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin: 10px auto 16px auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+  font-size: 2.2em;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.level-cards-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 32px 28px; /* вертикальный и горизонтальный gap */
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 10px 40px 10px;
+  box-sizing: border-box;
+}
+
+/* Карточка уровня */
+/* Убедитесь, что это единственное актуальное определение для .level-card-rect */
+.level-card-rect {
+  background: rgba(40, 70, 40, 0.85);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Выравнивание дочерних элементов по левому краю */
+  border: 2px solid #38761d; /* Базовая граница, будет переопределена для сложности */
+  color: #fff;
+  box-sizing: border-box;
+  flex-grow: 0;
+  flex-shrink: 1;
+  width: fit-content;
+  min-width: 300px;
+  max-width: 370px;
+  margin: 10px; /* Если используете gap на .level-cards-list, это можно убрать или оставить для дополнительного контроля */
+  overflow: hidden;
+  transition: transform 0.15s;
+}
+
+/* Общий стиль для всех прямых потомков карточки, кроме последнего (кнопки) */
+.level-card-rect > *:not(:last-child) {
+  margin-bottom: 12px; /* Отступ между элементами внутри карточки */
+  width: 100%; /* Чтобы текстовые блоки занимали всю ширину */
+}
+
+/* Стили для названия уровня в карточке */
+.level-card-rect .level-title {
+  font-size: 1.2em; /* Увеличим немного для акцента */
+  font-weight: bold;
+  color: #fff;
+  text-align: left;
+}
+
+/* Стили для блока сложности */
+.level-card-rect .level-difficulty {
+  font-size: 0.9em;
+  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
+  text-align: left;
+}
+
+/* Цветовое выделение для текста сложности */
+.level-card-rect .level-difficulty.easy b {
+  color: #66bb6a; /* Зеленый */
+}
+.level-card-rect .level-difficulty.medium b {
+  color: #ffee58; /* Желтый */
+}
+.level-card-rect .level-difficulty.hard b {
+  color: #ef5350; /* Красный */
+}
+
+/* Стили для содержания уровня */
+.level-card-rect .level-content {
+  font-size: 0.9em;
+  color: #ccc;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* Стили для "отдельного окна" с данными о прохождении уровня (статистика) */
+.level-card-rect .level-stats {
+  background-color: rgba(0, 0, 0, 0.35); /* Полупрозрачный темный фон для "окна" */
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.85em;
+  color: #e0e0e0;
+  line-height: 1.4;
+  text-align: left; /* или center, если текст внутри этого блока должен быть по центру */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Тонкая светлая рамка для "окна" */
+}
+
+.level-card-rect .level-stats div { /* Если внутри level-stats есть еще div'ы для данных */
+  margin-bottom: 5px;
+}
+.level-card-rect .level-stats div:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Стили для кнопки "Начать" внутри карточки уровня */
+/* Используем класс .level-start-btn из вашей HTML структуры */
+.level-card-rect .level-start-btn {
+  align-self: center; /* Центрирует кнопку по горизонтали */
+  background-color: #5cb85c;
+  color: white;
+  padding: 10px 25px;
+  font-size: 0.95em; /* Немного увеличим для читаемости */
+  border: none; /* Уберем стандартную границу, если есть */
+  border-bottom: 3px solid #4a964a; /* "Объемная" граница снизу */
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  margin-top: auto; /* Отталкивает кнопку вниз, занимая доступное пространство */
+  font-family: 'Press Start 2P', system-ui, sans-serif; /* Убедимся, что шрифт применяется */
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.level-card-rect .level-start-btn:hover {
+  background-color: #4a964a;
+  border-bottom-color: #3e8e3e;
+}
+
+.level-card-rect .level-start-btn:active {
+  transform: translateY(1px); /* Эффект нажатия */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  border-bottom-width: 2px;
+}
+
+
+/* УДАЛИТЕ или ЗАКОММЕНТИРУЙТЕ старые стили для .level-card-rect.level-easy, .medium, .hard, если они меняли border всей карточки,
+   так как теперь мы стилизуем текст внутри .level-difficulty */
+/* Например:
+.level-card-rect.level-easy {
+  border-color: #4CAF50;
+}
+.level-card-rect.level-medium {
+  border-color: #FFC107;
+}
+.level-card-rect.level-hard {
+  border-color: #F44336;
+}
+*/
+
+@media (max-width: 900px) {
+  .level-cards-list {
+    gap: 20px 12px;
+    max-width: 100vw;
+  }
+  .level-card-rect {
+    min-width: 180px;
+    max-width: 100%;
+    padding: 16px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .level-cards-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 2px 30px 2px;
+  }
+  .level-card-rect {
+    width: 98vw;
+    min-width: unset;
+    max-width: 99vw;
+    padding: 10px 2vw;
+  }
+}
+
+/* Остальные стили (player-info-card, training-room-card-rect и т.д.) оставляем без изменений */
+.level-select h1 {
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  color: #fff;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  margin-bottom: 2rem; /* Увеличим немного отступ */
+  font-size: 1.8em; /* Чуть уменьшим для баланса с пиксельным шрифтом */
+  text-align: center;
+}
+
+/* Контейнер для информации об игроке (Уровень, XP, Магазин) */
+.player-info-card { /* Предполагаемый класс, если это отдельный компонент */
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 15px 20px;
+  border-radius: 6px;
+  border: 2px solid #444;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Центрируем содержимое */
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto; /* Центрируем сам блок */
+}
+
+.training-room-card-rect .training-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin: 10px auto 16px auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+  font-size: 2.2em;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.level-cards-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 32px 28px; /* вертикальный и горизонтальный gap */
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 10px 40px 10px;
+  box-sizing: border-box;
+}
+
+/* Карточка уровня */
+/* Убедитесь, что это единственное актуальное определение для .level-card-rect */
+.level-card-rect {
+  background: rgba(40, 70, 40, 0.85);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Выравнивание дочерних элементов по левому краю */
+  border: 2px solid #38761d; /* Базовая граница, будет переопределена для сложности */
+  color: #fff;
+  box-sizing: border-box;
+  flex-grow: 0;
+  flex-shrink: 1;
+  width: fit-content;
+  min-width: 300px;
+  max-width: 370px;
+  margin: 10px; /* Если используете gap на .level-cards-list, это можно убрать или оставить для дополнительного контроля */
+  overflow: hidden;
+  transition: transform 0.15s;
+}
+
+/* Общий стиль для всех прямых потомков карточки, кроме последнего (кнопки) */
+.level-card-rect > *:not(:last-child) {
+  margin-bottom: 12px; /* Отступ между элементами внутри карточки */
+  width: 100%; /* Чтобы текстовые блоки занимали всю ширину */
+}
+
+/* Стили для названия уровня в карточке */
+.level-card-rect .level-title {
+  font-size: 1.2em; /* Увеличим немного для акцента */
+  font-weight: bold;
+  color: #fff;
+  text-align: left;
+}
+
+/* Стили для блока сложности */
+.level-card-rect .level-difficulty {
+  font-size: 0.9em;
+  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
+  text-align: left;
+}
+
+/* Цветовое выделение для текста сложности */
+.level-card-rect .level-difficulty.easy b {
+  color: #66bb6a; /* Зеленый */
+}
+.level-card-rect .level-difficulty.medium b {
+  color: #ffee58; /* Желтый */
+}
+.level-card-rect .level-difficulty.hard b {
+  color: #ef5350; /* Красный */
+}
+
+/* Стили для содержания уровня */
+.level-card-rect .level-content {
+  font-size: 0.9em;
+  color: #ccc;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* Стили для "отдельного окна" с данными о прохождении уровня (статистика) */
+.level-card-rect .level-stats {
+  background-color: rgba(0, 0, 0, 0.35); /* Полупрозрачный темный фон для "окна" */
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.85em;
+  color: #e0e0e0;
+  line-height: 1.4;
+  text-align: left; /* или center, если текст внутри этого блока должен быть по центру */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Тонкая светлая рамка для "окна" */
+}
+
+.level-card-rect .level-stats div { /* Если внутри level-stats есть еще div'ы для данных */
+  margin-bottom: 5px;
+}
+.level-card-rect .level-stats div:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Стили для кнопки "Начать" внутри карточки уровня */
+/* Используем класс .level-start-btn из вашей HTML структуры */
+.level-card-rect .level-start-btn {
+  align-self: center; /* Центрирует кнопку по горизонтали */
+  background-color: #5cb85c;
+  color: white;
+  padding: 10px 25px;
+  font-size: 0.95em; /* Немного увеличим для читаемости */
+  border: none; /* Уберем стандартную границу, если есть */
+  border-bottom: 3px solid #4a964a; /* "Объемная" граница снизу */
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  margin-top: auto; /* Отталкивает кнопку вниз, занимая доступное пространство */
+  font-family: 'Press Start 2P', system-ui, sans-serif; /* Убедимся, что шрифт применяется */
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.level-card-rect .level-start-btn:hover {
+  background-color: #4a964a;
+  border-bottom-color: #3e8e3e;
+}
+
+.level-card-rect .level-start-btn:active {
+  transform: translateY(1px); /* Эффект нажатия */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  border-bottom-width: 2px;
+}
+
+
+/* УДАЛИТЕ или ЗАКОММЕНТИРУЙТЕ старые стили для .level-card-rect.level-easy, .medium, .hard, если они меняли border всей карточки,
+   так как теперь мы стилизуем текст внутри .level-difficulty */
+/* Например:
+.level-card-rect.level-easy {
+  border-color: #4CAF50;
+}
+.level-card-rect.level-medium {
+  border-color: #FFC107;
+}
+.level-card-rect.level-hard {
+  border-color: #F44336;
+}
+*/
+
+@media (max-width: 900px) {
+  .level-cards-list {
+    gap: 20px 12px;
+    max-width: 100vw;
+  }
+  .level-card-rect {
+    min-width: 180px;
+    max-width: 100%;
+    padding: 16px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .level-cards-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 2px 30px 2px;
+  }
+  .level-card-rect {
+    width: 98vw;
+    min-width: unset;
+    max-width: 99vw;
+    padding: 10px 2vw;
+  }
+}
+
+/* Остальные стили (player-info-card, training-room-card-rect и т.д.) оставляем без изменений */
+.level-select h1 {
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  color: #fff;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  margin-bottom: 2rem; /* Увеличим немного отступ */
+  font-size: 1.8em; /* Чуть уменьшим для баланса с пиксельным шрифтом */
+  text-align: center;
+}
+
+/* Контейнер для информации об игроке (Уровень, XP, Магазин) */
+.player-info-card { /* Предполагаемый класс, если это отдельный компонент */
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 15px 20px;
+  border-radius: 6px;
+  border: 2px solid #444;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Центрируем содержимое */
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto; /* Центрируем сам блок */
+}
+
+.training-room-card-rect .training-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin: 10px auto 16px auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+  font-size: 2.2em;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.level-cards-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 32px 28px; /* вертикальный и горизонтальный gap */
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 10px 40px 10px;
+  box-sizing: border-box;
+}
+
+/* Карточка уровня */
+/* Убедитесь, что это единственное актуальное определение для .level-card-rect */
+.level-card-rect {
+  background: rgba(40, 70, 40, 0.85);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Выравнивание дочерних элементов по левому краю */
+  border: 2px solid #38761d; /* Базовая граница, будет переопределена для сложности */
+  color: #fff;
+  box-sizing: border-box;
+  flex-grow: 0;
+  flex-shrink: 1;
+  width: fit-content;
+  min-width: 300px;
+  max-width: 370px;
+  margin: 10px; /* Если используете gap на .level-cards-list, это можно убрать или оставить для дополнительного контроля */
+  overflow: hidden;
+  transition: transform 0.15s;
+}
+
+/* Общий стиль для всех прямых потомков карточки, кроме последнего (кнопки) */
+.level-card-rect > *:not(:last-child) {
+  margin-bottom: 12px; /* Отступ между элементами внутри карточки */
+  width: 100%; /* Чтобы текстовые блоки занимали всю ширину */
+}
+
+/* Стили для названия уровня в карточке */
+.level-card-rect .level-title {
+  font-size: 1.2em; /* Увеличим немного для акцента */
+  font-weight: bold;
+  color: #fff;
+  text-align: left;
+}
+
+/* Стили для блока сложности */
+.level-card-rect .level-difficulty {
+  font-size: 0.9em;
+  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
+  text-align: left;
+}
+
+/* Цветовое выделение для текста сложности */
+.level-card-rect .level-difficulty.easy b {
+  color: #66bb6a; /* Зеленый */
+}
+.level-card-rect .level-difficulty.medium b {
+  color: #ffee58; /* Желтый */
+}
+.level-card-rect .level-difficulty.hard b {
+  color: #ef5350; /* Красный */
+}
+
+/* Стили для содержания уровня */
+.level-card-rect .level-content {
+  font-size: 0.9em;
+  color: #ccc;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* Стили для "отдельного окна" с данными о прохождении уровня (статистика) */
+.level-card-rect .level-stats {
+  background-color: rgba(0, 0, 0, 0.35); /* Полупрозрачный темный фон для "окна" */
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.85em;
+  color: #e0e0e0;
+  line-height: 1.4;
+  text-align: left; /* или center, если текст внутри этого блока должен быть по центру */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Тонкая светлая рамка для "окна" */
+}
+
+.level-card-rect .level-stats div { /* Если внутри level-stats есть еще div'ы для данных */
+  margin-bottom: 5px;
+}
+.level-card-rect .level-stats div:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Стили для кнопки "Начать" внутри карточки уровня */
+/* Используем класс .level-start-btn из вашей HTML структуры */
+.level-card-rect .level-start-btn {
+  align-self: center; /* Центрирует кнопку по горизонтали */
+  background-color: #5cb85c;
+  color: white;
+  padding: 10px 25px;
+  font-size: 0.95em; /* Немного увеличим для читаемости */
+  border: none; /* Уберем стандартную границу, если есть */
+  border-bottom: 3px solid #4a964a; /* "Объемная" граница снизу */
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  margin-top: auto; /* Отталкивает кнопку вниз, занимая доступное пространство */
+  font-family: 'Press Start 2P', system-ui, sans-serif; /* Убедимся, что шрифт применяется */
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.level-card-rect .level-start-btn:hover {
+  background-color: #4a964a;
+  border-bottom-color: #3e8e3e;
+}
+
+.level-card-rect .level-start-btn:active {
+  transform: translateY(1px); /* Эффект нажатия */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  border-bottom-width: 2px;
+}
+
+
+/* УДАЛИТЕ или ЗАКОММЕНТИРУЙТЕ старые стили для .level-card-rect.level-easy, .medium, .hard, если они меняли border всей карточки,
+   так как теперь мы стилизуем текст внутри .level-difficulty */
+/* Например:
+.level-card-rect.level-easy {
+  border-color: #4CAF50;
+}
+.level-card-rect.level-medium {
+  border-color: #FFC107;
+}
+.level-card-rect.level-hard {
+  border-color: #F44336;
+}
+*/
+
+@media (max-width: 900px) {
+  .level-cards-list {
+    gap: 20px 12px;
+    max-width: 100vw;
+  }
+  .level-card-rect {
+    min-width: 180px;
+    max-width: 100%;
+    padding: 16px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .level-cards-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 2px 30px 2px;
+  }
+  .level-card-rect {
+    width: 98vw;
+    min-width: unset;
+    max-width: 99vw;
+    padding: 10px 2vw;
+  }
+}
+
+/* Остальные стили (player-info-card, training-room-card-rect и т.д.) оставляем без изменений */
+.level-select h1 {
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  color: #fff;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  margin-bottom: 2rem; /* Увеличим немного отступ */
+  font-size: 1.8em; /* Чуть уменьшим для баланса с пиксельным шрифтом */
+  text-align: center;
+}
+
+/* Контейнер для информации об игроке (Уровень, XP, Магазин) */
+.player-info-card { /* Предполагаемый класс, если это отдельный компонент */
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 15px 20px;
+  border-radius: 6px;
+  border: 2px solid #444;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Центрируем содержимое */
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto; /* Центрируем сам блок */
+}
+
+.training-room-card-rect .training-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin: 10px auto 16px auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+  font-size: 2.2em;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.level-cards-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 32px 28px; /* вертикальный и горизонтальный gap */
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 10px 40px 10px;
+  box-sizing: border-box;
+}
+
+/* Карточка уровня */
+/* Убедитесь, что это единственное актуальное определение для .level-card-rect */
+.level-card-rect {
+  background: rgba(40, 70, 40, 0.85);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Выравнивание дочерних элементов по левому краю */
+  border: 2px solid #38761d; /* Базовая граница, будет переопределена для сложности */
+  color: #fff;
+  box-sizing: border-box;
+  flex-grow: 0;
+  flex-shrink: 1;
+  width: fit-content;
+  min-width: 300px;
+  max-width: 370px;
+  margin: 10px; /* Если используете gap на .level-cards-list, это можно убрать или оставить для дополнительного контроля */
+  overflow: hidden;
+  transition: transform 0.15s;
+}
+
+/* Общий стиль для всех прямых потомков карточки, кроме последнего (кнопки) */
+.level-card-rect > *:not(:last-child) {
+  margin-bottom: 12px; /* Отступ между элементами внутри карточки */
+  width: 100%; /* Чтобы текстовые блоки занимали всю ширину */
+}
+
+/* Стили для названия уровня в карточке */
+.level-card-rect .level-title {
+  font-size: 1.2em; /* Увеличим немного для акцента */
+  font-weight: bold;
+  color: #fff;
+  text-align: left;
+}
+
+/* Стили для блока сложности */
+.level-card-rect .level-difficulty {
+  font-size: 0.9em;
+  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
+  text-align: left;
+}
+
+/* Цветовое выделение для текста сложности */
+.level-card-rect .level-difficulty.easy b {
+  color: #66bb6a; /* Зеленый */
+}
+.level-card-rect .level-difficulty.medium b {
+  color: #ffee58; /* Желтый */
+}
+.level-card-rect .level-difficulty.hard b {
+  color: #ef5350; /* Красный */
+}
+
+/* Стили для содержания уровня */
+.level-card-rect .level-content {
+  font-size: 0.9em;
+  color: #ccc;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* Стили для "отдельного окна" с данными о прохождении уровня (статистика) */
+.level-card-rect .level-stats {
+  background-color: rgba(0, 0, 0, 0.35); /* Полупрозрачный темный фон для "окна" */
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.85em;
+  color: #e0e0e0;
+  line-height: 1.4;
+  text-align: left; /* или center, если текст внутри этого блока должен быть по центру */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Тонкая светлая рамка для "окна" */
+}
+
+.level-card-rect .level-stats div { /* Если внутри level-stats есть еще div'ы для данных */
+  margin-bottom: 5px;
+}
+.level-card-rect .level-stats div:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Стили для кнопки "Начать" внутри карточки уровня */
+/* Используем класс .level-start-btn из вашей HTML структуры */
+.level-card-rect .level-start-btn {
+  align-self: center; /* Центрирует кнопку по горизонтали */
+  background-color: #5cb85c;
+  color: white;
+  padding: 10px 25px;
+  font-size: 0.95em; /* Немного увеличим для читаемости */
+  border: none; /* Уберем стандартную границу, если есть */
+  border-bottom: 3px solid #4a964a; /* "Объемная" граница снизу */
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  margin-top: auto; /* Отталкивает кнопку вниз, занимая доступное пространство */
+  font-family: 'Press Start 2P', system-ui, sans-serif; /* Убедимся, что шрифт применяется */
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.level-card-rect .level-start-btn:hover {
+  background-color: #4a964a;
+  border-bottom-color: #3e8e3e;
+}
+
+.level-card-rect .level-start-btn:active {
+  transform: translateY(1px); /* Эффект нажатия */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  border-bottom-width: 2px;
+}
+
+
+/* УДАЛИТЕ или ЗАКОММЕНТИРУЙТЕ старые стили для .level-card-rect.level-easy, .medium, .hard, если они меняли border всей карточки,
+   так как теперь мы стилизуем текст внутри .level-difficulty */
+/* Например:
+.level-card-rect.level-easy {
+  border-color: #4CAF50;
+}
+.level-card-rect.level-medium {
+  border-color: #FFC107;
+}
+.level-card-rect.level-hard {
+  border-color: #F44336;
+}
+*/
+
+@media (max-width: 900px) {
+  .level-cards-list {
+    gap: 20px 12px;
+    max-width: 100vw;
+  }
+  .level-card-rect {
+    min-width: 180px;
+    max-width: 100%;
+    padding: 16px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .level-cards-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 2px 30px 2px;
+  }
+  .level-card-rect {
+    width: 98vw;
+    min-width: unset;
+    max-width: 99vw;
+    padding: 10px 2vw;
+  }
+}
+
+/* Остальные стили (player-info-card, training-room-card-rect и т.д.) оставляем без изменений */
+.level-select h1 {
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  color: #fff;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  margin-bottom: 2rem; /* Увеличим немного отступ */
+  font-size: 1.8em; /* Чуть уменьшим для баланса с пиксельным шрифтом */
+  text-align: center;
+}
+
+/* Контейнер для информации об игроке (Уровень, XP, Магазин) */
+.player-info-card { /* Предполагаемый класс, если это отдельный компонент */
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 15px 20px;
+  border-radius: 6px;
+  border: 2px solid #444;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Центрируем содержимое */
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto; /* Центрируем сам блок */
+}
+
+.training-room-card-rect .training-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin: 10px auto 16px auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+  font-size: 2.2em;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.level-cards-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 32px 28px; /* вертикальный и горизонтальный gap */
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 10px 40px 10px;
+  box-sizing: border-box;
+}
+
+/* Карточка уровня */
+/* Убедитесь, что это единственное актуальное определение для .level-card-rect */
+.level-card-rect {
+  background: rgba(40, 70, 40, 0.85);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Выравнивание дочерних элементов по левому краю */
+  border: 2px solid #38761d; /* Базовая граница, будет переопределена для сложности */
+  color: #fff;
+  box-sizing: border-box;
+  flex-grow: 0;
+  flex-shrink: 1;
+  width: fit-content;
+  min-width: 300px;
+  max-width: 370px;
+  margin: 10px; /* Если используете gap на .level-cards-list, это можно убрать или оставить для дополнительного контроля */
+  overflow: hidden;
+  transition: transform 0.15s;
+}
+
+/* Общий стиль для всех прямых потомков карточки, кроме последнего (кнопки) */
+.level-card-rect > *:not(:last-child) {
+  margin-bottom: 12px; /* Отступ между элементами внутри карточки */
+  width: 100%; /* Чтобы текстовые блоки занимали всю ширину */
+}
+
+/* Стили для названия уровня в карточке */
+.level-card-rect .level-title {
+  font-size: 1.2em; /* Увеличим немного для акцента */
+  font-weight: bold;
+  color: #fff;
+  text-align: left;
+}
+
+/* Стили для блока сложности */
+.level-card-rect .level-difficulty {
+  font-size: 0.9em;
+  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
+  text-align: left;
+}
+
+/* Цветовое выделение для текста сложности */
+.level-card-rect .level-difficulty.easy b {
+  color: #66bb6a; /* Зеленый */
+}
+.level-card-rect .level-difficulty.medium b {
+  color: #ffee58; /* Желтый */
+}
+.level-card-rect .level-difficulty.hard b {
+  color: #ef5350; /* Красный */
+}
+
+/* Стили для содержания уровня */
+.level-card-rect .level-content {
+  font-size: 0.9em;
+  color: #ccc;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* Стили для "отдельного окна" с данными о прохождении уровня (статистика) */
+.level-card-rect .level-stats {
+  background-color: rgba(0, 0, 0, 0.35); /* Полупрозрачный темный фон для "окна" */
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.85em;
+  color: #e0e0e0;
+  line-height: 1.4;
+  text-align: left; /* или center, если текст внутри этого блока должен быть по центру */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Тонкая светлая рамка для "окна" */
+}
+
+.level-card-rect .level-stats div { /* Если внутри level-stats есть еще div'ы для данных */
+  margin-bottom: 5px;
+}
+.level-card-rect .level-stats div:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Стили для кнопки "Начать" внутри карточки уровня */
+/* Используем класс .level-start-btn из вашей HTML структуры */
+.level-card-rect .level-start-btn {
+  align-self: center; /* Центрирует кнопку по горизонтали */
+  background-color: #5cb85c;
+  color: white;
+  padding: 10px 25px;
+  font-size: 0.95em; /* Немного увеличим для читаемости */
+  border: none; /* Уберем стандартную границу, если есть */
+  border-bottom: 3px solid #4a964a; /* "Объемная" граница снизу */
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  margin-top: auto; /* Отталкивает кнопку вниз, занимая доступное пространство */
+  font-family: 'Press Start 2P', system-ui, sans-serif; /* Убедимся, что шрифт применяется */
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.level-card-rect .level-start-btn:hover {
+  background-color: #4a964a;
+  border-bottom-color: #3e8e3e;
+}
+
+.level-card-rect .level-start-btn:active {
+  transform: translateY(1px); /* Эффект нажатия */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  border-bottom-width: 2px;
+}
+
+
+/* УДАЛИТЕ или ЗАКОММЕНТИРУЙТЕ старые стили для .level-card-rect.level-easy, .medium, .hard, если они меняли border всей карточки,
+   так как теперь мы стилизуем текст внутри .level-difficulty */
+/* Например:
+.level-card-rect.level-easy {
+  border-color: #4CAF50;
+}
+.level-card-rect.level-medium {
+  border-color: #FFC107;
+}
+.level-card-rect.level-hard {
+  border-color: #F44336;
+}
+*/
+
+@media (max-width: 900px) {
+  .level-cards-list {
+    gap: 20px 12px;
+    max-width: 100vw;
+  }
+  .level-card-rect {
+    min-width: 180px;
+    max-width: 100%;
+    padding: 16px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .level-cards-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 2px 30px 2px;
+  }
+  .level-card-rect {
+    width: 98vw;
+    min-width: unset;
+    max-width: 99vw;
+    padding: 10px 2vw;
+  }
+}
+
+/* Остальные стили (player-info-card, training-room-card-rect и т.д.) оставляем без изменений */
+.level-select h1 {
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  color: #fff;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  margin-bottom: 2rem; /* Увеличим немного отступ */
+  font-size: 1.8em; /* Чуть уменьшим для баланса с пиксельным шрифтом */
+  text-align: center;
+}
+
+/* Контейнер для информации об игроке (Уровень, XP, Магазин) */
+.player-info-card { /* Предполагаемый класс, если это отдельный компонент */
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 15px 20px;
+  border-radius: 6px;
+  border: 2px solid #444;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Центрируем содержимое */
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto; /* Центрируем сам блок */
+}
+
+.training-room-card-rect .training-icon {
+  display: flex;
+  align-items: center;
+
 }

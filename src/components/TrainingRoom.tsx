@@ -202,9 +202,27 @@ const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) =
   useEffect(() => {
     const currentContainer = keyboardContainerRef.current;
     if (currentContainer && !keyboardRef.current) {
+      // ВАЖНО: Убедитесь, что `keyboardLayout` здесь определен и содержит вашу раскладку.
+      // Если `originalButtonAttributes` (или `keyboardButtonAttributes` из вашего старого кода)
+      // содержит важные атрибуты (например, aria-label), их нужно объединить.
+      
+      // Определяем originalButtonAttributes как пустой массив.
+      // Это исправляет ошибку: Cannot find name 'originalButtonAttributes'.
+      const originalButtonAttributes: any[] = []; 
+
+      const combinedButtonAttributes = [
+        ...originalButtonAttributes, 
+        // Используем объявленную на строке 33 переменную keyboardButtonAttributes 
+        // вместо fingerZoneButtonAttributes.
+        // Это исправляет ошибки:
+        // - Cannot find name 'fingerZoneButtonAttributes'.
+        // - 'keyboardButtonAttributes' is declared but its value is never read.
+        ...keyboardButtonAttributes 
+      ];
+
       const options = {
-        layout: keyboardLayout, // Используется
-        buttonAttributes: keyboardButtonAttributes, // Используется
+        layout: keyboardLayout, 
+        buttonAttributes: combinedButtonAttributes, 
         theme: "hg-theme-default hg-layout-default",
         debug: false,
         display: {
@@ -222,7 +240,7 @@ const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) =
         },
       };
       const keyboard = new Keyboard(currentContainer, options);
-      keyboardRef.current = keyboard; // Используется
+      keyboardRef.current = keyboard; 
     }
 
     return () => {
@@ -237,6 +255,7 @@ const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) =
       const currentKbd = keyboardRef.current;
 
       // 1. Отображение текущего ввода пользователя на виртуальной клавиатуре
+      // (Дублирование нажатий игрока)
       currentKbd.setInput(userInput);
 
       // 2. Логика подсветки следующей клавиши
@@ -246,7 +265,14 @@ const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) =
       if (nextCharIndex < currentTextToType.length) {
         const nextChar = currentTextToType[nextCharIndex];
         // Используем charToButtonMap для спецсимволов, иначе сам символ
-        nextButtonToHighlight = charToButtonMap[nextChar] || nextChar; // charToButtonMap используется
+        nextButtonToHighlight = charToButtonMap[nextChar.toLowerCase()] || // Проверяем нижний регистр
+                                  charToButtonMap[nextChar.toUpperCase()] || // Проверяем верхний регистр
+                                  (nextChar.match(/^[a-zA-Zа-яА-ЯёЁ0-9]$/) ? nextChar.toLowerCase() : nextChar); // Для букв/цифр - нижний регистр, иначе как есть
+        
+        // Если nextButtonToHighlight все еще содержит заглавную букву, а на клавиатуре только строчные (или наоборот)
+        // и нет отдельной кнопки для заглавной, simple-keyboard может не найти ее.
+        // Обычно simple-keyboard обрабатывает это через {shift} или авто-капитализацию.
+        // Для простоты, предполагаем, что кнопки на клавиатуре соответствуют строчным буквам, если не активен Shift.
       }
 
       // Снять подсветку с предыдущей клавиши

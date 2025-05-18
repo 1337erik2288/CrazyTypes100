@@ -5,9 +5,10 @@ import { PlayerProgress, calculateLevelProgress } from '../services/playerServic
 interface PlayerStatsProps {
   playerProgress: PlayerProgress;
   onOpenShop?: () => void;
+  onOpenOverallStats?: () => void; // Добавляем новую prop
 }
 
-const PlayerStats: React.FC<PlayerStatsProps> = ({ playerProgress, onOpenShop }) => {
+const PlayerStats: React.FC<PlayerStatsProps> = ({ playerProgress, onOpenShop, onOpenOverallStats }) => {
   const progressPercentage = calculateLevelProgress(playerProgress);
   
   return (
@@ -36,6 +37,16 @@ const PlayerStats: React.FC<PlayerStatsProps> = ({ playerProgress, onOpenShop })
         <span className="gold-amount">{playerProgress.gold}</span>
         {onOpenShop && <span className="shop-hint">Магазин</span>}
       </div>
+
+      {/* Кнопка для открытия общей статистики */}
+      {onOpenOverallStats && (
+        <button
+          onClick={onOpenOverallStats}
+          className="open-stats-btn" 
+        >
+          Общая статистика
+        </button>
+      )}
     </div>
   );
 };
