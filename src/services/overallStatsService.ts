@@ -29,7 +29,8 @@ export interface OverallPlayerStats {
 // }
 
 // Добавляем импорт getPlayerProgress из playerService
-import { getPlayerProgress } from './playerService';
+import { getPlayerProgress } from './playerService'; // getPlayerProgress теперь асинхронный
+// import { UserDocument } from '../types/firestoreTypes'; // Удален неиспользуемый импорт
 
 export interface LevelStatEntry {
   timestamp: number;
@@ -43,8 +44,10 @@ export interface OverallPlayerStats {
   progression: LevelStatEntry[];
 }
 
-export function getOverallStats(): OverallPlayerStats {
-  const playerProgress = getPlayerProgress();
+// getOverallStats теперь асинхронная и принимает userId
+export async function getOverallStats(userId: string): Promise<OverallPlayerStats> {
+  // playerProgress теперь получается асинхронно
+  const playerProgress = await getPlayerProgress(userId); // Этот вызов корректен для рефакторинга. Убедитесь, что playerService.ts экспортирует getPlayerProgress с userId.
   const progressionEntries: LevelStatEntry[] = [];
 
   if (playerProgress.levelStats) {

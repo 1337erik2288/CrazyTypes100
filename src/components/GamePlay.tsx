@@ -16,6 +16,8 @@ import { mathExpressions } from '../data/math-expressions';
 import PlayerHealthBar from './PlayerHealthBar';
 import { getPlayerHealth, getMaxPlayerHealth, damagePlayer, healPlayerToMax, getPlayerBaseDamage } from '../services/playerService'; // Ensure getPlayerBaseDamage is imported
 import { saveLevelResult } from '../services/progressService';
+import { useAuth } from '../contexts/AuthContext'; // Добавлено для получения userId
+import { Equipment } from '../data/equipmentData'; // Добавлен импорт типа Equipment
 
 interface Monster {
   health: number;
@@ -71,7 +73,7 @@ interface GamePlayProps {
 }
 
 const GamePlay: React.FC<GamePlayProps> = ({
-  config: initialConfig, // config is destructured to initialConfig
+  config: initialConfig,
   onRestart,
   onReturnToMenu,
   onLevelComplete,
@@ -79,25 +81,64 @@ const GamePlay: React.FC<GamePlayProps> = ({
   isFirstCompletion = false,
   levelId
 }) => {
-  // Apply equipment effects to the game configuration
-  const [equippedPlayerItems] = useState(() => getEquippedItems()); // <--- FIX: Use getEquippedItems and rename state
-  
-  const [gameConfig] = useState(() => {
-    // return applyEquipmentEffects(config, playerEquipment.equipped); // <--- OLD
-    return applyEquipmentEffects(initialConfig, equippedPlayerItems); // <--- FIX: Use initialConfig and equippedPlayerItems
-  });
+  const { currentUser } = useAuth(); // Получаем текущего пользователя
+  const userId = currentUser?.uid; // Получаем ID пользователя
+
+  const [actualEquippedItems, setActualEquippedItems] = useState<Equipment[]>([]);
+  const [isLoadingItems, setIsLoadingItems] = useState(true); // Состояние для отслеживания загрузки
+
+  // Эффект для загрузки экипированных предметов
+  useEffect(() => {
+    if (userId) {
+      setIsLoadingItems(true);
+      getEquippedItems(userId)
+        .then(items => {
+          setActualEquippedItems(items);
+        })
+        .catch(error => {
+          console.error("Ошибка загрузки экипировки:", error);
+          setActualEquippedItems([]); // В случае ошибки используем пустой массив
+        })
+        .finally(() => {
+          setIsLoadingItems(false);
+        });
+    } else {
+      // Если пользователя нет, экипировки тоже нет
+      setActualEquippedItems([]);
+      setIsLoadingItems(false);
+    }
+  }, [userId]); // Зависимость от userId
+
+  // Вычисляем эффективную конфигурацию игры с учетом снаряжения
+  const effectiveGameConfig = useMemo(() => {
+    return applyEquipmentEffects(initialConfig, actualEquippedItems);
+  }, [initialConfig, actualEquippedItems]);
   
   const [currentWord, setCurrentWord] = useState('');
   const [userInput, setUserInput] = useState('');
   const [showVictory, setShowVictory] = useState(false);
   const [showDefeatScreen, setShowDefeatScreen] = useState(false); // Добавьте это состояние
+
+  // Инициализация состояния монстра. Обновляется через useEffect ниже.
   const [monster, setMonster] = useState<Monster>(() => ({
-    health: gameConfig.initialHealth,
-    maxHealth: gameConfig.initialHealth,
-    imagePath: gameConfig.monsterImage,
+    health: effectiveGameConfig.initialHealth,
+    maxHealth: effectiveGameConfig.initialHealth,
+    imagePath: effectiveGameConfig.monsterImage,
     isDefeated: false,
     takingDamage: false
   }));
+
+  // Обновляем состояние монстра, когда effectiveGameConfig изменится (например, после загрузки предметов)
+  useEffect(() => {
+    setMonster({
+      health: effectiveGameConfig.initialHealth,
+      maxHealth: effectiveGameConfig.initialHealth,
+      imagePath: effectiveGameConfig.monsterImage,
+      isDefeated: false, // Сбрасываем состояние при изменении конфига (например, при перезапуске с новым конфигом)
+      takingDamage: false
+    });
+  }, [effectiveGameConfig]);
+
   const [gameStats, setGameStats] = useState<GameStats>(() => ({
     correctChars: 0,
     incorrectChars: 0,
@@ -109,27 +150,52 @@ const GamePlay: React.FC<GamePlayProps> = ({
   const [currentDamage, setCurrentDamage] = useState(0);
   const [bonusDamageActive, setBonusDamageActive] = useState(false);
   const [bonusDamagePercent, setBonusDamagePercent] = useState(0);
-  const [playerBaseDamage, setPlayerBaseDamage] = useState<number>(0); // <--- Add state for player's base damage
+  const [playerBaseDamage, setPlayerBaseDamage] = useState<number>(0);
 
   // Добавляем состояния для здоровья игрока
-  const [playerHealth, setPlayerHealth] = useState<number>(getPlayerHealth());
-  const [maxPlayerHealth, setMaxPlayerHealth] = useState<number>(getMaxPlayerHealth());
+  // Инициализируем с значениями из initialConfig, затем загружаем актуальные в useEffect
+  const [playerHealth, setPlayerHealth] = useState<number>(initialConfig.initialHealth);
+  const [maxPlayerHealth, setMaxPlayerHealth] = useState<number>(initialConfig.initialHealth);
   const [playerDamageAnimation, setPlayerDamageAnimation] = useState<boolean>(false);
   const [showAttackWarning, setShowAttackWarning] = useState<boolean>(false);
+
+  // Эффект для загрузки начального здоровья игрока
+  useEffect(() => {
+    if (userId) {
+      const fetchPlayerHealthStats = async () => {
+        try {
+          const currentHealth = await getPlayerHealth(userId);
+          const maxHealth = await getMaxPlayerHealth(userId);
+          setPlayerHealth(currentHealth);
+          setMaxPlayerHealth(maxHealth);
+        } catch (error) {
+          console.error("Ошибка загрузки здоровья игрока из сервиса:", error);
+          // В случае ошибки используем значения из initialConfig
+          setPlayerHealth(initialConfig.initialHealth);
+          setMaxPlayerHealth(initialConfig.initialHealth);
+        }
+      };
+      fetchPlayerHealthStats();
+    } else {
+      // Если нет userId, используем значения из initialConfig (уже установлены, но для ясности)
+      setPlayerHealth(initialConfig.initialHealth);
+      setMaxPlayerHealth(initialConfig.initialHealth);
+    }
+  }, [userId, initialConfig]); // Перезапускаем, если изменится userId или initialConfig
   
   // Таймер для нанесения урона игроку
   const monsterAttackInterval = useRef<NodeJS.Timeout | null>(null);
 
-  // Рассчитываем суммарное снижение урона от монстра (MOVED TO TOP LEVEL)
+  // Рассчитываем суммарное снижение урона от монстра
   const totalMonsterDamageReduction = useMemo(() => {
-    return equippedPlayerItems.reduce((sum: number, item: any) => sum + (item.effects?.monsterDamageReduction || 0), 0);
-  }, [equippedPlayerItems]);
+    return actualEquippedItems.reduce((sum: number, item: Equipment) => sum + (item.effects?.monsterDamageReduction || 0), 0);
+  }, [actualEquippedItems]);
 
   // Эффект автолечения игрока по бонусу снаряжения
   useEffect(() => {
     // Суммируем бонусы к лечению игрока со всего надетого снаряжения
-    const totalPlayerHealBonus = equippedPlayerItems.reduce(
-      (sum: number, item: any) => sum + (item.effects?.playerHealBonus || 0),
+    const totalPlayerHealBonus = actualEquippedItems.reduce(
+      (sum: number, item: Equipment) => sum + (item.effects?.playerHealBonus || 0),
       0
     );
 
@@ -145,36 +211,31 @@ const GamePlay: React.FC<GamePlayProps> = ({
     }
     // Если бонуса нет или игра завершена — ничего не делаем
     return undefined;
-  }, [equippedPlayerItems, maxPlayerHealth, showVictory, showDefeatScreen]);
+  }, [actualEquippedItems, maxPlayerHealth, showVictory, showDefeatScreen]);
 
   const generateNewWord = useCallback(() => {
-    if (initialConfig.language === 'code') { // Получаем список всех доступных языков из сервиса или вручную
-      const codeLanguages = ['javascript', 'python', 'typescript', 'java', 'csharp']; // Пример, замените на актуальные
-      // хочу гулять...
+    if (initialConfig.language === 'code') {
+      const codeLanguages = ['javascript', 'python', 'typescript', 'java', 'csharp'];
       const randomLang = codeLanguages[Math.floor(Math.random() * codeLanguages.length)];
       getRandomCodeLine(randomLang).then((codeLine: string) => {
         setCurrentWord(codeLine);
         setUserInput('');
       });
-    } else if (initialConfig.language === 'math') { // Специальная обработка для математических выражений
-      getAdditionalWords(initialConfig.language).then(newWords => { // <--- FIX: Use initialConfig
+    } else if (initialConfig.language === 'math') {
+      // Ошибка TS2554: Expected 1 arguments, but got 0.
+      // wordsService.getAdditionalWords ожидает аргумент 'language'.
+      getAdditionalWords(initialConfig.language).then(newWords => { // <--- ИСПРАВЛЕНО: добавлен initialConfig.language
         if (newWords.length > 0) {
           const randomIndex = Math.floor(Math.random() * newWords.length);
           const newWord = newWords[randomIndex];
-          
-          // Проверяем, является ли это выражением или числом
           const useExpressions = Math.random() > 0.5;
           if (!useExpressions) {
-            // Если это число, просто отображаем его
             setCurrentWord(newWord);
           } else {
-            // Если это выражение, находим соответствующее отображение
             const matchingExpression = mathExpressions.expressions.find(expr => expr.answer === newWord);
             if (matchingExpression) {
-              // Устанавливаем отображаемое выражение, но пользователь будет вводить только ответ
               setCurrentWord(matchingExpression.display);
             } else {
-              // Если не нашли соответствия, просто отображаем число
               setCurrentWord(newWord);
             }
           }
@@ -182,7 +243,9 @@ const GamePlay: React.FC<GamePlayProps> = ({
         }
       });
     } else {
-      getAdditionalWords(initialConfig.language).then(newWords => { // <--- FIX: Use initialConfig
+      // Ошибка TS2554: Expected 1 arguments, but got 0.
+      // wordsService.getAdditionalWords ожидает аргумент 'language'.
+      getAdditionalWords(initialConfig.language).then(newWords => { // <--- ИСПРАВЛЕНО: добавлен initialConfig.language
         if (newWords.length > 0) {
           const randomIndex = Math.floor(Math.random() * newWords.length);
           const newWord = newWords[randomIndex];
@@ -191,13 +254,13 @@ const GamePlay: React.FC<GamePlayProps> = ({
         }
       });
     }
-  }, [initialConfig.language]); // <--- FIX: Use initialConfig.language in dependency array
+  }, [initialConfig.language]);
 
   const restartGame = () => {
     setMonster({
-      health: initialConfig.initialHealth, // <--- FIX: Use initialConfig
-      maxHealth: initialConfig.initialHealth, // <--- FIX: Use initialConfig
-      imagePath: initialConfig.monsterImage, // <--- FIX: Use initialConfig
+      health: initialConfig.initialHealth,
+      maxHealth: initialConfig.initialHealth,
+      imagePath: initialConfig.monsterImage,
       isDefeated: false,
       takingDamage: false
     });
@@ -214,76 +277,91 @@ const GamePlay: React.FC<GamePlayProps> = ({
     onRestart();
   };
 
-  useEffect(() => {
-    generateNewWord();
-    setPlayerBaseDamage(getPlayerBaseDamage()); // <--- Initialize player's base damage
+  // Переносим useCallback выше useEffect, чтобы не было проблем с зависимостями
+  const handleDefeat = useCallback(() => {
+    if (monsterAttackInterval.current) {
+      clearInterval(monsterAttackInterval.current);
+    }
+    setShowDefeatScreen(true);
+    setGameStats(prev => ({ ...prev, endTime: Date.now() }));
+  }, [setShowDefeatScreen]);
 
-    healPlayerToMax();
-    setPlayerHealth(getPlayerHealth());
-    setMaxPlayerHealth(getMaxPlayerHealth());
-    
-    // Очищаем предыдущий таймер, если он существует
+  useEffect(() => {
+    // Генерация нового слова и инициализация статов игрока
+    generateNewWord();
+
+    const initializePlayerStats = async () => {
+      if (userId) {
+        try {
+          const baseDamage = await getPlayerBaseDamage();
+          setPlayerBaseDamage(baseDamage);
+
+          await healPlayerToMax(userId);
+
+          const currentHealth = await getPlayerHealth(userId);
+          const maxHealth = await getMaxPlayerHealth(userId);
+          setPlayerHealth(currentHealth);
+          setMaxPlayerHealth(maxHealth);
+
+        } catch (error) {
+          console.error("Ошибка инициализации статов игрока в useEffect:", error);
+          setPlayerBaseDamage(0);
+          setPlayerHealth(initialConfig.initialHealth);
+          setMaxPlayerHealth(initialConfig.initialHealth);
+        }
+      } else {
+        setPlayerBaseDamage(0);
+        setPlayerHealth(initialConfig.initialHealth);
+        setMaxPlayerHealth(initialConfig.initialHealth);
+      }
+    };
+
+    initializePlayerStats();
+
     if (monsterAttackInterval.current) {
       clearInterval(monsterAttackInterval.current);
       monsterAttackInterval.current = null;
     }
-    
-    // Добавляем отладочный вывод для проверки параметров уровня
-    console.log('Уровень:', initialConfig); // <--- FIX: Use initialConfig
-    console.log('Урон монстра:', initialConfig.monsterDamage); // <--- FIX: Use initialConfig
-    console.log('Интервал атаки:', initialConfig.attackInterval); // <--- FIX: Use initialConfig
-    
-    // Запускаем таймер атаки монстра, если уровень предусматривает урон
-    if (initialConfig.monsterDamage && initialConfig.monsterDamage > 0 && initialConfig.attackInterval && initialConfig.attackInterval > 0) { // <--- FIX: Use initialConfig
-      const initialDelay = 7000; 
-      
-      // Показываем предупреждение за 2 секунды до первой атаки
+
+    if (initialConfig.monsterDamage && initialConfig.monsterDamage > 0 && initialConfig.attackInterval && initialConfig.attackInterval > 0) {
+      const initialDelay = 7000;
+
       setTimeout(() => {
         setShowAttackWarning(true);
-        
-        // Скрываем предупреждение через 2 секунды
         setTimeout(() => {
           setShowAttackWarning(false);
         }, 2000);
       }, initialDelay - 2000);
-      
-      // Таймер для первой атаки с задержкой
-      const initialAttackTimer = setTimeout(() => {
-        
-        // Define the attack logic once
-        const performMonsterAttack = () => {
-          if (!monster.isDefeated && !showVictory && !showDefeatScreen) {
+
+      const initialAttackTimer = setTimeout(async () => {
+        const performMonsterAttack = async () => {
+          if (!monster.isDefeated && !showVictory && !showDefeatScreen && userId) {
             const baseMonsterDamage = initialConfig.monsterDamage || 0;
             const effectiveMonsterDamage = Math.max(0, baseMonsterDamage - totalMonsterDamageReduction);
-            const actualDamageToPlayer = Math.min(effectiveMonsterDamage, 10); 
-            
-            console.log('Монстр атакует! Базовый урон:', baseMonsterDamage, 'Снижение:', totalMonsterDamageReduction, 'Эффективный:', effectiveMonsterDamage, 'Финальный:', actualDamageToPlayer);
-            
-            const newPlayerHealth = damagePlayer(actualDamageToPlayer);
+            const actualDamageToPlayer = effectiveMonsterDamage;
+
+            const newPlayerHealth = await damagePlayer(userId, actualDamageToPlayer);
             setPlayerHealth(newPlayerHealth);
             setPlayerDamageAnimation(true);
-            
+
             setTimeout(() => {
               setPlayerDamageAnimation(false);
             }, 300);
-            
+
             if (newPlayerHealth <= 0) {
               handleDefeat();
             }
           }
         };
 
-        // Perform the first attack
-        performMonsterAttack();
+        await performMonsterAttack();
 
-        // Set up interval for subsequent attacks if the monster is still active
-        if (!monster.isDefeated && !showVictory && !showDefeatScreen) {
+        if (!monster.isDefeated && !showVictory && !showDefeatScreen && userId) {
           monsterAttackInterval.current = setInterval(performMonsterAttack, initialConfig.attackInterval);
         }
 
       }, initialDelay);
-      
-      // Очистка таймера начальной задержки при размонтировании
+
       return () => {
         clearTimeout(initialAttackTimer);
         if (monsterAttackInterval.current) {
@@ -291,34 +369,20 @@ const GamePlay: React.FC<GamePlayProps> = ({
         }
       };
     }
-    
+
     return () => {
-      // Очищаем таймер атаки монстра при размонтировании компонента
       if (monsterAttackInterval.current) {
         clearInterval(monsterAttackInterval.current);
       }
     };
-  }, [initialConfig, monster.isDefeated, generateNewWord, totalMonsterDamageReduction, showVictory, showDefeatScreen]); // Добавлены зависимости
-  
-  // Функция обработки поражения игрока
-  const handleDefeat = () => {
-    // Останавливаем таймер атаки монстра
-    if (monsterAttackInterval.current) {
-      clearInterval(monsterAttackInterval.current);
-    }
-    
-    setShowDefeatScreen(true); // Показываем экран поражения
-    // onReturnToMenu(); // Больше не вызываем это напрямую
-  };
+  }, [initialConfig, monster.isDefeated, generateNewWord, totalMonsterDamageReduction, showVictory, showDefeatScreen, userId, handleDefeat]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     const lastCharIndex = value.length - 1;
     
-    // Проверяем, является ли текущее слово математическим выражением
-    const isMathExpression = initialConfig.language === 'math' && currentWord.includes('=?'); // <--- FIX: Use initialConfig
+    const isMathExpression = initialConfig.language === 'math' && currentWord.includes('=?');
     
-    // Если это математическое выражение, находим ожидаемый ответ
     let expectedAnswer = currentWord;
     if (isMathExpression) {
       const matchingExpression = mathExpressions.expressions.find(expr => expr.display === currentWord);
@@ -328,10 +392,8 @@ const GamePlay: React.FC<GamePlayProps> = ({
     }
     
     if (lastCharIndex >= 0) {
-      // Для математических выражений проверяем ввод относительно ответа, а не отображаемого выражения
       const compareWith = isMathExpression ? expectedAnswer : currentWord;
       
-      // Проверяем, не выходит ли индекс за пределы длины ответа
       if (lastCharIndex < compareWith.length) {
         const isCorrect = value[lastCharIndex] === compareWith[lastCharIndex];
         
@@ -345,16 +407,16 @@ const GamePlay: React.FC<GamePlayProps> = ({
           }));
           
           setMonster(prev => {
-            // Sum up monster heal reduction from equipment
-            const totalHealReduction = equippedPlayerItems.reduce(
-              (sum: number, item: any) => sum + (item.effects?.monsterHealReduction || 0),
+            const totalHealReduction = actualEquippedItems.reduce(
+              (sum: number, item: Equipment) => sum + (item.effects?.monsterHealReduction || 0), // ИСПРАВЛЕНО: Equipment
               0
             );
             
-            const healAmount = Math.max(0, gameConfig.healOnMistake - totalHealReduction);
+            // TS2304: Cannot find name 'gameConfig'.
+            const healAmount = Math.max(0, effectiveGameConfig.healOnMistake - totalHealReduction); // ИСПРАВЛЕНО
             
             const newHealth = Math.min(
-              prev.maxHealth || gameConfig.initialHealth,
+              prev.maxHealth || effectiveGameConfig.initialHealth, // ИСПРАВЛЕНО
               prev.health + healAmount
             );
             
@@ -372,9 +434,11 @@ const GamePlay: React.FC<GamePlayProps> = ({
         setMonster(prev => {
           if (prev.isDefeated) return prev;
 
-          // Расчет урона с бонусами от снаряжения
-          const equipmentDamageBonus = equippedPlayerItems.reduce( // <--- Используем equippedPlayerItems
-            (sum, item) => sum + (item.effects?.playerDamageBonus || 0), // Используем playerDamageBonus
+          // TS2304: Cannot find name 'equippedPlayerItems'.
+          // TS7006: Parameter 'sum' implicitly has an 'any' type.
+          // TS7006: Parameter 'item' implicitly has an 'any' type.
+          const equipmentDamageBonus = actualEquippedItems.reduce( // ИСПРАВЛЕНО
+            (sum: number, item: Equipment) => sum + (item.effects?.playerDamageBonus || 0), // ИСПРАВЛЕНО: типы
             0
           );
           
@@ -386,7 +450,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
           
           const finalDamageToApply = parseFloat(damageWithActiveBonus.toFixed(2));
 
-          const newHealth = Math.max(0, prev.health - finalDamageToApply); // <--- Apply calculated damage
+          const newHealth = Math.max(0, prev.health - finalDamageToApply); 
           const isDefeated = newHealth === 0;
 
           if (isDefeated) {
@@ -427,14 +491,14 @@ const GamePlay: React.FC<GamePlayProps> = ({
       const durationMinutes = (gameStats.endTime - gameStats.startTime) / 60000;
       const speed = gameStats.correctChars / durationMinutes;
       const accuracy = (gameStats.correctChars / gameStats.totalChars) * 100;
-      saveLevelResult(levelId.toString(), speed, accuracy); // Changed: (gameConfig as any).id to levelId.toString()
+      saveLevelResult(userId, levelId.toString(), speed, accuracy); // Исправлено: добавлен userId первым аргументом
     }
     onReturnToMenu();
   };
 
   return (
     <>
-      <BackgroundManager imagePath={gameConfig.backgroundImage} />
+      <BackgroundManager imagePath={effectiveGameConfig.backgroundImage} />
       <div className="game-container">
         <button className="menu-button" onClick={handleReturnToMenu}>Вернуться в меню</button>
         
@@ -475,17 +539,17 @@ const GamePlay: React.FC<GamePlayProps> = ({
 
         {showVictory ? (
           <VictoryScreen 
-            gameStats={gameStats}
-            speed={gameStats && gameStats.endTime && gameStats.startTime && gameStats.totalChars > 0
-              ? gameStats.correctChars / ((gameStats.endTime - gameStats.startTime) / 60000)
-              : 0}
-            accuracy={gameStats && gameStats.totalChars > 0
-              ? (gameStats.correctChars / gameStats.totalChars) * 100
-              : 0}
-            onRestart={restartGame} 
+            gameStats={{...gameStats, speed: finalSpeed, accuracy: finalAccuracy}}
+            onRestart={() => {
+              restartGame();
+              if (userId) healPlayerToMax(userId);
+            }}
             rewards={rewards}
             isFirstCompletion={isFirstCompletion}
-            levelId={levelId as number} 
+            speed={finalSpeed}
+            accuracy={finalAccuracy}
+            levelId={levelId}
+            userId={userId} // Передаем userId
           />
         ) : showDefeatScreen ? ( // Добавляем условие для экрана поражения
           <DefeatScreen

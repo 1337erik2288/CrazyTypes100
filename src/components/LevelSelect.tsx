@@ -7,6 +7,8 @@ import { getOverallStats, OverallPlayerStats } from '../services/overallStatsSer
 import { useState } from 'react';
 import { levelResources } from '../data/levelResources'; // Убедитесь, что импорт есть
 import { GamePlayConfig } from './GamePlay'; // Если еще не импортирован
+import AuthDetails from './Auth/AuthDetails'; // ДОБАВЛЕН ИМПОРТ
+import { useAuth } from '../contexts/AuthContext'; // <-- Добавлен импорт
 
 export type Language = 'en' | 'ru' | 'code' | 'key-combos' | 'simple-words' | 'phrases' | 'math' | 'paragraphs' | 'mixed' | 'keyboard-training';
 
@@ -138,22 +140,32 @@ interface LevelSelectProps {
   onOpenShop: () => void;
 }
 
-const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevels, playerProgress, onOpenShop }) => {
+const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevels = [], playerProgress, onOpenShop }) => {
   const [showStatsModal, setShowStatsModal] = useState<boolean>(false);
   const [overallStats, setOverallStats] = useState<OverallPlayerStats | null>(null);
+  const { currentUser } = useAuth(); // <-- Получаем currentUser
 
   const trainingRoomLevel = levelResources.find(level => level.config.language === 'keyboard-training');
   const regularLevels = levelResources
     .filter(level => level.config.language !== 'keyboard-training')
     .sort((a, b) => a.id - b.id);
 
-  const handleOpenOverallStats = () => {
-    setOverallStats(getOverallStats());
-    setShowStatsModal(true);
+  const handleOpenOverallStats = async () => { // <-- Сделана асинхронной
+    if (currentUser) {
+      const stats = await getOverallStats(currentUser.uid); // <-- Добавлен await и currentUser.uid
+      setOverallStats(stats);
+      setShowStatsModal(true);
+    } else {
+      console.error("User not logged in, cannot fetch overall stats.");
+      // Можно показать уведомление пользователю
+    }
   };
 
   return (
     <div className="level-select">
+      <div className="auth-details-container-in-level-select">
+        <AuthDetails />
+      </div>
       <h1>Выберите испытание</h1>
 
       <div className="top-section-wrapper">
@@ -183,7 +195,7 @@ const LevelSelect: React.FC<LevelSelectProps> = ({ onLevelSelect, completedLevel
       )}
       <div className="level-path-rect">
         {regularLevels.map((level) => {
-          const isCompleted = completedLevels.includes(level.id.toString());
+          const isCompleted = completedLevels.includes(level.id.toString()); // This line should now be safe
           const stats = playerProgress.levelStats?.[level.id.toString()];
           return (
             <div key={level.id} className={`level-card-rect ${isCompleted ? 'completed' : ''}`}>

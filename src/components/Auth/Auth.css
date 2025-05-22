@@ -1,0 +1,107 @@
+.auth-form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: 50px auto;
+}
+
+.auth-form-container h2 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.auth-form-container form div {
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.auth-form-container label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+  font-weight: bold;
+}
+
+.auth-form-container input[type="email"],
+.auth-form-container input[type="password"] {
+  width: calc(100% - 20px);
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.auth-form-container button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.auth-form-container button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+.auth-error-message {
+  color: red;
+  background-color: #ffebee;
+  border: 1px solid red;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  width: calc(100% - 20px);
+  text-align: center;
+}
+
+.auth-switch-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 5px;
+  margin-top: 10px;
+}
+
+.auth-switch-button:hover {
+  color: #0056b3;
+}
+
+/* Стили для AuthDetails */
+.auth-details-container {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Расстояние между email и кнопкой */
+}
+
+.auth-details-container p {
+  margin: 0;
+  font-size: 0.9em;
+  color: #333;
+}
+
+.auth-details-container button {
+  padding: 5px 10px;
+  font-size: 0.9em;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.auth-details-container button:hover {
+  background-color: #c82333;
+}

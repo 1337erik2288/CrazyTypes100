@@ -14,29 +14,32 @@ interface GameStats {
 interface VictoryScreenProps {
   gameStats: GameStats;
   onRestart: () => void;
-  // Removed onReturnToMenu
   rewards?: LevelReward;
   isFirstCompletion?: boolean;
   speed: number;
   accuracy: number;
-  levelId: number; // <--- добавлено
+  levelId: number;
+  userId: string | undefined; // <--- ДОБАВЛЕНО: userId в пропсах
 }
 
 const VictoryScreen: React.FC<VictoryScreenProps> = ({
   onRestart,
-  // Removed onReturnToMenu
   rewards,
   isFirstCompletion,
   speed,
   accuracy,
   gameStats,
-  levelId // <--- добавлено
+  levelId,
+  userId // <--- ДОБАВЛЕНО: получаем userId из пропсов
 }) => {
   useEffect(() => {
-    if (levelId !== undefined && levelId !== null) {
-      saveLevelResult(levelId.toString(), speed, accuracy);
+    if (userId && levelId !== undefined && levelId !== null) {
+      // The function call below was causing the error by passing 5 arguments.
+      // saveLevelResult(userId, levelId.toString(), speed, accuracy, Date.now());
+      // Corrected call with 4 arguments:
+      saveLevelResult(userId, levelId.toString(), speed, accuracy);
     }
-  }, [levelId, speed, accuracy]);
+  }, [levelId, speed, accuracy, userId]);
 
   return (
     <div className="victory-screen">

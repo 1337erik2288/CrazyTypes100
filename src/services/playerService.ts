@@ -1,27 +1,28 @@
 import { Level } from '../components/LevelSelect';
+import { db } from '../firebase'; // Импорт db, auth удален
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'; // Импорт функций Firestore
+import { UserDocument } from '../types/firestoreTypes'; // Импорт типа UserDocument
 
+// Обновляем интерфейс PlayerProgress, чтобы он соответствовал UserDocument
+// или можно напрямую использовать UserDocument в функциях, возвращающих прогресс.
+// Для последовательности, расширим PlayerProgress.
 export interface PlayerProgress {
   experience: number;
   gold: number;
   level: number;
-  completedLevels: string[]; // Было number[]
+  completedLevels: string[];
   levelStats?: {
-    [levelId: string]: {     // Ключ был number
+    [levelId: string]: {
       speed: number;
       accuracy: number;
-      date: number;         // Добавлено поле date для консистентности
-    }
+      date: number;
+    };
   };
+  inventory: string[]; // Добавлено из UserDocument
+  equippedGear: { [slot: string]: string }; // Добавлено из UserDocument
+  currentHealth: number; // Добавлено из UserDocument
 }
 
-// Убедитесь, что DEFAULT_PLAYER_PROGRESS также соответствует этой структуре:
-// export const DEFAULT_PLAYER_PROGRESS: PlayerProgress = {
-//   experience: 0,
-//   gold: 0,
-//   level: 1,
-//   completedLevels: [], // Теперь string[]
-//   levelStats: {}       // Ключи теперь string
-// };
 export interface LevelReward {
   experience: number;
   gold: number;
@@ -33,6 +34,19 @@ const DEFAULT_PLAYER_PROGRESS: PlayerProgress = {
   gold: 0,
   level: 1,
   completedLevels: [],
+  levelStats: {},
+  inventory: [], // Инициализация нового поля
+  equippedGear: {}, // Инициализация нового поля
+  // currentHealth будет инициализирован в getInitialPlayerProgress на основе getMaxPlayerHealth для уровня 1
+  currentHealth: 0 // Временное значение, будет установлено в getInitialPlayerProgress
+};
+
+// Export a function that returns a copy of the default progress
+export const getInitialPlayerProgress = (): PlayerProgress => {
+  const initialProgress = { ...DEFAULT_PLAYER_PROGRESS };
+  // Рассчитываем начальное здоровье на основе базового уровня (1)
+  initialProgress.currentHealth = BASE_PLAYER_HEALTH + ((initialProgress.level -1 ) * HEALTH_PER_LEVEL);
+  return initialProgress;
 };
 
 // Experience required for each level
@@ -72,47 +86,7 @@ export const calculateLevelReward = (level: Level): LevelReward => {
   };
 };
 
-// Get player progress from localStorage
-export const getPlayerProgress = (): PlayerProgress => {
-  const savedProgress = localStorage.getItem('playerProgress');
-  if (savedProgress) {
-    try {
-      return JSON.parse(savedProgress);
-    } catch (error) {
-      console.error('Error parsing player progress:', error);
-    }
-  }
-  return { ...DEFAULT_PLAYER_PROGRESS };
-};
 
-// Save player progress to localStorage
-export const savePlayerProgress = (progress: PlayerProgress): void => {
-  localStorage.setItem('playerProgress', JSON.stringify(progress));
-};
-
-// Add experience and gold to player progress
-export const addRewards = (experience: number, gold: number): PlayerProgress => {
-  const progress = getPlayerProgress();
-  
-  // Add rewards
-  progress.experience += experience;
-  progress.gold += gold;
-  
-  // Check for level up
-  while (
-    progress.level < XP_REQUIREMENTS.length && 
-    progress.experience >= XP_REQUIREMENTS[progress.level]
-  ) {
-    progress.level++;
-  }
-  
-  // Save updated progress
-  savePlayerProgress(progress);
-  
-  return progress;
-};
-
-// Calculate progress percentage to next level
 export const calculateLevelProgress = (progress: PlayerProgress): number => {
   if (progress.level >= XP_REQUIREMENTS.length) {
     return 100; // Max level reached
@@ -126,27 +100,117 @@ export const calculateLevelProgress = (progress: PlayerProgress): number => {
   return Math.min(100, Math.floor((xpForCurrentLevel / xpRequiredForNextLevel) * 100));
 };
 
-// Calculate player rating based on typing speed and accuracy
-export const calculatePlayerRating = (speed: number, accuracy: number): number => {
-  // Rating formula: (Speed × 0.7) + (Accuracy × 0.3)
-  return (speed * 0.7) + (accuracy * 0.3);
-};
+
 
 // Базовое здоровье игрока
 const BASE_PLAYER_HEALTH = 100;
 const HEALTH_PER_LEVEL = 10;
 const BASE_PLAYER_DAMAGE = 10; // <--- Новый базовый урон игрока
 
-// Получение текущего уровня игрока
-export const getPlayerLevel = (): number => {
-  const playerProgress = getPlayerProgress();
+// Удаляем старые функции, работавшие с localStorage или вызывавшие старые версии
+// export const getPlayerLevel = (): number => { ... };
+// export const getMaxPlayerHealth = (): number => { ... };
+// export const getPlayerBaseDamage = (): number => { ... }; // Эта функция возвращает константу, ее можно оставить, если она не дублируется
+// export const getPlayerHealth = (): number => { ... };
+// export const setPlayerHealth = (health: number): void => { ... };
+// export const damagePlayer = (damage: number): number => { ... };
+// export const healPlayerToMax = (): void => { ... };
+
+// Убедитесь, что это ЕДИНСТВЕННЫЕ объявления этих функций в файле.
+// Старые, localStorage-версии должны быть удалены или закомментированы.
+
+// Get player progress from Firestore
+export const getPlayerProgress = async (userId: string): Promise<PlayerProgress> => {
+  if (!userId) {
+    console.warn("getPlayerProgress: userId is not provided. Returning initial progress.");
+    return getInitialPlayerProgress();
+  }
+  const userDocRef = doc(db, 'users', userId);
+  try {
+    const docSnap = await getDoc(userDocRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data() as UserDocument;
+      const initialDefaults = getInitialPlayerProgress();
+      return {
+        experience: data.experience ?? initialDefaults.experience,
+        gold: data.gold ?? initialDefaults.gold,
+        level: data.level ?? initialDefaults.level,
+        completedLevels: data.completedLevels ?? initialDefaults.completedLevels,
+        levelStats: data.levelStats ?? initialDefaults.levelStats,
+        inventory: data.inventory ?? initialDefaults.inventory,
+        equippedGear: data.equippedGear ?? initialDefaults.equippedGear,
+        currentHealth: data.currentHealth ?? initialDefaults.currentHealth,
+      };
+    } else {
+      console.log(`No progress found for user ${userId}, creating new one.`);
+      const initialProgress = getInitialPlayerProgress();
+      await setDoc(userDocRef, initialProgress);
+      return initialProgress;
+    }
+  } catch (error) {
+    console.error('Error fetching player progress:', error);
+    return getInitialPlayerProgress();
+  }
+};
+
+// Save player progress to Firestore
+export const savePlayerProgress = async (userId: string, progress: PlayerProgress): Promise<void> => {
+  if (!userId) {
+    console.error("savePlayerProgress: userId is not provided.");
+    return;
+  }
+  const userDocRef = doc(db, 'users', userId);
+  try {
+    await setDoc(userDocRef, progress, { merge: true });
+  } catch (error) {
+    console.error('Error saving player progress:', error);
+  }
+};
+
+// Add experience and gold to player progress in Firestore
+export const addRewards = async (userId: string, experience: number, gold: number): Promise<PlayerProgress> => {
+  if (!userId) {
+    console.error("addRewards: userId is not provided.");
+    return getInitialPlayerProgress(); // Возвращаем начальный прогресс или обрабатываем ошибку иначе
+  }
+  // Используем await для получения прогресса и передаем userId
+  const progress = await getPlayerProgress(userId);
+
+  progress.experience += experience;
+  progress.gold += gold;
+
+  // Предполагаем, что XP_REQUIREMENTS - это массив или объект, доступный в этом скоупе
+  // Например: const XP_REQUIREMENTS = [0, 100, 250, 500, ...]; // XP для уровней 1, 2, 3, 4...
+  while (
+    progress.level < XP_REQUIREMENTS.length && // Убедитесь, что XP_REQUIREMENTS определен и доступен
+    progress.experience >= XP_REQUIREMENTS[progress.level]
+  ) {
+    progress.level++;
+  }
+
+  await savePlayerProgress(userId, progress);
+  return progress;
+};
+
+// Calculate player rating based on typing speed and accuracy
+// export const calculatePlayerRating = (speed: number, accuracy: number): number => { // ЭТО ДУБЛИКАТ - УДАЛЯЕМ
+// Rating formula: (Speed × 0.7) + (Accuracy × 0.3)
+export const calculatePlayerRating = (speed: number, accuracy: number): number => {
+  return (speed * 0.7) + (accuracy * 0.3);
+};
+
+// Получение текущего уровня игрока из Firestore
+export const getPlayerLevel = async (userId: string): Promise<number> => {
+  if (!userId) return DEFAULT_PLAYER_PROGRESS.level;
+  const playerProgress = await getPlayerProgress(userId);
   return playerProgress.level;
 };
 
-// Получение максимального здоровья игрока на основе его уровня
-export const getMaxPlayerHealth = (): number => {
-  const playerLevel = getPlayerLevel();
-  return BASE_PLAYER_HEALTH + (playerLevel * HEALTH_PER_LEVEL);
+// Получение максимального здоровья игрока на основе его уровня из Firestore
+export const getMaxPlayerHealth = async (userId: string): Promise<number> => {
+  if (!userId) return BASE_PLAYER_HEALTH + (DEFAULT_PLAYER_PROGRESS.level -1) * HEALTH_PER_LEVEL;
+  const playerLevel = await getPlayerLevel(userId);
+  return BASE_PLAYER_HEALTH + ((playerLevel -1) * HEALTH_PER_LEVEL);
 };
 
 // Получение базового урона игрока
@@ -156,29 +220,40 @@ export const getPlayerBaseDamage = (): number => {
 };
 
 // Получение текущего здоровья игрока
-export const getPlayerHealth = (): number => {
-  // Get current health from storage or return max health if not set
-  const savedHealth = localStorage.getItem('playerHealth');
-  if (savedHealth) {
-    return parseInt(savedHealth, 10);
+export const getPlayerHealth = async (userId: string): Promise<number> => {
+  if (!userId) return await getMaxPlayerHealth(userId); // или дефолтное значение
+  const playerProgress = await getPlayerProgress(userId);
+  // Если currentHealth не определено в Firestore, возвращаем максимальное
+  return playerProgress.currentHealth ?? await getMaxPlayerHealth(userId);
+};
+
+// Установка здоровья игрока в Firestore
+export const setPlayerHealth = async (userId: string, health: number): Promise<void> => {
+  if (!userId) return;
+  const userDocRef = doc(db, 'users', userId);
+  try {
+    await updateDoc(userDocRef, { currentHealth: health });
+  } catch (error) {
+    console.error('Error setting player health:', error);
+    // Если документа нет, можно его создать с этим здоровьем
+    const progress = getInitialPlayerProgress();
+    progress.currentHealth = health;
+    await savePlayerProgress(userId, progress);
   }
-  return getMaxPlayerHealth();
 };
 
-// Установка здоровья игрока
-export const setPlayerHealth = (health: number): void => {
-  localStorage.setItem('playerHealth', health.toString());
-};
-
-// Нанесение урона игроку
-export const damagePlayer = (damage: number): number => {
-  const currentHealth = getPlayerHealth();
+// Нанесение урона игроку и обновление в Firestore
+export const damagePlayer = async (userId: string, damage: number): Promise<number> => {
+  if (!userId) return 0; // или другое значение по умолчанию
+  const currentHealth = await getPlayerHealth(userId);
   const newHealth = Math.max(0, currentHealth - damage);
-  setPlayerHealth(newHealth);
+  await setPlayerHealth(userId, newHealth);
   return newHealth;
 };
 
-// Восстановление здоровья игрока до максимума
-export const healPlayerToMax = (): void => {
-  setPlayerHealth(getMaxPlayerHealth());
+// Восстановление здоровья игрока до максимума в Firestore
+export const healPlayerToMax = async (userId: string): Promise<void> => {
+  if (!userId) return;
+  const maxHealth = await getMaxPlayerHealth(userId);
+  await setPlayerHealth(userId, maxHealth);
 };

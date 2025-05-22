@@ -1,4 +1,19 @@
 {
+  "compilerOptions": {
+    "target": "ES2020", // Или новее, например ES2022
+    "module": "NodeNext",  // ИЗМЕНЕНО: ESNext -> NodeNext
+    "moduleResolution": "NodeNext", // Или Bundler, Node16. Важно для разрешения ES-модулей.
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "./dist", // Пример, если вы компилируете в dist
+    // "rootDir": "./src",  // УДАЛЕНО: Эта строка вызывала ошибку с путем к scripts
+    // Если скрипты находятся вне rootDir, возможно, понадобится "include"
+  },
+  "include": [
+    "src/**/*",
+    "scripts/**/*" // Добавьте эту строку, если ваши скрипты вне src и не включены иначе
+  ],
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
