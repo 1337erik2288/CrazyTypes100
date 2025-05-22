@@ -138,8 +138,8 @@ export const levels: LevelConfig[] = [
   }
 ]
 
-
-
+// Remove the duplicated interface definition below
+/*
 export interface LevelConfig {
   id: number;
   name: string;
@@ -155,3 +155,4 @@ export interface LevelConfig {
   monsterDamage: number; // Урон, наносимый монстром игроку
   // ... existing code ...
 }
+*/

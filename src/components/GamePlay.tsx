@@ -71,7 +71,7 @@ interface GamePlayProps {
 }
 
 const GamePlay: React.FC<GamePlayProps> = ({
-  config: initialConfig, // config is destructured to initialConfig
+  config: initialConfig, 
   onRestart,
   onReturnToMenu,
   onLevelComplete,
@@ -79,12 +79,10 @@ const GamePlay: React.FC<GamePlayProps> = ({
   isFirstCompletion = false,
   levelId
 }) => {
-  // Apply equipment effects to the game configuration
-  const [equippedPlayerItems] = useState(() => getEquippedItems()); // <--- FIX: Use getEquippedItems and rename state
+  const [equippedPlayerItems] = useState(() => getEquippedItems()); 
   
   const [gameConfig] = useState(() => {
-    // return applyEquipmentEffects(config, playerEquipment.equipped); // <--- OLD
-    return applyEquipmentEffects(initialConfig, equippedPlayerItems); // <--- FIX: Use initialConfig and equippedPlayerItems
+    return applyEquipmentEffects(initialConfig, equippedPlayerItems); 
   });
   
   const [currentWord, setCurrentWord] = useState('');
@@ -109,7 +107,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
   const [currentDamage, setCurrentDamage] = useState(0);
   const [bonusDamageActive, setBonusDamageActive] = useState(false);
   const [bonusDamagePercent, setBonusDamagePercent] = useState(0);
-  const [playerBaseDamage, setPlayerBaseDamage] = useState<number>(0); // <--- Add state for player's base damage
+  const [playerBaseDamage, setPlayerBaseDamage] = useState<number>(0); 
 
   // Добавляем состояния для здоровья игрока
   const [playerHealth, setPlayerHealth] = useState<number>(getPlayerHealth());
@@ -148,9 +146,9 @@ const GamePlay: React.FC<GamePlayProps> = ({
   }, [equippedPlayerItems, maxPlayerHealth, showVictory, showDefeatScreen]);
 
   const generateNewWord = useCallback(() => {
-    if (initialConfig.language === 'code') { // Получаем список всех доступных языков из сервиса или вручную
-      const codeLanguages = ['javascript', 'python', 'typescript', 'java', 'csharp']; // Пример, замените на актуальные
-      // хочу гулять...
+    if (initialConfig.language === 'code') { 
+      const codeLanguages = ['javascript', 'python', 'typescript', 'java', 'csharp']; 
+      // хочу гулять... // <--- Удаляем этот комментарий
       const randomLang = codeLanguages[Math.floor(Math.random() * codeLanguages.length)];
       getRandomCodeLine(randomLang).then((codeLine: string) => {
         setCurrentWord(codeLine);

@@ -4,6 +4,7 @@ export interface EquipmentEffects {
   monsterDamageReduction?: number;  // 3. уменьшение урона от монстра (абсолютное значение)
   monsterHealReduction?: number;    // 4. уменьшение лечения монстра (при ошибке игрока)
   monsterRegenReduction?: number;   // 4. уменьшение регенерации монстра
+  monsterHealBonus?: number; // <--- ДОБАВЬТЕ ЭТУ СТРОКУ
 }
 
 export interface Equipment {

@@ -6,50 +6,40 @@ interface EquipmentStatsProps {
   equipment: Equipment[];
 }
 
-// interface TotalStats extends EquipmentEffects { // <-- REMOVE THIS LINE
-//   // Можно добавить сюда другие общие статы, если они появятся
-// }
-
-// Define TotalStats with required number properties
-interface TotalStats { // <-- ADD THIS BLOCK
+interface TotalStats {
   playerDamageBonus: number;
   playerHealBonus: number;
+  monsterHealBonus: number;
   monsterDamageReduction: number;
   monsterHealReduction: number;
   monsterRegenReduction: number;
 }
 
 const EquipmentStats: React.FC<EquipmentStatsProps> = ({ equipment }) => {
-  console.log('EquipmentStats received equipment:', equipment); 
-
   const calculateTotalStats = (): TotalStats => {
     let playerDamageBonus = 0;
     let playerHealBonus = 0;
+    let monsterHealBonus = 0; // <--- Добавлено объявление
     let monsterDamageReduction = 0;
     let monsterHealReduction = 0;
     let monsterRegenReduction = 0;
-    
-    equipment.forEach((item, index) => {
-      const effects = item.effects as any; // Используем 'as any' для гибкости
-      
-      console.log(`Item ${index} (${item.name}):`, JSON.parse(JSON.stringify(item))); 
+
+    equipment.forEach((item /*, index */) => { // <--- Удален неиспользуемый 'index'
+      const effects = item.effects;
       if (effects) {
-        console.log(`Item ${index} (${item.name}) effects:`, JSON.parse(JSON.stringify(effects))); 
-        
-        // Используем имена свойств из логов:
-        playerDamageBonus += effects.playerDamageBonus || 0; 
-        playerHealBonus += effects.playerHealBonus || 0; // <-- Исправлено здесь!
+        playerDamageBonus += effects.playerDamageBonus || 0;
+        playerHealBonus += effects.playerHealBonus || 0;
+        monsterHealBonus += effects.monsterHealBonus || 0; // <--- Добавлено суммирование
         monsterDamageReduction += effects.monsterDamageReduction || 0;
         monsterHealReduction += effects.monsterHealReduction || 0;
         monsterRegenReduction += effects.monsterRegenReduction || 0;
-      } else {
-        console.log(`Item ${index} (${item.name}) has NO effects property or it is undefined.`);
       }
     });
-    
+
     return {
       playerDamageBonus,
       playerHealBonus,
+      monsterHealBonus, // <--- Добавлено в возвращаемый объект
       monsterDamageReduction,
       monsterHealReduction,
       monsterRegenReduction
@@ -57,7 +47,7 @@ const EquipmentStats: React.FC<EquipmentStatsProps> = ({ equipment }) => {
   };
 
   const totalStats = calculateTotalStats();
-  console.log('Calculated totalStats:', totalStats); 
+  // console.log('Calculated totalStats:', totalStats); 
 
   const noBonusesFromEquipment = Object.values(totalStats).every(value => value === 0);
 
