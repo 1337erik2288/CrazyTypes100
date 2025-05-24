@@ -1,0 +1,164 @@
+.keyboard-panel-container {
+  margin: 0 auto;
+  max-width: 700px;
+}
+
+.simple-keyboard-container {
+  padding: 20px;
+  min-height: 250px;
+}
+
+.simple-keyboard {
+  background: #f8f9fa; /* Light grey background for the keyboard base */
+  border-radius: 8px;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+}
+
+.hg-button {
+  /* REMOVED background-color: #fff; to prevent override */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px 15px;
+  margin: 2px;
+  font-size: 1em;
+  cursor: default; /* Changed from pointer to default as keys are not interactive for typing */
+  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  color: #333; /* Default text color for keys, can be overridden by [data-finger] */
+}
+
+.hg-button.highlighted-key {
+  background: #ffe066 !important; /* Ensure highlight is visible */
+  color: #222 !important; /* Ensure text on highlighted key is visible */
+  border: 2px solid #e1b800 !important;
+}
+
+/* Finger zone colors */
+.hg-button[data-finger="pinky-left"],
+.hg-button[data-finger="pinky-right"] {
+  background: #7fc97f !important; /* pastel green */
+  color: #222 !important;
+}
+.hg-button[data-finger="ring-left"],
+.hg-button[data-finger="ring-right"] {
+  background: #ffff99 !important; /* pastel yellow */
+  color: #222 !important;
+}
+/* Central (burgundy and purple) */
+.hg-button[data-finger="middle-left"],
+.hg-button[data-finger="middle-right"] {
+  background: #a259a4 !important; /* purple */
+  color: #fff !important;
+}
+.hg-button[data-finger="index-left"],
+.hg-button[data-finger="index-right"] {
+  background: #8d2237 !important; /* burgundy */
+  color: #fff !important;
+}
+/* Next (pink) */
+.hg-button[data-finger="ring-left"],
+.hg-button[data-finger="ring-right"] {
+  background: #e9a1c0 !important; /* pink */
+  color: #222 !important;
+}
+/* Next (yellow) */
+.hg-button[data-finger="pinky-left"],
+.hg-button[data-finger="pinky-right"] {
+  background: #f7f48b !important; /* yellow */
+  color: #222 !important;
+}
+/* Outermost (green) */
+.hg-button[data-finger="thumb-left"],
+.hg-button[data-finger="thumb-right"],
+.hg-button[data-finger="thumb"] {
+  background: #a8e063 !important; /* green */
+  color: #222 !important;
+}
+/* Spacebar (bright yellow) */
+.hg-button[data-skbtn=" "] {
+  background: #fff700 !important;
+  color: #222 !important;
+}
+.hg-button[data-skbtn="{controlleft}"],
+.hg-button[data-skbtn="{altleft}"],
+.hg-button[data-skbtn=" "],
+.hg-button[data-skbtn="{altright}"],
+.hg-button[data-skbtn="{controlright}"],
+.hg-button[data-skbtn="< enter"],
+.hg-button[data-skbtn="{enter}"] {
+  background: #4db6ac !important;
+  color: #fff !important;
+}
+
+/* Media Queries for responsiveness */
+@media (max-width: 768px) {
+  .simple-keyboard-container { 
+    padding: 10px; 
+    min-height: 200px; 
+  }
+  .simple-keyboard .hg-button {
+    height: 45px; 
+    font-size: 0.9em; 
+  }
+}
+
+@media (max-width: 480px) {
+  .simple-keyboard .hg-button { 
+    height: 40px; 
+    font-size: 0.8em; 
+  }
+}
+
+.hg-button[data-skbtn="{enter}"],
+.hg-button[data-skbtn="< enter"] {
+  background: #f7f48b !important;
+  color: #333 !important;
+}
+
+.hg-button[data-skbtn="{backspace}"],
+.hg-button[data-skbtn="backspace"] {
+  background: #e53935 !important;
+  color: #fff !important;
+}
+
+.hg-button[data-skbtn="{shift}"],
+.hg-button[data-skbtn="shift"] {
+  background: #43a047 !important;
+  color: #fff !important;
+}
+
+.hg-button[data-skbtn="{controlleft}"],
+.hg-button[data-skbtn="{controlright}"],
+.hg-button[data-skbtn="{altleft}"],
+.hg-button[data-skbtn="{altright}"] {
+  background: #a8e063 !important;
+  color: #333!important;
+}
+.hg-button[data-skbtn="["] {
+  background: #f7f48b !important;
+  color: #333 !important;
+}
+.hg-button[data-skbtn="]"] {
+  background: #f7f48b !important;
+  color: #333 !important;
+}
+.hg-button[data-skbtn="'"] {
+  background: #f7f48b !important;
+  color: #333 !important;
+}
+.hg-button[data-skbtn="2"] {
+  background: #e9a1c0  !important;
+  color: #333 !important;
+}
+.hg-button[data-skbtn="a"] {
+  background: #f7f48b !important;
+  color: #333 !important;
+}
+.hg-button[data-skbtn="shift"]:last-child, /* right shift, if your keyboard uses this selector */
+.hg-button[data-skbtn="{shiftright}"] {
+  background: #f7f48b !important;
+  color: #333 !important;
+}
+.hg-button[data-skbtn=";"] {
+  background: #f7f48b!important;
+  color: #222 !important;
+}

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import Keyboard from 'simple-keyboard'; // Импортируем клавиатуру
+// import Keyboard from 'simple-keyboard'; // Импортируем клавиатуру - REMOVE THIS LINE
 import 'simple-keyboard/build/css/index.css'; // Импортируем стили клавиатуры
 import { getAdditionalWords } from '../services/wordsService';
 import { GamePlayConfig } from './GamePlay';
 import './TrainingRoom.css';
+import KeyboardPanel from './KeyboardPanel';
 
 interface TrainingRoomProps {
   onReturnToMenu: () => void;
@@ -12,38 +13,6 @@ interface TrainingRoomProps {
 
 const ROLLING_WINDOW_SECONDS = 3;
 
-// Определение раскладки и атрибутов для цветовой разметки пальцев
-const keyboardLayout = {
-  default: [
-    "` 1 2 3 4 5 6 7 8 9 0 - = {bksp}",
-    "{tab} q w e r t y u i o p [ ] \\",
-    "{lock} a s d f g h j k l ; ' {enter}",
-    "{shiftleft} z x c v b n m , . / {shiftright}",
-    "{controlleft} {altleft} {space} {altright} {controlright}"
-  ],
-  shift: [
-    "~ ! @ # $ % ^ & * ( ) _ + {bksp}",
-    "{tab} Q W E R T Y U I O P { } |",
-    "{lock} A S D F G H J K L : \" {enter}",
-    "{shiftleft} Z X C V B N M < > ? {shiftright}",
-    "{controlleft} {altleft} {space} {altright} {controlright}"
-  ]
-};
-
-const keyboardButtonAttributes = [
-  // Левая рука
-  { attribute: "data-finger", value: "pinky-left", buttons: "` 1 q a z {tab} {lock} {shiftleft} {controlleft}" },
-  { attribute: "data-finger", value: "ring-left", buttons: "2 w s x" },
-  { attribute: "data-finger", value: "middle-left", buttons: "3 e d c" },
-  { attribute: "data-finger", value: "index-left", buttons: "4 r f v 5 t g b" },
-  // Правая рука
-  { attribute: "data-finger", value: "index-right", buttons: "6 y h n 7 u j m" },
-  { attribute: "data-finger", value: "middle-right", buttons: "8 i k ," },
-  { attribute: "data-finger", value: "ring-right", buttons: "9 o l ." },
-  { attribute: "data-finger", value: "pinky-right", buttons: "0 p ; / - = [ ] ' \\ {bksp} {enter} {shiftright} {altright} {controlright}" },
-  // Большие пальцы
-  { attribute: "data-finger", value: "thumb", buttons: "{space} {altleft}" }
-];
 
 const charToButtonMap: { [key: string]: string } = {
   ' ': '{space}',
@@ -69,9 +38,8 @@ const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) =
   const charsInLastSecondForRollingWpmRef = useRef<number>(0);
   const charHistoryForRollingWpmRef = useRef<number[]>([]);
 
-  const keyboardRef = useRef<Keyboard | null>(null);
-  const keyboardContainerRef = useRef<HTMLDivElement>(null);
-  const highlightedNextKeyRef = useRef<string | null>(null);
+  // Добавляем состояние для клавиши, которую нужно подсветить
+  const [keyToHighlight, setKeyToHighlight] = useState<string | null>(null);
 
   const currentTextToType = words[currentWordIndex] || '';
 
@@ -150,7 +118,7 @@ const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) =
     
     setAverageWpm(0);
     setCurrentWpm(0);
-  }, []); // fetchWords будет вызван один раз при монтировании, т.к. его зависимости (isLoading, words.length) не меняются от этого useEffect
+  }, []); 
 
   useEffect(() => {
     if (words.length > 0 && currentWordIndex >= words.length - 3 && !isLoading) {
@@ -164,15 +132,37 @@ const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) =
     inputRef.current?.focus();
   }, [setCurrentWordIndex, setUserInput]);
 
+  // Обновляем эту функцию, чтобы она вызывалась из KeyboardPanel
+  const handleVirtualKeyboardInputChange = (newInput: string) => {
+    const prevValue = userInput;
+
+    if (currentTextToType && newInput.length > prevValue.length) {
+      const typedCharIndex = newInput.length - 1;
+      if (typedCharIndex < currentTextToType.length && newInput[typedCharIndex] === currentTextToType[typedCharIndex]) {
+        totalCorrectCharsInSessionRef.current += 1; 
+        charsInLastSecondForRollingWpmRef.current += 1; 
+      }
+    }
+    setUserInput(newInput);
+
+    if (currentTextToType && newInput === currentTextToType) {
+      advanceToNextWord();
+    }
+  };
+
+  // Эта функция остается для физической клавиатуры
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
+    // Логика подсчета WPM и перехода к следующему слову теперь может быть общей
+    // или дублироваться/выноситься в отдельную функцию, если нужно различать источник ввода.
+    // Для простоты, пока оставим ее здесь, но KeyboardPanel будет вызывать handleVirtualKeyboardInputChange
     const prevValue = userInput;
 
     if (currentTextToType && newValue.length > prevValue.length) {
       const typedCharIndex = newValue.length - 1;
       if (typedCharIndex < currentTextToType.length && newValue[typedCharIndex] === currentTextToType[typedCharIndex]) {
         totalCorrectCharsInSessionRef.current += 1; 
-        charsInLastSecondForRollingWpmRef.current += 1; // Считаем символы для текущего секундного тика
+        charsInLastSecondForRollingWpmRef.current += 1; 
       }
     }
 
@@ -198,99 +188,20 @@ const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) =
     }
   };
   
-  // Инициализация клавиатуры
+  
+  // Обновляем логику подсветки следующей клавиши, чтобы она устанавливала состояние keyToHighlight
   useEffect(() => {
-    const currentContainer = keyboardContainerRef.current;
-    if (currentContainer && !keyboardRef.current) {
-      // ВАЖНО: Убедитесь, что `keyboardLayout` здесь определен и содержит вашу раскладку.
-      // Если `originalButtonAttributes` (или `keyboardButtonAttributes` из вашего старого кода)
-      // содержит важные атрибуты (например, aria-label), их нужно объединить.
-      
-      // Определяем originalButtonAttributes как пустой массив.
-      // Это исправляет ошибку: Cannot find name 'originalButtonAttributes'.
-      const originalButtonAttributes: any[] = []; 
+    const nextCharIndex = userInput.length;
+    let nextButton: string | null = null;
 
-      const combinedButtonAttributes = [
-        ...originalButtonAttributes, 
-        // Используем объявленную на строке 33 переменную keyboardButtonAttributes 
-        // вместо fingerZoneButtonAttributes.
-        // Это исправляет ошибки:
-        // - Cannot find name 'fingerZoneButtonAttributes'.
-        // - 'keyboardButtonAttributes' is declared but its value is never read.
-        ...keyboardButtonAttributes 
-      ];
-
-      const options = {
-        layout: keyboardLayout, 
-        buttonAttributes: combinedButtonAttributes, 
-        theme: "hg-theme-default hg-layout-default",
-        debug: false,
-        display: {
-          "{bksp}": "⌫",
-          "{enter}": "⏎",
-          "{tab}": "⇥",
-          "{shiftleft}": "⇧",
-          "{shiftright}": "⇧",
-          "{lock}": "⇪",
-          "{space}": "␣",
-          '{controlleft}': 'Ctrl',
-          '{controlright}': 'Ctrl',
-          '{altleft}': 'Alt',
-          '{altright}': 'Alt',
-        },
-      };
-      const keyboard = new Keyboard(currentContainer, options);
-      keyboardRef.current = keyboard; 
+    if (nextCharIndex < currentTextToType.length) {
+      const nextChar = currentTextToType[nextCharIndex];
+      nextButton = charToButtonMap[nextChar.toLowerCase()] || 
+                   charToButtonMap[nextChar.toUpperCase()] || 
+                   (nextChar.match(/^[a-zA-Zа-яА-ЯёЁ0-9]$/) ? nextChar.toLowerCase() : nextChar);
     }
-
-    return () => {
-      keyboardRef.current?.destroy();
-      keyboardRef.current = null;
-    };
-  }, []); // Пустой массив зависимостей, чтобы выполнилось один раз при монтировании
-
-  // Обновление клавиатуры: отображение ввода и подсветка следующей клавиши
-  useEffect(() => {
-    if (keyboardRef.current) {
-      const currentKbd = keyboardRef.current;
-
-      // 1. Отображение текущего ввода пользователя на виртуальной клавиатуре
-      // (Дублирование нажатий игрока)
-      currentKbd.setInput(userInput);
-
-      // 2. Логика подсветки следующей клавиши
-      const nextCharIndex = userInput.length;
-      let nextButtonToHighlight: string | null = null;
-
-      if (nextCharIndex < currentTextToType.length) {
-        const nextChar = currentTextToType[nextCharIndex];
-        // Используем charToButtonMap для спецсимволов, иначе сам символ
-        nextButtonToHighlight = charToButtonMap[nextChar.toLowerCase()] || // Проверяем нижний регистр
-                                  charToButtonMap[nextChar.toUpperCase()] || // Проверяем верхний регистр
-                                  (nextChar.match(/^[a-zA-Zа-яА-ЯёЁ0-9]$/) ? nextChar.toLowerCase() : nextChar); // Для букв/цифр - нижний регистр, иначе как есть
-        
-        // Если nextButtonToHighlight все еще содержит заглавную букву, а на клавиатуре только строчные (или наоборот)
-        // и нет отдельной кнопки для заглавной, simple-keyboard может не найти ее.
-        // Обычно simple-keyboard обрабатывает это через {shift} или авто-капитализацию.
-        // Для простоты, предполагаем, что кнопки на клавиатуре соответствуют строчным буквам, если не активен Shift.
-      }
-
-      // Снять подсветку с предыдущей клавиши
-      if (highlightedNextKeyRef.current && highlightedNextKeyRef.current !== nextButtonToHighlight) {
-        currentKbd.removeButtonTheme(highlightedNextKeyRef.current, "next-key-highlight");
-      }
-
-      // Подсветить новую следующую клавишу
-      if (nextButtonToHighlight && nextButtonToHighlight !== highlightedNextKeyRef.current) {
-        currentKbd.addButtonTheme(nextButtonToHighlight, "next-key-highlight");
-        highlightedNextKeyRef.current = nextButtonToHighlight; // highlightedNextKeyRef используется
-      } else if (!nextButtonToHighlight && highlightedNextKeyRef.current) {
-        // Если нет следующей клавиши для подсветки, убираем подсветку
-        currentKbd.removeButtonTheme(highlightedNextKeyRef.current, "next-key-highlight");
-        highlightedNextKeyRef.current = null;
-      }
-    }
-  }, [userInput, currentTextToType, words]); // Зависимости для обновления
+    setKeyToHighlight(nextButton);
+  }, [userInput, currentTextToType, words]); // Убрали keyboardRef.current из зависимостей
 
   const getHighlightedText = () => {
     let correctPart = '';
@@ -379,8 +290,14 @@ const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) =
           Выход в меню
         </button>
       </div>
-      {/* Контейнер для клавиатуры должен быть здесь, как отдельный дочерний элемент training-room-container */}
-      <div ref={keyboardContainerRef} className="simple-keyboard-container"></div>
+      {/* Заменяем старый контейнер клавиатуры на компонент KeyboardPanel */}
+      {/* <div ref={keyboardContainerRef} className="simple-keyboard-container"></div> */}
+      <KeyboardPanel
+        input={userInput}
+        onInputChange={handleVirtualKeyboardInputChange}
+        layoutType="latin" // Always use English layout
+        highlightKey={keyToHighlight}
+      />
     </div>
   );
 };
