@@ -114,6 +114,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
   const [maxPlayerHealth, setMaxPlayerHealth] = useState<number>(getMaxPlayerHealth());
   const [playerDamageAnimation, setPlayerDamageAnimation] = useState<boolean>(false);
   const [showAttackWarning, setShowAttackWarning] = useState<boolean>(false);
+  const [errorChars, setErrorChars] = useState<string[]>([]); // Add this line
   
   // Таймер для нанесения урона игроку
   const monsterAttackInterval = useRef<NodeJS.Timeout | null>(null);
@@ -201,6 +202,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
     });
     setShowVictory(false);
     setShowDefeatScreen(false); // Сбрасываем экран поражения
+    setErrorChars([]); // Reset error characters on game restart
     setGameStats({
       correctChars: 0,
       incorrectChars: 0,
@@ -334,6 +336,9 @@ const GamePlay: React.FC<GamePlayProps> = ({
         const isCorrect = value[lastCharIndex] === compareWith[lastCharIndex];
         
         if (!isCorrect) {
+          // Add the incorrect character to the errorChars array
+          setErrorChars(prevErrorChars => [...prevErrorChars, compareWith[lastCharIndex]]); 
+
           setUserInput(value.slice(0, -1));
           
           setGameStats(prev => ({
@@ -425,7 +430,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
       const durationMinutes = (gameStats.endTime - gameStats.startTime) / 60000;
       const speed = gameStats.correctChars / durationMinutes;
       const accuracy = (gameStats.correctChars / gameStats.totalChars) * 100;
-      saveLevelResult(levelId.toString(), speed, accuracy); // Changed: (gameConfig as any).id to levelId.toString()
+      saveLevelResult(levelId.toString(), speed, accuracy, errorChars); // Pass errorChars here
     }
     onReturnToMenu();
   };

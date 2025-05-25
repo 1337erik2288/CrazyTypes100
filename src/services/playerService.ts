@@ -10,6 +10,7 @@ export interface PlayerProgress {
       speed: number;
       accuracy: number;
       date: number;         // Добавлено поле date для консистентности
+      errorChars?: string[]; // Add this line for storing mistyped characters
     }
   };
 }

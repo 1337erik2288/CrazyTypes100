@@ -7,14 +7,14 @@ import { getPlayerProgress, savePlayerProgress, PlayerProgress } from './playerS
 // export function getPlayerProgress(): PlayerProgress { ... } // Удалить, если это для основного прогресса
 // export function savePlayerProgress(progress: PlayerProgress) { ... } // Удалить
 
-export function saveLevelResult(levelId: string, speed: number, accuracy: number) {
+export function saveLevelResult(levelId: string, speed: number, accuracy: number, errorChars: string[]) {
   const progress: PlayerProgress = getPlayerProgress(); // Используем из playerService
 
   if (!progress.levelStats) {
     progress.levelStats = {};
   }
-  // Структура { speed, accuracy, date } соответствует обновленному PlayerProgress
-  progress.levelStats[levelId] = { speed, accuracy, date: Date.now() };
+  // Структура { speed, accuracy, date, errorChars } соответствует обновленному PlayerProgress
+  progress.levelStats[levelId] = { speed, accuracy, date: Date.now(), errorChars };
 
   if (!progress.completedLevels.includes(levelId)) {
     progress.completedLevels.push(levelId);

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
+import { getOverallStats } from "../../services/overallStatsService";
 import { OverallPlayerStats } from '../../services/overallStatsService';
 // Assuming OverallStatPoint is (or should be) exported from overallStatsService.ts
 // If OverallStatPoint is not defined or exported, you might need to define it here or use 'any' as a temporary measure.
@@ -18,14 +19,16 @@ import './OverallStatsModal.css';
 // Alias imports from recharts to avoid naming conflicts
 import {
   LineChart,
-  Line as RechartsLine, // Aliased
+  Line as RechartsLine, 
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip as RechartsTooltip, // Aliased
-  Legend as RechartsLegend,   // Aliased
-  ResponsiveContainer
-} from 'recharts'; // Added import for RechartsLine, RechartsTooltip, RechartsLegend
+  Tooltip as RechartsTooltip, 
+  Legend as RechartsLegend,   
+  ResponsiveContainer,
+  BarChart, // Import BarChart
+  Bar,      // Import Bar
+} from 'recharts'; 
 
 // Убедитесь, что OverallStatPoint импортирован или определен здесь, если overallStatsService.ts не используется
 // import { OverallStatPoint } from '../../services/overallStatsService'; // Example - this line is now active above
@@ -75,65 +78,17 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
   return null;
 };
 
-const OverallStatsModal: React.FC<Props> = ({ stats, onClose }) => { // Changed OverallStatsModalProps to Props
-  const data = {
-    labels: stats.progression.map((_: any, idx: number) => `#${idx + 1}`), // Added types for _ and idx
-    datasets: [
-      {
-        label: 'Скорость (CPM)',
-        data: stats.progression.map((entry: LevelStatEntry) => entry.speedCPM), // Changed OverallStatPoint to LevelStatEntry
-        borderColor: '#1abc9c',
-        fill: false,
-      },
-      {
-        label: 'Точность (%)',
-        data: stats.progression.map((entry: LevelStatEntry) => entry.accuracyPercent), // Changed OverallStatPoint to LevelStatEntry
-        borderColor: '#e74c3c',
-        fill: false,
-      },
-    ],
-  };
+type OverallStatsModalProps = {
+  isOpen?: boolean; // if you use it elsewhere
+  onClose: () => void;
+  stats: OverallPlayerStats;
+};
 
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false, // Это важно, контейнер должен иметь размеры
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      title: {
-        display: true,
-        text: 'Прогрессия игрока',
-      },
-    },
-    scales: {
-      x: {
-        type: 'category' as const,
-        ticks: {
-          color: '#ccc', // Цвет тиков на оси X
-        },
-        grid: {
-          color: 'rgba(204, 204, 204, 0.2)', // Цвет сетки для оси X
-        },
-      },
-      y: {
-        type: 'linear' as const,
-        beginAtZero: true,
-        ticks: {
-          color: '#ccc', // Цвет тиков на оси Y
-        },
-        grid: {
-          color: 'rgba(204, 204, 204, 0.2)', // Цвет сетки для оси Y
-        },
-      },
-    },
-  };
-
-  // Helper function for formatting Recharts X-axis ticks
-  const formatRechartsXAxisTick = (tick: any): string => {
-    if (tick === undefined || tick === null) {
-      return '';
-    }
+const OverallStatsModal: React.FC<OverallStatsModalProps> = ({ stats, onClose }) => {
+  if (!stats) {
+    return null;
+  }
+  const formatRechartsXAxisTick = (tick: any) => {
     try {
       const dateValue = Number(tick);
       if (isNaN(dateValue)) {
@@ -144,6 +99,18 @@ const OverallStatsModal: React.FC<Props> = ({ stats, onClose }) => { // Changed 
       return String(tick);
     }
   };
+
+  // Data for Russian error characters bar chart
+  const russianErrorChartData = stats.mostCommonRussianErrors?.map((err: CommonErrorStat) => ({
+    name: `Символ: "${err.char}"`,
+    ошибок: err.count,
+  }));
+
+  // Data for English error characters bar chart
+  const englishErrorChartData = stats.mostCommonEnglishErrors?.map((err: CommonErrorStat) => ({
+    name: `Character: "${err.char}"`,
+    errors: err.count,
+  }));
 
   return (
     <div className="stats-modal-overlay" onClick={onClose}>
@@ -162,33 +129,61 @@ const OverallStatsModal: React.FC<Props> = ({ stats, onClose }) => { // Changed 
         <div className="progress-visualization">
           <h4>Прогрессия по уровням</h4>
           {stats.progression && stats.progression.length > 0 ? (
-            <Line data={data} options={options} />
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={stats.progression}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="timestamp" tickFormatter={formatRechartsXAxisTick} />
+                <YAxis />
+                <RechartsTooltip content={<CustomTooltip />} />
+                <RechartsLegend />
+                <RechartsLine type="monotone" dataKey="speedCPM" stroke="#8884d8" name="Скорость (зн./мин)" />
+                <RechartsLine type="monotone" dataKey="accuracyPercent" stroke="#82ca9d" name="Точность (%)" />
+              </LineChart>
+            </ResponsiveContainer>
           ) : (
             <p style={{ textAlign: 'center', color: '#ccc' }}>Нет данных для отображения прогрессии.</p>
           )}
         </div>
+        {/* Section for Russian errors */}
+        <h4>Частые ошибки (Русский, Топ 5)</h4>
+        {stats.mostCommonRussianErrors && stats.mostCommonRussianErrors.length > 0 && russianErrorChartData ? (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={russianErrorChartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis allowDecimals={false} />
+              <RechartsTooltip />
+              <RechartsLegend />
+              <Bar dataKey="ошибок" fill="#dc3545" name="Кол-во ошибок (Рус)" />
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <p style={{ textAlign: 'center', color: '#ccc' }}>Нет данных о частых русских ошибках.</p>
+        )}
+        {/* Section for English errors */}
+        <h4>Частые ошибки (Английский, Топ 5)</h4>
+        {stats.mostCommonEnglishErrors && stats.mostCommonEnglishErrors.length > 0 && englishErrorChartData ? (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={englishErrorChartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis allowDecimals={false} />
+              <RechartsTooltip />
+              <RechartsLegend />
+              <Bar dataKey="errors" fill="#007bff" name="Кол-во ошибок (Англ)" />
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <p style={{ textAlign: 'center', color: '#ccc' }}>Нет данных о частых английских ошибках.</p>
+        )}
         <button className="close-modal-button" onClick={onClose}>
           Закрыть
         </button>
-        <h4>История результатов:</h4>
-        {stats.progression && stats.progression.length > 0 ? (
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={stats.progression}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="timestamp" tickFormatter={(tick) => formatRechartsXAxisTick(tick)} />
-              <YAxis />
-              <RechartsTooltip content={<CustomTooltip />} />
-              <RechartsLegend />
-              <RechartsLine type="monotone" dataKey="speedCPM" stroke="#8884d8" name="Скорость (зн./мин)" />
-              <RechartsLine type="monotone" dataKey="accuracyPercent" stroke="#82ca9d" name="Точность (%)" />
-            </LineChart>
-          </ResponsiveContainer>
-        ) : (
-          <p>Нет данных для отображения истории.</p>
-        )}
       </div>
     </div>
   );
 };
 
 export default OverallStatsModal;
+
+type CommonErrorStat = { char: string; count: number };
