@@ -48,15 +48,16 @@
 }
 
 .text-display-area {
-  font-size: 2em;
+  font-family: 'Press Start 2P', system-ui, sans-serif !important;
+  font-size: 1.2em;
+  color: #fff;
   padding: 15px;
-  background-color: rgba(255, 255, 255, 0.1); /* Очень светлый, полупрозрачный фон */
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 5px;
   min-height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Courier New', Courier, monospace; /* Моноширинный шрифт для лучшего восприятия */
 }
 
 .text-display-area .correct-text {

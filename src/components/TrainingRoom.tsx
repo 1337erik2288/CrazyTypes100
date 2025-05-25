@@ -303,7 +303,7 @@ const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) =
         </div>
 
         <button onClick={handleLanguageToggle} className="language-toggle-btn">
-          {language === 'en' ? 'Сменить на Русский' : 'Switch to English'}
+          {language === 'en' ? 'Сменить на Русский' : 'Сменить на Английский'}
         </button>
 
         <button onClick={onReturnToMenu} className="return-to-menu-btn">
