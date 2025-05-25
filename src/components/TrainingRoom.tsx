@@ -3,7 +3,7 @@ import 'simple-keyboard/build/css/index.css';
 import { getWordsByLanguage } from '../services/wordsService'; // Use getWordsByLanguage
 import { GamePlayConfig } from './GamePlay';
 import './TrainingRoom.css';
-import KeyboardPanel, { KeyboardPanelProps } from './KeyboardPanel'; // KeyboardPanelProps is now correctly imported
+import KeyboardPanel from './KeyboardPanel'; // Removed KeyboardPanelProps from import
 
 interface TrainingRoomProps {
   onReturnToMenu: () => void;
@@ -35,6 +35,7 @@ const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) =
   const charHistoryForRollingWpmRef = useRef<number[]>([]);
 
   const [keyToHighlight, setKeyToHighlight] = useState<string | null>(null);
+  const [isErrorActive, setIsErrorActive] = useState<boolean>(false); // Новое состояние для ошибки
 
   const currentTextToType = words[currentWordIndex] || '';
 
@@ -127,41 +128,78 @@ const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) =
     inputRef.current?.focus();
   }, [setCurrentWordIndex, setUserInput]);
 
-  const handleVirtualKeyboardInputChange = (newInput: string) => {
-    const prevValue = userInput;
-
-    if (currentTextToType && newInput.length > prevValue.length) {
-      const typedCharIndex = newInput.length - 1;
-      if (typedCharIndex < currentTextToType.length && newInput[typedCharIndex] === currentTextToType[typedCharIndex]) {
-        totalCorrectCharsInSessionRef.current += 1; 
-        charsInLastSecondForRollingWpmRef.current += 1; 
-      }
-    }
-    setUserInput(newInput);
-
-    if (currentTextToType && newInput === currentTextToType) {
-      advanceToNextWord();
-    }
-  };
-
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
     const prevValue = userInput;
+    let errorOccurred = false;
 
-    if (currentTextToType && newValue.length > prevValue.length) {
-      const typedCharIndex = newValue.length - 1;
-      if (typedCharIndex < currentTextToType.length && newValue[typedCharIndex] === currentTextToType[typedCharIndex]) {
-        totalCorrectCharsInSessionRef.current += 1; 
-        charsInLastSecondForRollingWpmRef.current += 1; 
+    if (currentTextToType) {
+      // Проверка на ошибку при вводе нового символа
+      if (newValue.length > prevValue.length) {
+        const typedCharIndex = newValue.length - 1;
+        if (typedCharIndex < currentTextToType.length) {
+          if (newValue[typedCharIndex] !== currentTextToType[typedCharIndex]) {
+            errorOccurred = true;
+          } else {
+            totalCorrectCharsInSessionRef.current += 1; 
+            charsInLastSecondForRollingWpmRef.current += 1; 
+          }
+        }
+      } else if (newValue.length < prevValue.length) {
+        // Ошибка сбрасывается при стирании
+        errorOccurred = false;
+      } else {
+        // Если длина не изменилась, проверяем текущий ввод на ошибки
+        for (let i = 0; i < newValue.length; i++) {
+          if (i < currentTextToType.length && newValue[i] !== currentTextToType[i]) {
+            errorOccurred = true;
+            break;
+          }
+        }
       }
     }
-
+    setIsErrorActive(errorOccurred);
     setUserInput(newValue);
 
-    if (currentTextToType && newValue === currentTextToType) {
+    if (currentTextToType && newValue === currentTextToType && !errorOccurred) {
       advanceToNextWord();
     }
   };
+
+  // Аналогичные изменения нужно внести в handleVirtualKeyboardInputChange, если она используется для ввода
+  // const handleVirtualKeyboardInputChange = (newInput: string) => {
+  //   const prevValue = userInput;
+  //   let errorOccurred = false;
+
+  //   if (currentTextToType) {
+  //     if (newInput.length > prevValue.length) {
+  //       const typedCharIndex = newInput.length - 1;
+  //       if (typedCharIndex < currentTextToType.length) {
+  //         if (newInput[typedCharIndex] !== currentTextToType[typedCharIndex]) {
+  //           errorOccurred = true;
+  //         } else {
+  //           totalCorrectCharsInSessionRef.current += 1;
+  //           charsInLastSecondForRollingWpmRef.current += 1;
+  //         }
+  //       }
+  //     } else if (newInput.length < prevValue.length) {
+  //       errorOccurred = false;
+  //     } else {
+  //       for (let i = 0; i < newInput.length; i++) {
+  //         if (i < currentTextToType.length && newInput[i] !== currentTextToType[i]) {
+  //           errorOccurred = true;
+  //           break;
+  //         }
+  //       }
+  //     }
+  //   }
+  //   setIsErrorActive(errorOccurred);
+  //   setUserInput(newInput);
+
+  //   if (currentTextToType && newInput === currentTextToType && !errorOccurred) {
+  //     advanceToNextWord();
+  //   }
+  // };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -272,12 +310,15 @@ const TrainingRoom: React.FC<TrainingRoomProps> = ({ onReturnToMenu, config }) =
           Выход в меню
         </button>
       </div>
-      <KeyboardPanel
-        input={userInput}
-        onInputChange={handleVirtualKeyboardInputChange}
-        layoutType={language === 'en' ? 'latin' : 'cyrillic'}
-        highlightKey={keyToHighlight}
-      />
+      <div className="keyboard-section">
+        <KeyboardPanel 
+          input={userInput} 
+          layoutType={language === 'en' ? 'latin' : 'cyrillic'} 
+          highlightKey={keyToHighlight}
+          highlightErrorKey={isErrorActive} // Передаем состояние ошибки
+          // onInputChange={handleVirtualKeyboardInputChange} // Раскомментируйте, если используете виртуальный ввод
+        />
+      </div>
     </div>
   );
 };

@@ -1,8 +1,14 @@
-.keyboard-panel-container {
-  margin: 0 auto;
-  max-width: 700px;
+.keyboard-section {
+  width: 100%;
+  max-width: none;
+  display: flex;
+  justify-content: center;
 }
-
+.keyboard-panel-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
 .simple-keyboard-container {
   padding: 20px;
   min-height: 250px;
@@ -30,6 +36,12 @@
   background: #66ff75 !important; /* Ensure highlight is visible */
   color: #222 !important; /* Ensure text on highlighted key is visible */
   border: 5px solid #00e138 !important;
+}
+
+.hg-button.error-highlighted-key {
+  background: #ff6666 !important; /* Красный фон для ошибки */
+  color: #fff !important; /* Белый текст на красном фоне */
+  border: 5px solid #e10000 !important; /* Темно-красная рамка */
 }
 
 /* Finger zone colors - Simplified and Corrected */

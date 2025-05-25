@@ -9,6 +9,7 @@ export interface KeyboardPanelProps { // Add export here
   layoutType: 'latin' | 'cyrillic';
   onInputChange?: (input: string) => void;
   highlightKey?: string | null;
+  highlightErrorKey?: boolean; // Новый проп для подсветки ошибки
 }
 
 // Определение атрибутов для слепой печати (аналогично TrainingRoom.tsx)
@@ -58,10 +59,11 @@ const cyrillicLayout = {
   ]
 };
 
-const KeyboardPanel: React.FC<KeyboardPanelProps> = ({ input, layoutType, highlightKey }) => {
+const KeyboardPanel: React.FC<KeyboardPanelProps> = ({ input, layoutType, highlightKey, highlightErrorKey }) => {
   const keyboardRef = useRef<Keyboard | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const prevHighlightedKey = useRef<string | null>(null);
+  const prevErrorHighlightState = useRef<boolean>(false);
 
   useEffect(() => {
     if (containerRef.current && !keyboardRef.current) {
@@ -90,15 +92,26 @@ const KeyboardPanel: React.FC<KeyboardPanelProps> = ({ input, layoutType, highli
 
   useEffect(() => {
     if (keyboardRef.current) {
-      // Remove highlight from previous key
+      // Сначала убираем все предыдущие подсветки
       if (prevHighlightedKey.current) {
         const prevBtn = keyboardRef.current.getButtonElement(prevHighlightedKey.current);
         if (prevBtn && 'classList' in prevBtn) {
           (prevBtn as HTMLElement).classList.remove('highlighted-key');
         }
       }
-      // Add highlight to the new key
-      if (highlightKey) {
+      const backspaceBtn = keyboardRef.current.getButtonElement('{bksp}');
+      if (backspaceBtn && 'classList' in backspaceBtn) {
+        (backspaceBtn as HTMLElement).classList.remove('error-highlighted-key');
+      }
+
+      // Применяем подсветку ошибки, если она активна
+      if (highlightErrorKey) {
+        if (backspaceBtn && 'classList' in backspaceBtn) {
+          (backspaceBtn as HTMLElement).classList.add('error-highlighted-key');
+        }
+        prevHighlightedKey.current = null; // Ошибка имеет приоритет
+      } else if (highlightKey) {
+        // Иначе применяем обычную подсветку следующей клавиши
         const btn = keyboardRef.current.getButtonElement(highlightKey);
         if (btn && 'classList' in btn) {
           (btn as HTMLElement).classList.add('highlighted-key');
@@ -107,8 +120,9 @@ const KeyboardPanel: React.FC<KeyboardPanelProps> = ({ input, layoutType, highli
       } else {
         prevHighlightedKey.current = null;
       }
+      prevErrorHighlightState.current = highlightErrorKey || false;
     }
-  }, [highlightKey]);
+  }, [highlightKey, highlightErrorKey]);
 
   return <div className="keyboard-panel-container" ref={containerRef} />;
 };
