@@ -2,8 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import Keyboard from 'simple-keyboard';
 import 'simple-keyboard/build/css/index.css';
 import './KeyboardPanel.css';
+import FingerLegend from "./FingerLegend";
 
-interface KeyboardPanelProps {
+export interface KeyboardPanelProps { // Add export here
   input: string;
   layoutType: 'latin' | 'cyrillic';
   onInputChange?: (input: string) => void;
@@ -12,14 +13,14 @@ interface KeyboardPanelProps {
 
 // Определение атрибутов для слепой печати (аналогично TrainingRoom.tsx)
 const keyboardButtonAttributes = [
-  { attribute: 'data-finger', value: 'pinky-left', buttons: '` 1 q a z {tab} {lock} {shiftleft} {controlleft}' },
-  { attribute: 'data-finger', value: 'ring-left', buttons: '2 w s x' },
-  { attribute: 'data-finger', value: 'middle-left', buttons: '3 e d c' },
-  { attribute: 'data-finger', value: 'index-left', buttons: '4 r f v 5 t g b' },
-  { attribute: 'data-finger', value: 'index-right', buttons: '6 y h n 7 u j m' },
-  { attribute: 'data-finger', value: 'middle-right', buttons: '8 i k ,' },
-  { attribute: 'data-finger', value: 'ring-right', buttons: '9 o l .' },
-  { attribute: 'data-finger', value: 'pinky-right', buttons: '0 p ; / - = \\ {bksp} {enter} {shiftright} {altright} {controlright}' },
+  { attribute: 'data-finger', value: 'pinky-left', buttons: '` 1 q a z ё ۱ й ф я {tab} {lock} {shiftleft} {controlleft}' },
+  { attribute: 'data-finger', value: 'ring-left', buttons: '2 w s x ۲ ц ы ч' },
+  { attribute: 'data-finger', value: 'middle-left', buttons: '3 e d c ۳ у в с' },
+  { attribute: 'data-finger', value: 'index-left', buttons: '4 r f v 5 t g b ۴ к а м ۵ е п и ۶ н р т' }, 
+  { attribute: 'data-finger', value: 'index-right', buttons: '6 y h n 7 u j m ۶ о г ь ۷' }, 
+  { attribute: 'data-finger', value: 'middle-right', buttons: '8 i k , ۸ ш л б' }, 
+  { attribute: 'data-finger', value: 'ring-right', buttons: '9 o l . ۹ ж з д щ ю' }, // Точка '.' добавлена сюда для английской раскладки (розовый)
+  { attribute: 'data-finger', value: 'pinky-right', buttons: '0 p ; / - = \\ [ ] \' ۰ х э з ж э ъ . {bksp} {enter} {shiftright} {altright} {controlright}' }, // Точка '.' уже здесь для русской раскладки (желтый)
   { attribute: 'data-finger', value: 'thumb', buttons: '{space} {altleft}' },
 ];
 
@@ -111,5 +112,6 @@ const KeyboardPanel: React.FC<KeyboardPanelProps> = ({ input, layoutType, highli
 
   return <div className="keyboard-panel-container" ref={containerRef} />;
 };
+
 
 export default KeyboardPanel;

@@ -1,0 +1,37 @@
+.finger-legend-panel {
+  background: #222;
+  color: #fff;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-left: 32px;
+  min-width: 180px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.finger-legend-panel h4 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+.finger-legend-panel ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.finger-legend-panel li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.finger-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 10px;
+  border: 2px solid #fff;
+}
+.finger-label {
+  font-size: 1em;
+  font-weight: 500;
+}

@@ -27,55 +27,46 @@
 }
 
 .hg-button.highlighted-key {
-  background: #ffe066 !important; /* Ensure highlight is visible */
+  background: #66ff75 !important; /* Ensure highlight is visible */
   color: #222 !important; /* Ensure text on highlighted key is visible */
-  border: 2px solid #e1b800 !important;
+  border: 5px solid #00e138 !important;
 }
 
-/* Finger zone colors */
+/* Finger zone colors - Simplified and Corrected */
 .hg-button[data-finger="pinky-left"],
 .hg-button[data-finger="pinky-right"] {
-  background: #7fc97f !important; /* pastel green */
+  background: #f7f48b !important; /* Yellow */
   color: #222 !important;
 }
+
 .hg-button[data-finger="ring-left"],
 .hg-button[data-finger="ring-right"] {
-  background: #ffff99 !important; /* pastel yellow */
+  background: #e9a1c0 !important; /* Pink */
   color: #222 !important;
 }
-/* Central (burgundy and purple) */
+
 .hg-button[data-finger="middle-left"],
 .hg-button[data-finger="middle-right"] {
-  background: #a259a4 !important; /* purple */
+  background: #a259a4 !important; /* Purple */
   color: #fff !important;
 }
+
 .hg-button[data-finger="index-left"],
 .hg-button[data-finger="index-right"] {
-  background: #8d2237 !important; /* burgundy */
+  background: #8d2237 !important; /* Burgundy */
   color: #fff !important;
 }
-/* Next (pink) */
-.hg-button[data-finger="ring-left"],
-.hg-button[data-finger="ring-right"] {
-  background: #e9a1c0 !important; /* pink */
+
+.hg-button[data-finger="thumb"] { /* Combined thumb-left and thumb-right into thumb */
+  background: #a8e063 !important; /* Green */
   color: #222 !important;
 }
-/* Next (yellow) */
-.hg-button[data-finger="pinky-left"],
-.hg-button[data-finger="pinky-right"] {
-  background: #f7f48b !important; /* yellow */
-  color: #222 !important;
-}
-/* Outermost (green) */
-.hg-button[data-finger="thumb-left"],
-.hg-button[data-finger="thumb-right"],
-.hg-button[data-finger="thumb"] {
-  background: #a8e063 !important; /* green */
-  color: #222 !important;
-}
-/* Spacebar (bright yellow) */
-.hg-button[data-skbtn=" "] {
-  background: #fff700 !important;
+
+/* Specific key overrides (like space, enter, etc.) can remain if needed */
+/* but ensure they don't conflict with the finger colors if not intended */
+
+.hg-button[data-skbtn=" "] { /* Spacebar */
+  background: #a8e063 !important; /* Consistent with thumb color or a distinct one */
   color: #222 !important;
 }
 .hg-button[data-skbtn="{controlleft}"],
@@ -162,3 +153,9 @@
   background: #f7f48b!important;
   color: #222 !important;
 }
+.finger-highlight-pinky { background: #8ecae6; color: #222; border-radius: 4px; padding: 0 4px; }
+.finger-highlight-ring { background: #e0aaff; color: #222; border-radius: 4px; padding: 0 4px; }
+.finger-highlight-middle { background: #b5838d; color: #fff; border-radius: 4px; padding: 0 4px; }
+.finger-highlight-index { background: #ffb4a2; color: #222; border-radius: 4px; padding: 0 4px; }
+.finger-highlight-thumb { background: #ffe066; color: #222; border-radius: 4px; padding: 0 4px; }
+

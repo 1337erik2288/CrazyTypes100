@@ -180,15 +180,56 @@ export async function fetchRussianWords(count: number = 20): Promise<string[]> {
   return shuffledWords.slice(0, count);
 }
 
-import { ruWords } from '../data/ru-words';
-import { enWords } from '../data/en-words';
+import { enWords } from '../data/en-words'; // Corrected import
+import { ruWords } from '../data/ru-words'; // Corrected import
+
+// Example: if you create separate files for words
+const allWords: { [key: string]: { [key: string]: string[] } } = {
+  en: {
+    'keyboard-training': enWords, // from en-words.ts
+    // ... other categories for English
+  },
+  ru: {
+    'keyboard-training': ruWords, // from ru-words.ts
+    // ... other categories for Russian
+  }
+};
+
+export const getWordsByLanguage = async (language: 'en' | 'ru', category: string): Promise<string[]> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const langWords = allWords[language] && allWords[language][category];
+      if (langWords) {
+        // Shuffle or select a subset as needed
+        resolve([...langWords].sort(() => 0.5 - Math.random()).slice(0, 50)); // Example: shuffle and take 50
+      } else {
+        resolve([]); // Or reject with an error
+      }
+    }, 200);
+  });
+};
+
+// If you adapt getAdditionalWords, it might look something like this:
+// export const getAdditionalWords = async (category: string, language: 'en' | 'ru' = 'en'): Promise<string[]> => {
+//   // ... logic to select words based on category and language ...
+//   let sourceWords: string[] = [];
+//   if (language === 'en') {
+//     sourceWords = enWords; // Or specific category words for English
+//   } else if (language === 'ru') {
+//     sourceWords = ruWords; // Or specific category words for Russian
+//   }
+  
+//   // Your existing logic to shuffle/select words
+//   const shuffled = [...sourceWords].sort(() => 0.5 - Math.random());
+//   return Promise.resolve(shuffled.slice(0, 20)); // Example: return 20 random words
+// };
 import { keyComboWords } from '../data/key-combos';
 import { simpleWords } from '../data/simple-words';
 import { phrasesWords } from '../data/phrases-words';
 import { mathExpressions } from '../data/math-expressions';
 import { textParagraphs } from '../data/text-paragraphs';
 import { mixedChallenges } from '../data/mixed-challenges';
-import { enChallenges } from '../data/en-challenges';
+// import { enChallenges } from '../data/en-challenges'; // Removed unused import
 
 export async function getAdditionalWords(language: string): Promise<string[]> {
   try {
