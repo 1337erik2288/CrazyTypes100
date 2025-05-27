@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { getOverallStats } from "../../services/overallStatsService";
+import React from "react"; // Removed useEffect, useState, useMemo
+// import { getOverallStats } from "../../services/overallStatsService"; // Удалить или закомментировать
 import { OverallPlayerStats } from '../../services/overallStatsService';
-// Assuming OverallStatPoint is (or should be) exported from overallStatsService.ts
-// If OverallStatPoint is not defined or exported, you might need to define it here or use 'any' as a temporary measure.
-import { LevelStatEntry } from '../../services/overallStatsService'; // Changed OverallStatPoint to LevelStatEntry
-import { Line } from 'react-chartjs-2'; // This is for the first chart
+import { LevelStatEntry } from '../../services/overallStatsService';
+// import { Line } from 'react-chartjs-2'; // Удалить или закомментировать
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,26 +10,22 @@ import {
   PointElement,
   LineElement,
   Title,
-  Tooltip, // This Tooltip is from chart.js, for the first chart
-  Legend,  // This Legend is from chart.js, for the first chart
+  Tooltip,
+  Legend,
 } from 'chart.js';
 import './OverallStatsModal.css';
-// Alias imports from recharts to avoid naming conflicts
 import {
   LineChart,
-  Line as RechartsLine, 
+  Line as RechartsLine,
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip as RechartsTooltip, 
-  Legend as RechartsLegend,   
+  Tooltip as RechartsTooltip,
+  Legend as RechartsLegend,
   ResponsiveContainer,
-  BarChart, // Import BarChart
-  Bar,      // Import Bar
-} from 'recharts'; 
-
-// Убедитесь, что OverallStatPoint импортирован или определен здесь, если overallStatsService.ts не используется
-// import { OverallStatPoint } from '../../services/overallStatsService'; // Example - this line is now active above
+  BarChart,
+  Bar,
+} from 'recharts';
 
 ChartJS.register(
   CategoryScale,
@@ -39,14 +33,17 @@ ChartJS.register(
   PointElement,
   LineElement,
   Title,
-  Tooltip, // This is the chart.js Tooltip
-  Legend   // This is the chart.js Legend
+  Tooltip,
+  Legend
 );
 
-interface Props {
-  stats: OverallPlayerStats;
-  onClose: () => void;
-}
+import KeyboardHeatmapStats from '../stats/KeyboardHeatmapStats';
+import { CommonErrorStat } from "../../services/overallStatsService"; // Добавлен импорт
+
+// interface Props { // Удалить или закомментировать
+//   stats: OverallPlayerStats;
+//   onClose: () => void;
+// }
 
 // Define a more specific type for Recharts payload items
 interface CustomTooltipPayloadItem {
@@ -79,12 +76,12 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
 };
 
 type OverallStatsModalProps = {
-  isOpen?: boolean; // if you use it elsewhere
+  // isOpen?: boolean; // Удалить или закомментировать
   onClose: () => void;
   stats: OverallPlayerStats;
 };
 
-const OverallStatsModal: React.FC<OverallStatsModalProps> = ({ stats, onClose }) => {
+const OverallStatsModal: React.FC<OverallStatsModalProps> = ({ /* isOpen, */ onClose, stats }) => {
   if (!stats) {
     return null;
   }
@@ -111,6 +108,10 @@ const OverallStatsModal: React.FC<OverallStatsModalProps> = ({ stats, onClose })
     name: `Character: "${err.char}"`,
     errors: err.count,
   }));
+
+  // Подготовка данных для тепловой карты - БОЛЬШЕ НЕ НУЖНА ЗДЕСЬ В ТАКОМ ВИДЕ
+  // const russianErrorStats = useMemo(() => {
+  // const englishErrorStats = useMemo(() => {
 
   return (
     <div className="stats-modal-overlay" onClick={onClose}>
@@ -160,6 +161,11 @@ const OverallStatsModal: React.FC<OverallStatsModalProps> = ({ stats, onClose })
         ) : (
           <p style={{ textAlign: 'center', color: '#ccc' }}>Нет данных о частых русских ошибках.</p>
         )}
+        {/* Keyboard heatmap for Russian */}
+        {/* {stats.mostCommonRussianErrors && stats.mostCommonRussianErrors.length > 0 && ( // <--- ИЗМЕНЕНО УСЛОВИЕ И ПРОП */} 
+        {stats.russianCharErrorCounts && Object.keys(stats.russianCharErrorCounts).length > 0 && (
+          <KeyboardHeatmapStats errorCharCounts={stats.russianCharErrorCounts} language="russian" />
+        )}
         {/* Section for English errors */}
         <h4>Частые ошибки (Английский, Топ 5)</h4>
         {stats.mostCommonEnglishErrors && stats.mostCommonEnglishErrors.length > 0 && englishErrorChartData ? (
@@ -176,9 +182,12 @@ const OverallStatsModal: React.FC<OverallStatsModalProps> = ({ stats, onClose })
         ) : (
           <p style={{ textAlign: 'center', color: '#ccc' }}>Нет данных о частых английских ошибках.</p>
         )}
-        <button className="close-modal-button" onClick={onClose}>
-          Закрыть
-        </button>
+        {/* Keyboard heatmap for English */}
+        {/* {stats.mostCommonEnglishErrors && stats.mostCommonEnglishErrors.length > 0 && ( // <--- ИЗМЕНЕНО УСЛОВИЕ И ПРОП */} 
+        {stats.englishCharErrorCounts && Object.keys(stats.englishCharErrorCounts).length > 0 && (
+          <KeyboardHeatmapStats errorCharCounts={stats.englishCharErrorCounts} language="english" />
+        )}
+        <button onClick={onClose} className="stats-modal-close-btn">Закрыть</button>
       </div>
     </div>
   );
@@ -186,4 +195,4 @@ const OverallStatsModal: React.FC<OverallStatsModalProps> = ({ stats, onClose })
 
 export default OverallStatsModal;
 
-type CommonErrorStat = { char: string; count: number };
+// type CommonErrorStat = { char: string; count: number }; // <--- REMOVE THIS LINE

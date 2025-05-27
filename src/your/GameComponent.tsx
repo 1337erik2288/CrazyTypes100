@@ -17,9 +17,15 @@ const GameComponent: React.FC<GameComponentProps> = ({
   const handleExitToMenu = () => {
     const progress = getPlayerProgress();
     if (!progress.levelStats) progress.levelStats = {};
-    progress.levelStats[currentLevelId] = { speed: playerSpeed, accuracy: playerAccuracy };
-    if (!progress.completedLevels.includes(currentLevelId)) {
-      progress.completedLevels.push(currentLevelId);
+    // Convert currentLevelId to string for object key and add date
+    progress.levelStats[String(currentLevelId)] = { 
+      speed: playerSpeed, 
+      accuracy: playerAccuracy, 
+      date: Date.now() // Add current timestamp for the date
+    };
+    // Convert currentLevelId to string before pushing to completedLevels
+    if (!progress.completedLevels.includes(String(currentLevelId))) {
+      progress.completedLevels.push(String(currentLevelId));
     }
     savePlayerProgress(progress);
     onReturnToMenu();

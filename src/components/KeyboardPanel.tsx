@@ -25,7 +25,7 @@ const keyboardButtonAttributes = [
   { attribute: 'data-finger', value: 'thumb', buttons: '{space} {altleft}' },
 ];
 
-const latinLayout = {
+export const latinLayout = { // <--- Добавлено 'export'
   default: [
     '` 1 2 3 4 5 6 7 8 9 0 - = {bksp}',
     '{tab} q w e r t y u i o p [ ] \\',
@@ -42,7 +42,7 @@ const latinLayout = {
   ]
 };
 
-const cyrillicLayout = {
+export const cyrillicLayout = { // <--- Добавлено 'export'
   default: [
     '\u0451 1 2 3 4 5 6 7 8 9 0 - = {bksp}',
     '{tab} й ц у к е н г ш щ з х ъ \\',
@@ -70,7 +70,7 @@ const KeyboardPanel: React.FC<KeyboardPanelProps> = ({ input, layoutType, highli
       keyboardRef.current = new Keyboard(containerRef.current, {
         layout: layoutType === 'latin' ? latinLayout : cyrillicLayout,
         theme: 'hg-theme-default',
-        buttonAttributes: keyboardButtonAttributes,
+        buttonAttributes: keyboardButtonAttributes, // <--- Вот здесь
         // Remove or comment out onChange to disable input
         // onChange: onInputChange,
         debug: false,

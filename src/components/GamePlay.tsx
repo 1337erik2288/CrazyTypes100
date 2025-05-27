@@ -14,7 +14,8 @@ import { LevelReward } from '../services/playerService';
 import { getEquippedItems, applyEquipmentEffects } from '../services/equippedGearService'; // <--- ИСПОЛЬ НОВЫЙ СЕРВИС
 import { mathExpressions } from '../data/math-expressions';
 import PlayerHealthBar from './PlayerHealthBar';
-import { getPlayerHealth, getMaxPlayerHealth, damagePlayer, healPlayerToMax, getPlayerBaseDamage } from '../services/playerService'; // Ensure getPlayerBaseDamage is imported
+// Removed unused: getPlayerProgress, savePlayerProgress
+import { getPlayerHealth, getMaxPlayerHealth, damagePlayer, healPlayerToMax, getPlayerBaseDamage } from '../services/playerService'; 
 import { saveLevelResult } from '../services/progressService';
 
 interface Monster {
@@ -33,6 +34,7 @@ interface GameStats {
   endTime: number | null;
   speed?: number;      // Add this
   accuracy?: number;   // Add this
+  errorChars?: string[]; // Ensure this is part of GameStats if it's intended for overall stats
 }
 
 // Предполагаемое местоположение и вид определения типа Language
@@ -114,7 +116,8 @@ const GamePlay: React.FC<GamePlayProps> = ({
   const [maxPlayerHealth, setMaxPlayerHealth] = useState<number>(getMaxPlayerHealth());
   const [playerDamageAnimation, setPlayerDamageAnimation] = useState<boolean>(false);
   const [showAttackWarning, setShowAttackWarning] = useState<boolean>(false);
-  const [errorChars, setErrorChars] = useState<string[]>([]); // Add this line
+  const [currentErrorChars, setCurrentErrorChars] = useState<string[]>([]); // This was correctly defined
+  const [errorChars, setErrorChars] = useState<string[]>([]); // Define errorChars for overall game errors if needed, or remove if currentErrorChars is sufficient
   
   // Таймер для нанесения урона игроку
   const monsterAttackInterval = useRef<NodeJS.Timeout | null>(null);
@@ -202,7 +205,8 @@ const GamePlay: React.FC<GamePlayProps> = ({
     });
     setShowVictory(false);
     setShowDefeatScreen(false); // Сбрасываем экран поражения
-    setErrorChars([]); // Reset error characters on game restart
+    setCurrentErrorChars([]); // Reset currentErrorChars for the new game/word
+    // setErrorChars([]); // Reset overall errorChars if it's being used for the entire session
     setGameStats({
       correctChars: 0,
       incorrectChars: 0,
@@ -337,7 +341,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
         
         if (!isCorrect) {
           // Add the incorrect character to the errorChars array
-          setErrorChars(prevErrorChars => [...prevErrorChars, compareWith[lastCharIndex]]); 
+          setCurrentErrorChars((prevErrorChars: string[]) => [...prevErrorChars, compareWith[lastCharIndex]]); 
 
           setUserInput(value.slice(0, -1));
           
@@ -430,10 +434,46 @@ const GamePlay: React.FC<GamePlayProps> = ({
       const durationMinutes = (gameStats.endTime - gameStats.startTime) / 60000;
       const speed = gameStats.correctChars / durationMinutes;
       const accuracy = (gameStats.correctChars / gameStats.totalChars) * 100;
-      saveLevelResult(levelId.toString(), speed, accuracy, errorChars); // Pass errorChars here
+      saveLevelResult(levelId.toString(), speed, accuracy, currentErrorChars); // Pass currentErrorChars here
     }
     onReturnToMenu();
   };
+  // Перемещенный код НАЧАЛО
+  const handleVictory = useCallback(() => {
+    if (showVictory || showDefeatScreen) return; // Already handled
+
+    console.log("Victory achieved!");
+    setShowVictory(true); // Устанавливаем локальное состояние для отображения экрана победы
+    setGameStats(prev => ({
+      ...prev,
+      endTime: Date.now(),
+    }));
+
+    // НЕ ВЫЗЫВАЙТЕ onLevelComplete здесь напрямую
+
+    // Stop monster attacks
+    if (monsterAttackInterval.current) {
+      clearInterval(monsterAttackInterval.current);
+    }
+  }, [showVictory, showDefeatScreen /* убрали onLevelComplete отсюда, если он не нужен для других логик в useCallback */]);
+
+  // Существующий useEffect для определения условия победы
+  useEffect(() => {
+    if (!monster.isDefeated && monster.health <= 0 && !showVictory && !showDefeatScreen) {
+      setMonster(prev => ({ ...prev, isDefeated: true }));
+      handleVictory(); 
+    }
+  }, [monster.health, monster.isDefeated, showVictory, showDefeatScreen, handleVictory]);
+
+  // Новый useEffect для вызова onLevelComplete, когда showVictory становится true
+  useEffect(() => {
+    if (showVictory) {
+      if (onLevelComplete) {
+        onLevelComplete(); // Это вызовет handleLevelComplete из App.tsx
+      }
+    }
+  }, [showVictory, onLevelComplete]); // Запускается, когда изменяется showVictory или onLevelComplete
+  // Перемещенный код КОНЕЦ
 
   return (
     <>
@@ -535,4 +575,10 @@ const GamePlay: React.FC<GamePlayProps> = ({
   );
 };
 
+
 export default GamePlay;
+
+// Удаленный код отсюда:
+// const handleVictory = useCallback(() => { ... });
+// useEffect(() => { ... }); // для определения условия победы
+// useEffect(() => { ... }); // для вызова onLevelComplete

@@ -16,6 +16,8 @@ export interface OverallPlayerStats {
   progression: LevelStatEntry[];
   mostCommonRussianErrors?: CommonErrorStat[]; 
   mostCommonEnglishErrors?: CommonErrorStat[]; 
+  russianCharErrorCounts?: { [char: string]: number }; // <--- ДОБАВЛЕНО
+  englishCharErrorCounts?: { [char: string]: number }; // <--- ДОБАВЛЕНО
 }
 
 // Удаляем STORAGE_KEY, loadStats, saveStats и addLevelStat, так как они больше не нужны.
@@ -37,19 +39,21 @@ export interface OverallPlayerStats {
 // }
 
 // Добавляем импорт getPlayerProgress из playerService
-import { getPlayerProgress } from './playerService';
+import { getPlayerProgress } from './playerService'; // Already imported below
 
-export interface LevelStatEntry {
-  timestamp: number;
-  speedCPM: number;
-  accuracyPercent: number;
-}
+// Remove this duplicate LevelStatEntry
+// export interface LevelStatEntry {
+//   timestamp: number;
+//   speedCPM: number;
+//   accuracyPercent: number;
+// }
 
-export interface OverallPlayerStats {
-  averageSpeedCPM: number;
-  averageAccuracyPercent: number;
-  progression: LevelStatEntry[];
-}
+// Remove this duplicate OverallPlayerStats
+// export interface OverallPlayerStats {
+//   averageSpeedCPM: number;
+//   averageAccuracyPercent: number;
+//   progression: LevelStatEntry[];
+// }
 
 // Helper function to check if a character is Russian
 function isRussianChar(char: string): boolean {
@@ -84,10 +88,11 @@ export function getOverallStats(): OverallPlayerStats {
           });
           if (stat.errorChars) {
             stat.errorChars.forEach(char => {
-              if (isRussianChar(char)) {
-                allRussianErrorChars.push(char);
-              } else if (isEnglishChar(char)) {
-                allEnglishErrorChars.push(char);
+              const lowerChar = char.toLowerCase(); // Приводим к нижнему регистру для унификации
+              if (isRussianChar(lowerChar)) {
+                allRussianErrorChars.push(lowerChar);
+              } else if (isEnglishChar(lowerChar)) {
+                allEnglishErrorChars.push(lowerChar);
               }
               // Characters that are neither will be ignored for this specific breakdown
             });
@@ -111,7 +116,7 @@ export function getOverallStats(): OverallPlayerStats {
   const averageSpeedCPM = totalEntries > 0 ? Math.round(sumSpeedCPM / totalEntries) : 0;
   const averageAccuracyPercent = totalEntries > 0 ? Math.round((sumAccuracyPercent / totalEntries) * 10) / 10 : 0;
 
-  // Calculate most common Russian errors
+  // Calculate all Russian error counts
   const russianErrorCounts: { [char: string]: number } = {};
   allRussianErrorChars.forEach(char => {
     russianErrorCounts[char] = (russianErrorCounts[char] || 0) + 1;
@@ -121,7 +126,7 @@ export function getOverallStats(): OverallPlayerStats {
     .sort((a, b) => b.count - a.count)
     .slice(0, 5); // Top 5
 
-  // Calculate most common English errors
+  // Calculate all English error counts
   const englishErrorCounts: { [char: string]: number } = {};
   allEnglishErrorChars.forEach(char => {
     englishErrorCounts[char] = (englishErrorCounts[char] || 0) + 1;
@@ -137,5 +142,7 @@ export function getOverallStats(): OverallPlayerStats {
     progression: progressionEntries,
     mostCommonRussianErrors: sortedRussianErrors,
     mostCommonEnglishErrors: sortedEnglishErrors,
+    russianCharErrorCounts: russianErrorCounts, // <--- ДОБАВЛЕНО
+    englishCharErrorCounts: englishErrorCounts, // <--- ДОБАВЛЕНО
   };
 }

@@ -1,0 +1,270 @@
+.keyboard-heatmap-stats-container {
+  width: 100%;
+  max-width: 800px; /* Ограничиваем максимальную ширину для лучшего вида */
+  margin: 20px auto;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f0f0f0; /* Светлый фон для контейнера */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stats-khm-keyboard .hg-button {
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid #ccc; /* Граница для кнопок */
+  color: #333; /* Цвет текста по умолчанию */
+  background-color: #ffffff; /* Белый фон по умолчанию */
+}
+
+/* Базовый стиль для всех кнопок тепловой карты */
+.stats-khm-keyboard .hg-button {
+  height: 50px; /* Увеличим высоту кнопок для лучшей читаемости */
+  font-size: 1em;
+  /* transition и border лучше оставить здесь, если они общие для всех кнопок */
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid #ccc; 
+}
+
+/* 
+  Убираем этот блок, так как он дублирует стили интенсивности, 
+  и общий стиль для .hg-button уже задан выше или будет переопределен стилями интенсивности.
+  Если цель была задать ОБЩИЙ фон для всех кнопок перед применением интенсивности,
+  то это лучше сделать более специфичным селектором или убедиться, что стили интенсивности его перекрывают.
+*/
+/*
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button {
+  background-color: transparent !important; 
+}
+*/
+
+/* Стили для интенсивности ошибок */
+/* Используем HSL для градации красного. Hue для красного ~0 */
+/* Lightness будет варьироваться от ~90% (почти белый) до ~50% (насыщенный красный) */
+
+/* Стиль для кнопок без ошибок или с минимальным количеством (если нужно их выделить) */
+/* Можно оставить их со стандартным фоном simple-keyboard или задать свой */
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button {
+  background-color: #ffffff; /* Белый фон по умолчанию для кнопок без специального класса интенсивности */
+  color: #333; /* Цвет текста по умолчанию */
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-0 {
+  background-color: hsl(0, 70%, 95%) !important; /* Очень светлый красный / почти белый */
+  color: #a0a0a0 !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-1 {
+  background-color: hsl(0, 70%, 90%) !important;
+  color: #333 !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-2 {
+  background-color: hsl(0, 70%, 85%) !important;
+  color: #333 !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-3 {
+  background-color: hsl(0, 70%, 80%) !important;
+  color: #333 !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-4 {
+  background-color: hsl(0, 70%, 75%) !important;
+  color: white !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-5 {
+  background-color: hsl(0, 70%, 70%) !important;
+  color: white !important;
+}
+
+/* Удаляем дублирующийся блок стилей интенсивности с 0 до 4, так как они определены выше */
+/*
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-0 {
+  background-color: hsl(0, 70%, 95%) !important; 
+  color: #a0a0a0 !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-1 {
+  background-color: hsl(0, 70%, 90%) !important;
+  color: #333 !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-2 {
+  background-color: hsl(0, 70%, 85%) !important;
+  color: #333 !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-3 {
+  background-color: hsl(0, 70%, 80%) !important;
+  color: #333 !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-4 {
+  background-color: hsl(0, 70%, 75%) !important;
+  color: white !important;
+}
+*/
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-6 {
+  background-color: hsl(0, 70%, 65%) !important;
+  color: white !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-7 {
+  background-color: hsl(0, 70%, 60%) !important;
+  color: white !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-8 {
+  background-color: hsl(0, 70%, 55%) !important;
+  color: white !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-9 {
+  background-color: hsl(0, 70%, 50%) !important;
+  color: white !important;
+}
+
+/* Стили для интенсивности ошибок (0-10) */
+/* Класс для нулевой интенсивности (можно сделать его таким же, как фон клавиатуры или чуть светлее) */
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-0 {
+  background-color: hsl(0, 0%, 98%) !important; /* Очень светлый или белый */
+  color: #b0b0b0 !important; /* Светло-серый текст */
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-1 {
+  background-color: hsl(0, 70%, 92%) !important; /* Очень-очень светлый красный */
+  color: #333 !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-2 {
+  background-color: hsl(0, 70%, 88%) !important;
+  color: #333 !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-3 {
+  background-color: hsl(0, 70%, 82%) !important;
+  color: #333 !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-4 {
+  background-color: hsl(0, 70%, 76%) !important;
+  color: white !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-5 {
+  background-color: hsl(0, 70%, 70%) !important;
+  color: white !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-6 {
+  background-color: hsl(0, 70%, 64%) !important;
+  color: white !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-7 {
+  background-color: hsl(0, 70%, 58%) !important;
+  color: white !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-8 {
+  background-color: hsl(0, 70%, 52%) !important;
+  color: white !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-9 {
+  background-color: hsl(0, 75%, 48%) !important;
+  color: white !important;
+}
+
+.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-10 {
+  background-color: hsl(0, 80%, 45%) !important; /* Самый насыщенный красный */
+  color: white !important;
+}
+
+/* 
+  Этот блок уже был закомментирован, и это правильно, 
+  так как базовые стили для .hg-button лучше определить один раз в начале секции стилей для кнопок.
+*/
+/* 
+.stats-khm-keyboard .hg-button {
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid #ccc; 
+  color: #333; 
+  background-color: #ffffff; 
+}
+*/
+
+/* Легенда */
+.stats-khm-legend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 15px;
+  padding: 0 10px;
+}
+
+.stats-khm-legend-gradient {
+  flex-grow: 1;
+  height: 20px;
+  margin: 0 10px;
+  border-radius: 5px;
+  background: linear-gradient(to right, 
+    hsl(0, 70%, 95%), 
+    hsl(0, 70%, 90%), 
+    hsl(0, 70%, 85%), 
+    hsl(0, 70%, 80%), 
+    hsl(0, 70%, 75%), 
+    hsl(0, 70%, 70%), 
+    hsl(0, 70%, 65%), 
+    hsl(0, 70%, 60%), 
+    hsl(0, 70%, 55%), 
+    hsl(0, 70%, 50%), 
+    hsl(0, 80%, 45%)
+  );
+}
+
+.stats-khm-legend-label-left,
+.stats-khm-legend-label-right {
+  font-size: 0.9em;
+  color: #555;
+}
+
+/* Адаптивность для simple-keyboard */
+.stats-khm-keyboard.simple-keyboard {
+    background-color: transparent; /* Убираем фон самой simple-keyboard */
+    border: none; /* Убираем границу simple-keyboard */
+    padding: 0;
+    border-radius: 5px;
+}
+
+.stats-khm-keyboard .hg-row {
+    margin-bottom: 5px; /* Небольшой отступ между рядами клавиш */
+}
+
+.stats-khm-keyboard .hg-row:last-child {
+    margin-bottom: 0;
+}
+
+/* Убедимся, что кнопки занимают всю доступную ширину */
+.stats-khm-keyboard .hg-button {
+    flex-grow: 1;
+    margin: 2px; /* Небольшие отступы между кнопками */
+}
+
+/* Специальные клавиши могут требовать дополнительной стилизации по ширине */
+.stats-khm-keyboard .hg-button[data-skbtn="{space}"] {
+    max-width: none; /* Позволяем пробелу быть шире */
+}
+
+.simple-keyboard.keyboard-heatmap-stats-theme .hg-button.heatmap-intensity-0 { background-color: #ebedf0; /* Очень светлый или без изменений */ }
+.simple-keyboard.keyboard-heatmap-stats-theme .hg-button.heatmap-intensity-10 { background-color: #c6e48b; }
+.simple-keyboard.keyboard-heatmap-stats-theme .hg-button.heatmap-intensity-20 { background-color: #7bc96f; }
+.simple-keyboard.keyboard-heatmap-stats-theme .hg-button.heatmap-intensity-30 { background-color: #4ebb9f; }
+.simple-keyboard.keyboard-heatmap-stats-theme .hg-button.heatmap-intensity-40 { background-color: #33a3dc; }
+.simple-keyboard.keyboard-heatmap-stats-theme .hg-button.heatmap-intensity-50 { background-color: #2a9ed2; }
+.simple-keyboard.keyboard-heatmap-stats-theme .hg-button.heatmap-intensity-60 { background-color: #239a3b; }
+.simple-keyboard.keyboard-heatmap-stats-theme .hg-button.heatmap-intensity-70 { background-color: #239a3b; }
+.simple-keyboard.keyboard-heatmap-stats-theme .hg-button.heatmap-intensity-80 { background-color: #239a3b; }
+.simple-keyboard.keyboard-heatmap-stats-theme .hg-button.heatmap-intensity-90 { background-color: #239a3b; }
+.simple-keyboard.keyboard-heatmap-stats-theme .hg-button.heatmap-intensity-100 { background-color: #239a3b; /* Очень темный */ }
