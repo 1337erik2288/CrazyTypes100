@@ -99,13 +99,13 @@ const OverallStatsModal: React.FC<OverallStatsModalProps> = ({ /* isOpen, */ onC
 
   // Data for Russian error characters bar chart
   const russianErrorChartData = stats.mostCommonRussianErrors?.map((err: CommonErrorStat) => ({
-    name: `Символ: "${err.char}"`,
+    name: `"${err.char}"`, // Изменено здесь
     ошибок: err.count,
   }));
 
   // Data for English error characters bar chart
   const englishErrorChartData = stats.mostCommonEnglishErrors?.map((err: CommonErrorStat) => ({
-    name: `Character: "${err.char}"`,
+    name: `"${err.char}"`, // Изменено здесь
     errors: err.count,
   }));
 
