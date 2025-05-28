@@ -98,10 +98,10 @@ const KeyboardHeatmapStats: React.FC<KeyboardHeatmapStatsProps> = ({
   return (
     <div className="keyboard-heatmap-stats-container">
       <div ref={keyboardContainerRef} className="simple-keyboard" />
-      <div className="heatmap-legend">
-        <span>Меньше ошибок</span>
-        <div className="gradient-bar"></div>
-        <span>Больше ошибок</span>
+      <div className="stats-khm-legend">
+        <span className="stats-khm-legend-label-left">Меньше ошибок</span>
+        <div className="stats-khm-legend-gradient"></div>
+        <span className="stats-khm-legend-label-right">Больше ошибок</span>
       </div>
     </div>
   );
