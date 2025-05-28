@@ -1,86 +1,73 @@
+// KeyboardHeatmapStats.tsx
 import React, { useEffect, useRef, useCallback, useMemo } from 'react';
 import SimpleKeyboard from 'simple-keyboard';
 import 'simple-keyboard/build/css/index.css';
 import './KeyboardHeatmapStats.css';
-// Импортируем раскладки из KeyboardPanel.tsx
-import { latinLayout as englishLayout, cyrillicLayout as russianLayout } from '../KeyboardPanel'; 
-// Используем OverallPlayerStats или убедитесь, что OverallCharStats экспортируется и имеет правильный тип
-// import { OverallPlayerStats } from '../../services/overallStatsService'; // Больше не нужен весь объект
 
-// Убедитесь, что тип для stats соответствует объекту { [char: string]: number }
-// Если OverallPlayerStats имеет другую структуру, вам нужно будет адаптировать это
+import { latinLayout as englishLayout, cyrillicLayout as russianLayout } from '../KeyboardPanel';
+
 interface KeyboardHeatmapStatsProps {
-  language: 'english' | 'russian';
-  // stats: OverallPlayerStats; // <--- ИЗМЕНЕНО
-  errorCharCounts: { [key: string]: number } | undefined; // <--- ИЗМЕНЕНО
+  errorCharCounts: { [key: string]: number };
+  selectedLayout: 'russian' | 'english';
   maxErrorsOverride?: number;
 }
 
-const KeyboardHeatmapStats: React.FC<KeyboardHeatmapStatsProps> = ({ language, errorCharCounts, maxErrorsOverride }) => {
-  const keyboardContainerRef = useRef<HTMLDivElement>(null);
+const KeyboardHeatmapStats: React.FC<KeyboardHeatmapStatsProps> = ({
+  errorCharCounts,
+  selectedLayout,
+  maxErrorsOverride,
+}) => {
   const keyboardInstanceRef = useRef<SimpleKeyboard | null>(null);
+  const keyboardContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const selectedLayout = language === 'english' ? englishLayout : russianLayout;
+  console.log('Данные для тепловой карты (errorCharCounts):', errorCharCounts);
 
   const maxErrors = useMemo(() => {
-    if (maxErrorsOverride !== undefined) {
-      return maxErrorsOverride;
-    }
-    // const errorCounts = stats && typeof stats === 'object' ? Object.values(stats).filter(val => typeof val === 'number') as number[] : []; // <--- ИЗМЕНЕНО
-    const currentErrorCounts = errorCharCounts ? Object.values(errorCharCounts).filter(val => typeof val === 'number') as number[] : [];
-    if (currentErrorCounts.length === 0) return 0; // Если ошибок нет, maxErrors = 0
+    if (maxErrorsOverride !== undefined) return maxErrorsOverride;
+    const currentErrorCounts = errorCharCounts
+      ? Object.values(errorCharCounts).filter((val) => typeof val === 'number') as number[]
+      : [];
+    if (currentErrorCounts.length === 0) return 0;
     const max = Math.max(...currentErrorCounts);
-    return max > 0 ? max : 1; // Если макс. ошибка 0, но ошибки есть, то 1 для предотвращения деления на 0
+    return max > 0 ? max : 1;
   }, [errorCharCounts, maxErrorsOverride]);
 
   const getButtonThemeForKeyboard = useCallback(() => {
-    const buttonTheme = [];
-    // if (stats && typeof stats === 'object' && Object.keys(stats).length > 0 && maxErrors > 0) { // <--- ИЗМЕНЕНО
-    if (errorCharCounts && Object.keys(errorCharCounts).length > 0 && maxErrors > 0) { 
-      // for (const char in stats) { // <--- ИЗМЕНЕНО
-      for (const char in errorCharCounts) {
-        // const errorCount = stats[char as keyof OverallPlayerStats]; // <--- ИЗМЕНЕНО
-        const errorCount = errorCharCounts[char];
-        if (typeof errorCount === 'number' && errorCount > 0) {
-          // Интенсивность будет от 0 до 1. Если maxErrors = 0, то intensity будет NaN или Infinity, поэтому проверяем maxErrors > 0
-          const intensity = Math.min(errorCount / maxErrors, 1);
-          // const cssClass = `heatmap-intensity-${Math.round(intensity * 100)}`; // <--- ИЗМЕНЕНО
-          // Группируем интенсивность в 10 шагов (0-9 или 1-10)
-          // Например, 0-9%, 10-19%, ..., 90-100%
-          // Math.floor(intensity * 10) даст значения от 0 до 9 для intensity < 1, и 10 для intensity = 1
-          // Чтобы классы были от heatmap-intensity-0 до heatmap-intensity-10 (11 классов)
-          // или heatmap-intensity-1 до heatmap-intensity-10 (10 классов)
-          // Давайте сделаем 10 классов, где 10 - максимальная интенсивность.
-          // Если intensity = 0, класс будет heatmap-intensity-0
-          // Если intensity > 0 и <= 0.1, класс будет heatmap-intensity-1
-          // ...
-          // Если intensity > 0.9 и <= 1, класс будет heatmap-intensity-10
-          let intensityLevel = Math.ceil(intensity * 10); // от 1 до 10
-          if (errorCount === 0) intensityLevel = 0; // для явного нуля
-          else if (intensityLevel === 0 && errorCount > 0) intensityLevel = 1; // если очень мало ошибок, но не ноль
-          
-          const cssClass = `stats-khm-intensity-${intensityLevel}`; // Используем новый CSS класс
+    const generateTheme = (charErrorCounts: { [key: string]: number }, maxVal: number) => {
+      const buttonsConfig = [];
 
-          buttonTheme.push({
-            class: cssClass,
-            buttons: char === ' ' ? '{space}' : char,
+      for (const charKey in charErrorCounts) {
+        if (charErrorCounts[charKey] > 0) {
+          const errorCount = charErrorCounts[charKey];
+          const intensityLevel = maxVal > 0 ? Math.min(10, Math.ceil((errorCount / maxVal) * 10)) : 0;
+          buttonsConfig.push({
+            class: `stats-khm-intensity-${intensityLevel}`, // Ensure this matches your CSS
+            buttons: charKey.toLowerCase(),
+            // Remove this line if you want CSS to handle all styling:
+            // style: `background-color: ${backgroundColor} !important; color: ${textColor} !important;` 
           });
         }
       }
+
+      return buttonsConfig;
+    };
+
+    if (errorCharCounts && Object.keys(errorCharCounts).length > 0 && maxErrors > 0) {
+      return generateTheme(errorCharCounts, maxErrors);
     }
-    // Этот класс можно оставить для общего стиля кнопок, если нужно
-    // buttonTheme.push({
-    //   class: 'hg-button-heatmap',
-    //   buttons: selectedLayout.default.join(' ') + ' ' + selectedLayout.shift.join(' ') 
-    // });
-    return buttonTheme;
-  }, [errorCharCounts, maxErrors, selectedLayout]); // Changed 'stats' to 'errorCharCounts'
+
+    return [];
+  }, [errorCharCounts, maxErrors]);
+
+  const currentLayoutObject = useMemo(() => {
+    return selectedLayout === 'russian' ? russianLayout : englishLayout;
+  }, [selectedLayout]);
 
   useEffect(() => {
     if (keyboardContainerRef.current && !keyboardInstanceRef.current) {
       const keyboard = new SimpleKeyboard(keyboardContainerRef.current, {
-        layout: selectedLayout, // Используется selectedLayout
-        // display: selectedLayout.display, // Removed: display is not part of selectedLayout's type
+        layout: currentLayoutObject, // Changed: Pass currentLayoutObject directly
+        // Removed: display: currentLayoutObject.display,
         theme: 'hg-theme-default hg-layout-default keyboard-heatmap-stats-theme',
         physicalKeyboardHighlight: false,
         preventMouseDownDefault: true,
@@ -95,19 +82,18 @@ const KeyboardHeatmapStats: React.FC<KeyboardHeatmapStatsProps> = ({ language, e
         keyboardInstanceRef.current = null;
       }
     };
-  // ВАЖНО: selectedLayout должен быть в зависимостях, чтобы клавиатура пересоздавалась при смене языка
-  }, [selectedLayout]); 
+  }, [currentLayoutObject]);
 
   useEffect(() => {
     if (keyboardInstanceRef.current) {
       const newButtonTheme = getButtonThemeForKeyboard();
       keyboardInstanceRef.current.setOptions({
-        layout: selectedLayout, // Используется selectedLayout
+        layout: currentLayoutObject, // Changed: Pass currentLayoutObject directly
+        // Removed: display: currentLayoutObject.display,
         buttonTheme: newButtonTheme,
       });
     }
-  // ВАЖНО: selectedLayout и language должны быть в зависимостях
-  }, [errorCharCounts, language, selectedLayout, getButtonThemeForKeyboard]); // <--- ИЗМЕНЕНО stats на errorCharCounts
+  }, [errorCharCounts, currentLayoutObject, getButtonThemeForKeyboard]);
 
   return (
     <div className="keyboard-heatmap-stats-container">

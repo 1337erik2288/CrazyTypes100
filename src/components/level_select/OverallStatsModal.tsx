@@ -164,7 +164,7 @@ const OverallStatsModal: React.FC<OverallStatsModalProps> = ({ /* isOpen, */ onC
         {/* Keyboard heatmap for Russian */}
         {/* {stats.mostCommonRussianErrors && stats.mostCommonRussianErrors.length > 0 && ( // <--- ИЗМЕНЕНО УСЛОВИЕ И ПРОП */} 
         {stats.russianCharErrorCounts && Object.keys(stats.russianCharErrorCounts).length > 0 && (
-          <KeyboardHeatmapStats errorCharCounts={stats.russianCharErrorCounts} language="russian" />
+          <KeyboardHeatmapStats errorCharCounts={stats.russianCharErrorCounts} selectedLayout="russian" />
         )}
         {/* Section for English errors */}
         <h4>Частые ошибки (Английский, Топ 5)</h4>
@@ -185,7 +185,7 @@ const OverallStatsModal: React.FC<OverallStatsModalProps> = ({ /* isOpen, */ onC
         {/* Keyboard heatmap for English */}
         {/* {stats.mostCommonEnglishErrors && stats.mostCommonEnglishErrors.length > 0 && ( // <--- ИЗМЕНЕНО УСЛОВИЕ И ПРОП */} 
         {stats.englishCharErrorCounts && Object.keys(stats.englishCharErrorCounts).length > 0 && (
-          <KeyboardHeatmapStats errorCharCounts={stats.englishCharErrorCounts} language="english" />
+          <KeyboardHeatmapStats errorCharCounts={stats.englishCharErrorCounts} selectedLayout="english" />
         )}
         <button onClick={onClose} className="stats-modal-close-btn">Закрыть</button>
       </div>

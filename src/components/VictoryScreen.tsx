@@ -9,6 +9,7 @@ interface GameStats {
   totalChars: number;
   startTime: number;
   endTime: number | null;
+  errorChars?: string[]; // Add this line
 }
 
 interface VictoryScreenProps {
@@ -34,9 +35,9 @@ const VictoryScreen: React.FC<VictoryScreenProps> = ({
 }) => {
   useEffect(() => {
     if (levelId !== undefined && levelId !== null) {
-      saveLevelResult(levelId.toString(), speed, accuracy);
+      saveLevelResult(levelId.toString(), speed, accuracy, gameStats.errorChars || []);
     }
-  }, [levelId, speed, accuracy]);
+  }, [levelId, speed, accuracy, gameStats.errorChars]);
 
   return (
     <div className="victory-screen">

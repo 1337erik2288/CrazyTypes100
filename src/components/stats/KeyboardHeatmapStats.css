@@ -16,7 +16,7 @@
 }
 
 /* Базовый стиль для всех кнопок тепловой карты */
-.stats-khm-keyboard .hg-button {
+.keyboard-heatmap-stats-theme .hg-button { /* Изменено здесь */
   height: 50px; /* Увеличим высоту кнопок для лучшей читаемости */
   font-size: 1em;
   /* transition и border лучше оставить здесь, если они общие для всех кнопок */
@@ -42,37 +42,38 @@
 
 /* Стиль для кнопок без ошибок или с минимальным количеством (если нужно их выделить) */
 /* Можно оставить их со стандартным фоном simple-keyboard или задать свой */
-.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button {
+.keyboard-heatmap-stats-theme.simple-keyboard.hg-theme-default .hg-button { /* Изменено здесь */
   background-color: #ffffff; /* Белый фон по умолчанию для кнопок без специального класса интенсивности */
   color: #333; /* Цвет текста по умолчанию */
 }
 
-.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-0 {
+.keyboard-heatmap-stats-theme.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-0 { /* Изменено здесь */
   background-color: hsl(0, 70%, 95%) !important; /* Очень светлый красный / почти белый */
   color: #a0a0a0 !important;
 }
 
-.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-1 {
+.keyboard-heatmap-stats-theme.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-1 { /* Изменено здесь */
   background-color: hsl(0, 70%, 90%) !important;
   color: #333 !important;
 }
 
-.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-2 {
+/* И так далее для всех классов .stats-khm-intensity-X */
+.keyboard-heatmap-stats-theme.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-2 { /* Изменено здесь */
   background-color: hsl(0, 70%, 85%) !important;
   color: #333 !important;
 }
 
-.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-3 {
+.keyboard-heatmap-stats-theme.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-3 { /* Изменено здесь */
   background-color: hsl(0, 70%, 80%) !important;
   color: #333 !important;
 }
 
-.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-4 {
+.keyboard-heatmap-stats-theme.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-4 { /* Изменено здесь */
   background-color: hsl(0, 70%, 75%) !important;
   color: white !important;
 }
 
-.stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-5 {
+.keyboard-heatmap-stats-theme.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-5 { /* Изменено здесь */
   background-color: hsl(0, 70%, 70%) !important;
   color: white !important;
 }
@@ -127,6 +128,9 @@
 
 /* Стили для интенсивности ошибок (0-10) */
 /* Класс для нулевой интенсивности (можно сделать его таким же, как фон клавиатуры или чуть светлее) */
+/* Этот блок ниже дублирует стили для intensity 0-9. Рекомендуется удалить его или убедиться, что значения HSL уникальны и не конфликтуют с предыдущими определениями. */
+/* Для примера, я оставлю его, но исправлю селекторы. */
+
 .stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-0 {
   background-color: hsl(0, 0%, 98%) !important; /* Очень светлый или белый */
   color: #b0b0b0 !important; /* Светло-серый текст */

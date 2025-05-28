@@ -117,7 +117,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
   const [playerDamageAnimation, setPlayerDamageAnimation] = useState<boolean>(false);
   const [showAttackWarning, setShowAttackWarning] = useState<boolean>(false);
   const [currentErrorChars, setCurrentErrorChars] = useState<string[]>([]); // This was correctly defined
-  const [errorChars, setErrorChars] = useState<string[]>([]); // Define errorChars for overall game errors if needed, or remove if currentErrorChars is sufficient
+  // const [errorChars, setErrorChars] = useState<string[]>([]); // Define errorChars for overall game errors if needed, or remove if currentErrorChars is sufficient
   
   // Таймер для нанесения урона игроку
   const monsterAttackInterval = useRef<NodeJS.Timeout | null>(null);
@@ -517,18 +517,18 @@ const GamePlay: React.FC<GamePlayProps> = ({
         </div>
 
         {showVictory ? (
-          <VictoryScreen 
-            gameStats={gameStats}
+          <VictoryScreen
+            gameStats={{ ...gameStats, errorChars: currentErrorChars }}
             speed={gameStats && gameStats.endTime && gameStats.startTime && gameStats.totalChars > 0
               ? gameStats.correctChars / ((gameStats.endTime - gameStats.startTime) / 60000)
               : 0}
             accuracy={gameStats && gameStats.totalChars > 0
               ? (gameStats.correctChars / gameStats.totalChars) * 100
               : 0}
-            onRestart={restartGame} 
+            onRestart={restartGame}
             rewards={rewards}
             isFirstCompletion={isFirstCompletion}
-            levelId={levelId as number} 
+            levelId={levelId as number}
           />
         ) : showDefeatScreen ? ( // Добавляем условие для экрана поражения
           <DefeatScreen
