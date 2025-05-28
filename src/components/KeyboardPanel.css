@@ -81,16 +81,8 @@
   background: #a8e063 !important; /* Consistent with thumb color or a distinct one */
   color: #222 !important;
 }
-.hg-button[data-skbtn="{controlleft}"],
-.hg-button[data-skbtn="{altleft}"],
-.hg-button[data-skbtn=" "],
-.hg-button[data-skbtn="{altright}"],
-.hg-button[data-skbtn="{controlright}"],
-.hg-button[data-skbtn="< enter"],
-.hg-button[data-skbtn="{enter}"] {
-  background: #4db6ac !important;
-  color: #fff !important;
-}
+
+
 
 /* Media Queries for responsiveness */
 @media (max-width: 768px) {
@@ -111,57 +103,69 @@
   }
 }
 
-.hg-button[data-skbtn="{enter}"],
-.hg-button[data-skbtn="< enter"] {
-  background: #f7f48b !important;
+/* Стили для клавиатуры в тренировочной комнате (остальные) */
+.training-room-keyboard-container .hg-button[data-skbtn="{enter}"],
+.training-room-keyboard-container .hg-button[data-skbtn="< enter"] {
+  /* Это правило будет иметь приоритет над предыдущим для enter в тренировочной комнате, если оно идет позже в файле */
+  /* или если его селектор более специфичен. В данном случае, они одинаково специфичны, */
+  /* поэтому порядок важен. Если вы хотите, чтобы enter был #f7f48b, убедитесь, что это правило идет после бирюзового. */
+  background: #f7f48b !important; 
   color: #333 !important;
 }
 
-.hg-button[data-skbtn="{backspace}"],
-.hg-button[data-skbtn="backspace"] {
+.training-room-keyboard-container .hg-button[data-skbtn="{backspace}"],
+.training-room-keyboard-container .hg-button[data-skbtn="backspace"] {
   background: #e53935 !important;
   color: #fff !important;
 }
 
-.hg-button[data-skbtn="{shift}"],
-.hg-button[data-skbtn="shift"] {
+.training-room-keyboard-container .hg-button[data-skbtn="{shift}"],
+.training-room-keyboard-container .hg-button[data-skbtn="shift"] {
   background: #43a047 !important;
   color: #fff !important;
 }
 
-.hg-button[data-skbtn="{controlleft}"],
-.hg-button[data-skbtn="{controlright}"],
-.hg-button[data-skbtn="{altleft}"],
-.hg-button[data-skbtn="{altright}"] {
-  background: #a8e063 !important;
+.training-room-keyboard-container .hg-button[data-skbtn="{controlleft}"],
+.training-room-keyboard-container .hg-button[data-skbtn="{controlright}"],
+.training-room-keyboard-container .hg-button[data-skbtn="{altleft}"],
+.training-room-keyboard-container .hg-button[data-skbtn="{altright}"] {
+  /* Аналогично enter, это правило для control и alt будет иметь приоритет, если идет позже */
+  background: #a8e063 !important; 
   color: #333!important;
 }
-.hg-button[data-skbtn="["] {
+
+.training-room-keyboard-container .hg-button[data-skbtn="["] {
   background: #f7f48b !important;
   color: #333 !important;
 }
-.hg-button[data-skbtn="]"] {
+
+.training-room-keyboard-container .hg-button[data-skbtn="]"] {
   background: #f7f48b !important;
   color: #333 !important;
 }
-.hg-button[data-skbtn="'"] {
+
+.training-room-keyboard-container .hg-button[data-skbtn="'"] {
   background: #f7f48b !important;
   color: #333 !important;
 }
-.hg-button[data-skbtn="2"] {
+
+.training-room-keyboard-container .hg-button[data-skbtn="2"] {
   background: #e9a1c0  !important;
   color: #333 !important;
 }
-.hg-button[data-skbtn="a"] {
+
+.training-room-keyboard-container .hg-button[data-skbtn="a"] {
   background: #f7f48b !important;
   color: #333 !important;
 }
-.hg-button[data-skbtn="shift"]:last-child, /* right shift, if your keyboard uses this selector */
-.hg-button[data-skbtn="{shiftright}"] {
+
+.training-room-keyboard-container .hg-button[data-skbtn="shift"]:last-child, /* right shift, if your keyboard uses this selector */
+.training-room-keyboard-container .hg-button[data-skbtn="{shiftright}"] {
   background: #f7f48b !important;
   color: #333 !important;
 }
-.hg-button[data-skbtn=";"] {
+
+.training-room-keyboard-container .hg-button[data-skbtn=";"] {
   background: #f7f48b!important;
   color: #222 !important;
 }

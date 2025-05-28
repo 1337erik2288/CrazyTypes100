@@ -78,6 +78,33 @@
   color: white !important;
 }
 
+/* Добавляем недостающие стили для интенсивности 6-10 с правильным селектором */
+.keyboard-heatmap-stats-theme.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-6 {
+  background-color: hsl(0, 70%, 65%) !important;
+  color: white !important;
+}
+
+.keyboard-heatmap-stats-theme.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-7 {
+  background-color: hsl(0, 70%, 60%) !important;
+  color: white !important;
+}
+
+.keyboard-heatmap-stats-theme.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-8 {
+  background-color: hsl(0, 70%, 55%) !important;
+  color: white !important;
+}
+
+.keyboard-heatmap-stats-theme.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-9 {
+  background-color: hsl(0, 70%, 50%) !important;
+  color: white !important;
+}
+
+.keyboard-heatmap-stats-theme.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-10 {
+  background-color: hsl(0, 80%, 45%) !important; /* Самый насыщенный красный */
+  color: white !important;
+}
+
+
 /* Удаляем дублирующийся блок стилей интенсивности с 0 до 4, так как они определены выше */
 /*
 .stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-0 {
@@ -106,6 +133,9 @@
 }
 */
 
+/* Удаляем или комментируем все последующие определения для .stats-khm-keyboard...stats-khm-intensity-X */
+
+/*
 .stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-6 {
   background-color: hsl(0, 70%, 65%) !important;
   color: white !important;
@@ -125,19 +155,22 @@
   background-color: hsl(0, 70%, 50%) !important;
   color: white !important;
 }
+*/
 
 /* Стили для интенсивности ошибок (0-10) */
 /* Класс для нулевой интенсивности (можно сделать его таким же, как фон клавиатуры или чуть светлее) */
 /* Этот блок ниже дублирует стили для intensity 0-9. Рекомендуется удалить его или убедиться, что значения HSL уникальны и не конфликтуют с предыдущими определениями. */
 /* Для примера, я оставлю его, но исправлю селекторы. */
 
+/* Рекомендуется удалить этот блок, так как стили уже определены выше с селектором .keyboard-heatmap-stats-theme */
+/*
 .stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-0 {
-  background-color: hsl(0, 0%, 98%) !important; /* Очень светлый или белый */
-  color: #b0b0b0 !important; /* Светло-серый текст */
+  background-color: hsl(0, 0%, 98%) !important; 
+  color: #b0b0b0 !important; 
 }
 
 .stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-1 {
-  background-color: hsl(0, 70%, 92%) !important; /* Очень-очень светлый красный */
+  background-color: hsl(0, 70%, 92%) !important; 
   color: #333 !important;
 }
 
@@ -182,9 +215,10 @@
 }
 
 .stats-khm-keyboard.simple-keyboard.hg-theme-default .hg-button.stats-khm-intensity-10 {
-  background-color: hsl(0, 80%, 45%) !important; /* Самый насыщенный красный */
+  background-color: hsl(0, 80%, 45%) !important; 
   color: white !important;
 }
+*/
 
 /* 
   Этот блок уже был закомментирован, и это правильно, 

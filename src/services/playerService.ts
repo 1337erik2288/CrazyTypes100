@@ -183,3 +183,29 @@ export const damagePlayer = (damage: number): number => {
 export const healPlayerToMax = (): void => {
   setPlayerHealth(getMaxPlayerHealth());
 };
+
+// Update or add stats for a completed level
+export const updateLevelStats = (levelId: string, speed: number, accuracy: number, errorChars: string[]): PlayerProgress => {
+  const progress = getPlayerProgress();
+
+  if (!progress.levelStats) {
+    progress.levelStats = {};
+  }
+
+  // Store the latest attempt for this level
+  // If you want to store all attempts, you would change this to push to an array
+  progress.levelStats[levelId] = {
+    speed,
+    accuracy,
+    date: Date.now(),
+    errorChars, // Save the error characters from this attempt
+  };
+
+  // Mark level as completed if not already
+  if (!progress.completedLevels.includes(levelId)) {
+    progress.completedLevels.push(levelId);
+  }
+
+  savePlayerProgress(progress);
+  return progress;
+};

@@ -22,7 +22,7 @@ const keyboardButtonAttributes = [
   { attribute: 'data-finger', value: 'middle-right', buttons: '8 i k , ۸ ш л б' }, 
   { attribute: 'data-finger', value: 'ring-right', buttons: '9 o l . ۹ ж з д щ ю' }, // Точка '.' добавлена сюда для английской раскладки (розовый)
   { attribute: 'data-finger', value: 'pinky-right', buttons: '0 p ; / - = \\ [ ] \' ۰ х э з ж э ъ . {bksp} {enter} {shiftright} {altright} {controlright}' }, // Точка '.' уже здесь для русской раскладки (желтый)
-  { attribute: 'data-finger', value: 'thumb', buttons: '{space} {altleft}' },
+  { attribute: 'data-finger', value: 'thumb', buttons: '{controlleft} {space} {altleft} {altright} {controlright}' },
 ];
 
 export const latinLayout = { // <--- Добавлено 'export'
