@@ -13,8 +13,20 @@ export function saveLevelResult(levelId: string, speed: number, accuracy: number
   if (!progress.levelStats) {
     progress.levelStats = {};
   }
+
+  // Получаем существующие ошибки для данного уровня, если они есть
+  const existingErrorChars = progress.levelStats[levelId]?.errorChars || [];
+  // Объединяем существующие ошибки с новыми, избегая дубликатов, если это необходимо
+  // В данном случае просто конкатенируем, предполагая, что каждый символ ошибки важен
+  const updatedErrorChars = existingErrorChars.concat(errorChars);
+
   // Структура { speed, accuracy, date, errorChars } соответствует обновленному PlayerProgress
-  progress.levelStats[levelId] = { speed, accuracy, date: Date.now(), errorChars };
+  progress.levelStats[levelId] = { 
+    speed, 
+    accuracy, 
+    date: Date.now(), 
+    errorChars: updatedErrorChars // Используем обновленный массив ошибок
+  };
 
   if (!progress.completedLevels.includes(levelId)) {
     progress.completedLevels.push(levelId);
