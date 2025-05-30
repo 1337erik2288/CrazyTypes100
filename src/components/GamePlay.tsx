@@ -17,6 +17,7 @@ import PlayerHealthBar from './PlayerHealthBar';
 // Removed unused: getPlayerProgress, savePlayerProgress
 import { getPlayerHealth, getMaxPlayerHealth, damagePlayer, healPlayerToMax, getPlayerBaseDamage } from '../services/playerService'; 
 import { saveLevelResult } from '../services/progressService';
+import { Language, ContentType } from '../types'; // <--- ИСПРАВЛЕННЫЙ ПУТЬ ИМПОРТА
 
 interface Monster {
   health: number;
@@ -37,18 +38,17 @@ interface GameStats {
   errorChars?: string[]; // Ensure this is part of GameStats if it's intended for overall stats
 }
 
-// Предполагаемое местоположение и вид определения типа Language
-// Убедитесь, что вы нашли правильное определение в вашем файле
-export type Language =
-  | 'key-combos'
-  | 'simple-words'
-  | 'phrases'
-  | 'math'
-  | 'code'
-  | 'paragraphs'
-  | 'mixed'
-  // Добавьте сюда другие существующие значения, если они есть (например, 'ru', 'en')
-  | 'keyboard-training'; // <--- Добавлено это значение
+// Удаляем локальное определение Language, так как будем использовать импортированное
+// export type Language =
+//   | 'key-combos'
+//   | 'simple-words'
+//   | 'phrases'
+//   | 'math'
+//   | 'code'
+//   | 'paragraphs'
+//   | 'mixed'
+//   // Добавьте сюда другие существующие значения, если они есть (например, 'ru', 'en')
+//   | 'keyboard-training'; // <--- Добавлено это значение
 
 export interface GamePlayConfig {
   backgroundImage: string;
@@ -57,7 +57,8 @@ export interface GamePlayConfig {
   healAmount: number;
   regenerateAmount: number;
   healOnMistake: number;
-  language: Language; // Теперь 'keyboard-training' будет допустимым значением
+  language: Language; // Теперь используется импортированный Language
+  contentType: ContentType; // <--- ДОБАВИТЬ contentType
   monsterDamage?: number;
   attackInterval?: number;
 }
@@ -577,8 +578,3 @@ const GamePlay: React.FC<GamePlayProps> = ({
 
 
 export default GamePlay;
-
-// Удаленный код отсюда:
-// const handleVictory = useCallback(() => { ... });
-// useEffect(() => { ... }); // для определения условия победы
-// useEffect(() => { ... }); // для вызова onLevelComplete

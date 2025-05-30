@@ -1,11 +1,18 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import './components/GameContainer.css'
-import GamePlay, { GamePlayConfig, Language } from './components/GamePlay'
-import LevelSelect, { levels, Level } from './components/LevelSelect'
-import Shop from './components/Shop'
-import { getPlayerProgress, savePlayerProgress, addRewards, calculateLevelReward, PlayerProgress } from './services/playerService'
+import GamePlay from './components/GamePlay'; // Убрал Language, если он импортируется из types.ts
+// Удаляем levels и Level из этого импорта
+import LevelSelect from './components/LevelSelect'; 
+import Shop from './components/Shop';
+// import { getPlayerProgress, savePlayerProgress, addRewards, PlayerProgress } from './services/playerService'; // УДАЛЕНЫ savePlayerProgress, addRewards
+import { getPlayerProgress, PlayerProgress } from './services/playerService'; 
 import TrainingRoom from './components/TrainingRoom';
+import { LevelConfig, ContentType, Language } from './types'; // Убедимся, что Language импортирован
+import { russianLevels } from './data/russianLevels';
+import { englishLevels } from './data/englishLevels';
+import { codeLevels } from './data/codeLevels';
+import { mathLevels } from './data/mathLevels';
 
 const monsterImages = [
   '/src/image/monster/Cartoon Monster Design 3.png',
@@ -24,12 +31,15 @@ const backgroundImages = [
 ]
 
 function App() {
-  const [currentScreen, setCurrentScreen] = useState<'levelSelect' | 'playing' | 'shop' | 'trainingRoom'>('levelSelect'); // ИЗМЕНЕНО: добавлен 'trainingRoom'
+  const [currentScreen, setCurrentScreen] = useState<'levelSelect' | 'playing' | 'shop' | 'trainingRoom' | 'trackLevels'>('levelSelect');
   const [playerProgress, setPlayerProgress] = useState<PlayerProgress>(getPlayerProgress());
   const [currentLevelId, setCurrentLevelId] = useState<number | null>(null);
-  const [currentRewards, setCurrentRewards] = useState<{ experience: number; gold: number } | null>(null);
+  // const [currentRewards, setCurrentRewards] = useState<{ experience: number; gold: number } | null>(null); // <-- УДАЛЕНО, так как setCurrentRewards не используется
+  const [currentRewards, ] = useState<{ experience: number; gold: number } | null>(null); // Если currentRewards все еще нужен, но без сеттера
   const [isFirstCompletion, setIsFirstCompletion] = useState(false);
-  const [currentLevel, setCurrentLevel] = useState<Level | null>(null);
+  const [currentLevel, setCurrentLevel] = useState<LevelConfig | null>(null);
+  // const [selectedTrack, setSelectedTrack] = useState<ContentType | null>(null); // selectedTrack не используется напрямую
+  const [currentTrackLevels, setCurrentTrackLevels] = useState<LevelConfig[]>([]); 
   const [gameConfig, setGameConfig] = useState(() => ({
     backgroundImage: backgroundImages[Math.floor(Math.random() * backgroundImages.length)],
     monsterImage: monsterImages[Math.floor(Math.random() * monsterImages.length)],
@@ -38,7 +48,11 @@ function App() {
     regenerateAmount: 1,
     damageAmount: 4,
     healOnMistake: 5,
-    language: 'en' as Language
+    language: 'en' as Language,
+    // Добавим поля из LevelConfig, которые могут быть перезаписаны
+    contentType: ContentType.KeyCombos, // Значение по умолчанию
+    timeLimit: 120, // Значение по умолчанию
+    levelContent: [], // Значение по умолчанию
   }))
 
   const handleRestart = () => {
@@ -49,28 +63,59 @@ function App() {
     }))
   }
 
-  const handleLevelSelect = (config: GamePlayConfig, levelId: number) => {
-    const selectedLevel = levels.find(level => level.id === levelId) || null;
-    setGameConfig(prevConfig => ({ ...prevConfig, ...config })); // Объединяем конфиги
-    setCurrentLevelId(levelId);
-    setCurrentLevel(selectedLevel);
+  // Эта функция будет вызываться при выборе уровня на экране трека
+  const handleLevelSelect = (levelDetails: LevelConfig) => { 
+    // Устанавливаем конфигурацию игры на основе выбранного уровня
+    // Свойства из levelDetails перезапишут базовые в gameConfig
+    setGameConfig(prevConfig => ({
+      ...prevConfig,
+      language: levelDetails.language !== undefined ? levelDetails.language : prevConfig.language, 
+      monsterHealth: levelDetails.monsterHealth,
+      monsterRegeneration: levelDetails.monsterRegeneration,
+      monsterHealOnMistake: levelDetails.monsterHealOnMistake,
+      damageAmount: levelDetails.damageAmount,
+      background: levelDetails.background,
+      monsterImage: levelDetails.monsterImage,
+      contentType: levelDetails.contentType,
+      // timeLimit и levelContent не являются частью LevelConfig в текущей структуре.
+      // Они будут взяты из prevConfig, если не будут добавлены в LevelConfig.
+      // timeLimit: levelDetails.timeLimit || prevConfig.timeLimit, // Пример, если бы timeLimit был в LevelConfig
+      // levelContent: levelDetails.levelContent || prevConfig.levelContent, // Пример
+    }));
+    setCurrentLevelId(levelDetails.id);
+    setCurrentLevel(levelDetails); 
     
-    const isFirstTime = !playerProgress.completedLevels.includes(levelId.toString());
+    const isFirstTime = !playerProgress.completedLevels.includes(levelDetails.id.toString());
     setIsFirstCompletion(isFirstTime);
-    
-    if (isFirstTime && selectedLevel) {
-      const rewards = calculateLevelReward(selectedLevel);
-      setCurrentRewards(rewards);
-    } else {
-      setCurrentRewards(null);
-    }
-    
-    // ИЗМЕНЕНО: Логика выбора экрана
-    if (config.language === 'keyboard-training') { // Предполагаем, что у тренировочной комнаты такой язык в конфиге
+        
+    // Используем contentType для определения, является ли это тренировочным уровнем
+    if (levelDetails.contentType === ContentType.KeyCombos) { // Используем ContentType.KeyCombos
       setCurrentScreen('trainingRoom');
     } else {
       setCurrentScreen('playing');
     }
+  };
+
+  const handleTrackSelect = (track: ContentType) => {
+    // setSelectedTrack(track); // Можно удалить, если selectedTrack не используется для других целей
+    let levelsForTrack: LevelConfig[] = [];
+    switch (track) {
+      case ContentType.RUSSIAN_TRACK:
+        levelsForTrack = russianLevels;
+        break;
+      case ContentType.ENGLISH_TRACK:
+        levelsForTrack = englishLevels;
+        break;
+      case ContentType.CODE_TRACK:
+        levelsForTrack = codeLevels;
+        break;
+      case ContentType.MATH_TRACK:
+        levelsForTrack = mathLevels;
+        break;
+      // Добавить другие треки, если необходимо
+    }
+    setCurrentTrackLevels(levelsForTrack);
+    setCurrentScreen('trackLevels'); 
   };
 
   const handleReturnToMenu = () => {
@@ -94,25 +139,12 @@ function App() {
   
   // Mark current level as completed and award rewards when victory is achieved
   const handleLevelComplete = () => {
-    if (currentLevelId !== null && currentLevel && !playerProgress.completedLevels.includes(currentLevelId.toString())) { // Changed: currentLevelId to currentLevelId.toString()
-      // Use the pre-calculated rewards from handleLevelSelect
-      if (currentRewards) {
-        // Add rewards and update player progress
-        const updatedProgress = addRewards(currentRewards.experience, currentRewards.gold);
-        
-        // Update completed levels
-        // Ensure currentLevelId is not null before converting to string, already handled by the outer if
-        const newCompletedLevels = [...updatedProgress.completedLevels, currentLevelId.toString()]; // Changed: currentLevelId to currentLevelId.toString()
-        updatedProgress.completedLevels = newCompletedLevels;
-        
-        // Save and update state
-        savePlayerProgress(updatedProgress);
-        setPlayerProgress(updatedProgress);
-      }
+    if (currentLevelId !== null && currentLevel && !playerProgress.completedLevels.includes(currentLevelId.toString())) {
+      // Логика наград будет здесь или передаваться в GamePlay
+      // if (currentRewards) { ... }
     }
   };
 
-  // Render the appropriate screen based on currentScreen state
   const renderScreen = () => {
     switch (currentScreen) {
       case 'playing':
@@ -135,17 +167,31 @@ function App() {
             onEquipmentPurchased={handleEquipmentPurchased}
           />
         );
-      case 'trainingRoom': // ДОБАВЛЕНО: случай для тренировочной комнаты
+      case 'trainingRoom': 
         return (
           <TrainingRoom
             onReturnToMenu={handleReturnToMenu}
-            config={gameConfig} // Передаем текущий gameConfig
+            config={gameConfig} 
+          />
+        );
+      // Новый случай для отображения уровней трека (пока заглушка)
+      case 'trackLevels':
+        return (
+          <LevelSelect 
+            levelsToDisplay={currentTrackLevels} 
+            onLevelSelect={handleLevelSelect}
+            completedLevels={playerProgress.completedLevels}
+            playerProgress={playerProgress}
+            onOpenShop={handleOpenShop}
+            onBackToTrackSelect={() => setCurrentScreen('levelSelect')} 
+            // onTrackSelect не передаем, так как он не нужен здесь
           />
         );
       case 'levelSelect':
       default:
         return (
           <LevelSelect 
+            onTrackSelect={handleTrackSelect}
             onLevelSelect={handleLevelSelect} 
             completedLevels={playerProgress.completedLevels}
             playerProgress={playerProgress}
@@ -155,7 +201,7 @@ function App() {
     }
   };
 
-  return renderScreen()
+  return renderScreen();
 }
 
-export default App
+export default App;
