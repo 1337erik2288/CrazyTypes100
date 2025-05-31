@@ -3,10 +3,10 @@ import './DefeatScreen.css'; // Мы создадим этот файл даль
 
 interface DefeatScreenProps {
   onRestart: () => void;
-  onReturnToMenu: () => void;
+  onLevelComplete: () => void; // Заменено onReturnToMenu на onLevelComplete
 }
 
-const DefeatScreen: React.FC<DefeatScreenProps> = ({ onRestart, onReturnToMenu }) => {
+const DefeatScreen: React.FC<DefeatScreenProps> = ({ onRestart, onLevelComplete }) => { // Обновлено для использования onLevelComplete
   return (
     <div className="defeat-screen">
       <h2>Поражение</h2>
@@ -15,7 +15,7 @@ const DefeatScreen: React.FC<DefeatScreenProps> = ({ onRestart, onReturnToMenu }
         <button onClick={onRestart} className="restart-button-defeat">
           Попробовать снова
         </button>
-        <button onClick={onReturnToMenu} className="menu-button-defeat">
+        <button onClick={onLevelComplete} className="menu-button-defeat"> // Обновлено для использования onLevelComplete
           Вернуться в меню
         </button>
       </div>

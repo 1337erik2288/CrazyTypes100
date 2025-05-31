@@ -231,74 +231,77 @@ import { textParagraphs } from '../data/text-paragraphs';
 import { mixedChallenges } from '../data/mixed-challenges';
 // import { enChallenges } from '../data/en-challenges'; // Removed unused import
 
-export async function getAdditionalWords(language: string): Promise<string[]> {
+import { ruLetters, ruSimpleWords, ruComplexWordsAndPhrases } from '../data/ru-words';
+import { ContentType } from '../types';
+
+export async function getAdditionalWords(contentType: ContentType): Promise<string[]> {
   try {
-    console.log(`Getting additional words for language: ${language}`);
-    
-    // Новые типы словарей
-    if (language === 'key-combos') {
-      return Promise.resolve(keyComboWords.sort(() => Math.random() - 0.5).slice(0, 10));
-    } else if (language === 'simple-words') {
-      return Promise.resolve(simpleWords.sort(() => Math.random() - 0.5).slice(0, 10));
-    } else if (language === 'phrases') {
-      // Случайно выбираем между словами и фразами
-      const useWords = Math.random() > 0.5;
-      if (useWords) {
-        return Promise.resolve(phrasesWords.words.sort(() => Math.random() - 0.5).slice(0, 10));
-      } else {
-        return Promise.resolve(phrasesWords.phrases.sort(() => Math.random() - 0.5).slice(0, 10));
-      }
-    } else if (language === 'math') {
-      // Случайно выбираем между числами и выражениями
-      const useNumbers = Math.random() > 0.5;
-      if (useNumbers) {
-        return Promise.resolve(mathExpressions.numbers.sort(() => Math.random() - 0.5).slice(0, 10));
-      } else {
-        // Для выражений возвращаем только ответы, а отображаем выражения
-        const shuffledExpressions = [...mathExpressions.expressions].sort(() => Math.random() - 0.5).slice(0, 10);
-        return Promise.resolve(shuffledExpressions.map(expr => expr.answer));
-      }
-    } else if (language === 'paragraphs') {
-      return Promise.resolve(textParagraphs.sort(() => Math.random() - 0.5).slice(0, 3));
-    } else if (language === 'mixed') {
-      // Выбираем случайный тип контента для смешанного режима
-      const contentTypes = ['code', 'complexWords', 'mathExpressions', 'paragraphs'];
-      const randomType = contentTypes[Math.floor(Math.random() * contentTypes.length)];
-      return Promise.resolve(mixedChallenges[randomType as keyof typeof mixedChallenges].sort(() => Math.random() - 0.5).slice(0, 10));
-    } else if (language === 'ru') {
-      // Try to get Russian words from API first
-      try {
-        console.log('Attempting to fetch Russian words from API');
-        const apiWords = await fetchRussianWords(10);
-        console.log(`Fetched ${apiWords.length} Russian words from API`);
-        return apiWords;
-      } catch (apiError) {
-        console.error('Error fetching Russian words from API, falling back to local dictionary:', apiError);
-        // Fall back to local dictionary
-        const shuffledWords = [...ruWords].sort(() => Math.random() - 0.5);
-        return shuffledWords.slice(0, 10);
-      }
-    } else {
-      // Try to get English words from API first
-      try {
-        console.log('Attempting to fetch English words from API');
-        const apiWords = await fetchEnglishWords(10);
-        console.log(`Fetched ${apiWords.length} English words from API`);
-        return apiWords;
-      } catch (apiError) {
-        console.error('Error fetching English words from API, falling back to local dictionary:', apiError);
-        // Fall back to local dictionary
-        const shuffledWords = [...enWords].sort(() => Math.random() - 0.5);
-        return shuffledWords.slice(0, 10);
-      }
+    console.log(`Getting additional words for contentType: ${contentType}`);
+
+    switch (contentType) {
+      case ContentType.KeyCombos:
+        return Promise.resolve(keyComboWords.sort(() => Math.random() - 0.5).slice(0, 10));
+      case ContentType.SimpleWords:
+        return Promise.resolve(simpleWords.sort(() => Math.random() - 0.5).slice(0, 10));
+      case ContentType.Phrases:
+        const useWords = Math.random() > 0.5;
+        if (useWords) {
+          return Promise.resolve(phrasesWords.words.sort(() => Math.random() - 0.5).slice(0, 10));
+        } else {
+          return Promise.resolve(phrasesWords.phrases.sort(() => Math.random() - 0.5).slice(0, 10));
+        }
+      case ContentType.Math:
+        const useNumbers = Math.random() > 0.5;
+        if (useNumbers) {
+          return Promise.resolve(mathExpressions.numbers.sort(() => Math.random() - 0.5).slice(0, 10));
+        } else {
+          const shuffledExpressions = [...mathExpressions.expressions].sort(() => Math.random() - 0.5).slice(0, 10);
+          return Promise.resolve(shuffledExpressions.map(expr => expr.answer));
+        }
+      case ContentType.Paragraphs:
+        return Promise.resolve(textParagraphs.sort(() => Math.random() - 0.5).slice(0, 3));
+      case ContentType.Mixed:
+        const contentTypes = ['code', 'complexWords', 'mathExpressions', 'paragraphs'];
+        const randomType = contentTypes[Math.floor(Math.random() * contentTypes.length)];
+        return Promise.resolve(mixedChallenges[randomType as keyof typeof mixedChallenges].sort(() => Math.random() - 0.5).slice(0, 10));
+      case ContentType.RussianLetterCombinations:
+        return Promise.resolve(ruLetters.sort(() => Math.random() - 0.5).slice(0, 10));
+      case ContentType.RussianSimpleWords:
+        return Promise.resolve(ruSimpleWords.sort(() => Math.random() - 0.5).slice(0, 10));
+      case ContentType.RussianComplexWords:
+        return Promise.resolve(ruComplexWordsAndPhrases.sort(() => Math.random() - 0.5).slice(0, 10));
+      case ContentType.RUSSIAN_TRACK:
+        // Логика для общего русского трека, возможно, с использованием API или смешанных источников
+        try {
+          console.log('Attempting to fetch Russian words from API');
+          const apiWords = await fetchRussianWords(10);
+          console.log(`Fetched ${apiWords.length} Russian words from API`);
+          return apiWords;
+        } catch (apiError) {
+          console.error('Error fetching Russian words from API, falling back to local dictionary:', apiError);
+          const shuffledWords = [...ruWords].sort(() => Math.random() - 0.5);
+          return shuffledWords.slice(0, 10);
+        }
+      case ContentType.ENGLISH_TRACK:
+        // Логика для общего английского трека
+        try {
+          console.log('Attempting to fetch English words from API');
+          const apiWords = await fetchEnglishWords(10);
+          console.log(`Fetched ${apiWords.length} English words from API`);
+          return apiWords;
+        } catch (apiError) {
+          console.error('Error fetching English words from API, falling back to local dictionary:', apiError);
+          const shuffledWords = [...enWords].sort(() => Math.random() - 0.5);
+          return shuffledWords.slice(0, 10);
+        }
+      // Добавьте другие ContentType по мере необходимости
+      default:
+        console.warn(`Unknown contentType: ${contentType}. Falling back to default English words.`);
+        return Promise.resolve(enWords.sort(() => Math.random() - 0.5).slice(0, 10));
     }
   } catch (error) {
     console.error('Error in getAdditionalWords:', error);
-    // Ultimate fallback
-    if (language === 'ru') {
-      return [...ruWords].sort(() => Math.random() - 0.5).slice(0, 10);
-    } else {
-      return [...enWords].sort(() => Math.random() - 0.5).slice(0, 10);
-    }
+    // Ultimate fallback to a generic set of words in case of any error
+    return Promise.resolve(enWords.sort(() => Math.random() - 0.5).slice(0, 10));
   }
 }

@@ -15,23 +15,23 @@ interface GameStats {
 interface VictoryScreenProps {
   gameStats: GameStats;
   onRestart: () => void;
-  // Removed onReturnToMenu
+  onLevelComplete: () => void; // Добавлено onLevelComplete
   rewards?: LevelReward;
   isFirstCompletion?: boolean;
   speed: number;
   accuracy: number;
-  levelId: number; // <--- добавлено
+  levelId: number;
 }
 
 const VictoryScreen: React.FC<VictoryScreenProps> = ({
   onRestart,
-  // Removed onReturnToMenu
+  onLevelComplete, // Добавлено onLevelComplete
   rewards,
   isFirstCompletion,
   speed,
   accuracy,
   gameStats,
-  levelId // <--- добавлено
+  levelId
 }) => {
   useEffect(() => {
     if (levelId !== undefined && levelId !== null) {
@@ -65,6 +65,9 @@ const VictoryScreen: React.FC<VictoryScreenProps> = ({
       <div className="victory-buttons">
         <button onClick={onRestart} className="restart-button">
           Play Again
+        </button>
+        <button onClick={onLevelComplete} className="return-button"> {/* Добавлена кнопка Return to Menu */}
+          Return to Menu
         </button>
       </div>
     </div>

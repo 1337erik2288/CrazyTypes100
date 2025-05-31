@@ -41,24 +41,30 @@ export enum ContentType {
   MATH_TRACK = 'math_track',
 }
 
+// LevelConfigDetails удален
+
 export interface LevelConfig {
   id: number;
   name: string;
   description: string;
-  monsterHealth: number;
+  monsterHealth: number; // Сделано обязательным
   monsterRegeneration: number;
   monsterHealOnMistake: number;
   damageAmount: number;
   requiredWPM?: number;
-  background: string;
+  backgroundImage: string;
   monsterImage: string;
   contentType: ContentType;
-  monsterDamage?: number;
-  attackInterval?: number;
-  language?: Language;
-  levelContent?: string[]; // <-- Add this line (optional if not always present)
-  timeLimit?: number;      // <-- Add this line (optional if not always present)
+  content?: string;
+  difficulty?: string;
+  diffClass?: string;
+  monsterDamage: number;
+  attackInterval: number;
+  language: Language;
+  levelContent?: string[];
+  timeLimit?: number;
   experienceReward?: number;
   goldReward?: number;
   isSpecial?: boolean;
+  // initialHealth, healAmount, regenerateAmount, healOnMistake удалены из LevelConfig
 }

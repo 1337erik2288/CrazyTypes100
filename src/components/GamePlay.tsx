@@ -66,7 +66,7 @@ export interface GamePlayConfig {
 interface GamePlayProps {
   config: GamePlayConfig;
   onRestart: () => void;
-  onReturnToMenu: () => void;
+  // onReturnToMenu: () => void; // Удаляем, так как навигация будет обрабатываться через onLevelComplete
   onLevelComplete: () => void;
   rewards?: LevelReward;
   isFirstCompletion?: boolean;
@@ -76,7 +76,7 @@ interface GamePlayProps {
 const GamePlay: React.FC<GamePlayProps> = ({
   config: initialConfig, 
   onRestart,
-  onReturnToMenu,
+  // onReturnToMenu, // Удаляем
   onLevelComplete,
   rewards,
   isFirstCompletion = false,
@@ -172,7 +172,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
       }
       setUserInput('');
     } else {
-      getAdditionalWords(initialConfig.language).then(newWords => { 
+      getAdditionalWords(initialConfig.contentType).then(newWords => { 
         if (newWords.length > 0) {
           const randomIndex = Math.floor(Math.random() * newWords.length);
           const newWord = newWords[randomIndex];
@@ -303,7 +303,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
     // onReturnToMenu(); // Больше не вызываем это напрямую
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  function handleInputChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const value = e.target.value;
     const lastCharIndex = value.length - 1;
     
@@ -385,7 +385,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
           if (isDefeated) {
             setShowVictory(true);
             setGameStats(prevStats => ({ ...prevStats, endTime: Date.now() }));
-            onLevelComplete();
+            // onLevelComplete(); // УДАЛЕНО: Вызов onLevelComplete здесь
           }
           const monsterElement = document.querySelector('.monster') as HTMLElement;
           if (monsterElement) {
@@ -422,7 +422,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
       const accuracy = (gameStats.correctChars / gameStats.totalChars) * 100;
       saveLevelResult(levelId.toString(), speed, accuracy, currentErrorChars); // Pass currentErrorChars here
     }
-    onReturnToMenu();
+    onLevelComplete();
   };
   // Перемещенный код НАЧАЛО
   const handleVictory = useCallback(() => {
@@ -452,13 +452,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
   }, [monster.health, monster.isDefeated, showVictory, showDefeatScreen, handleVictory]);
 
   // Новый useEffect для вызова onLevelComplete, когда showVictory становится true
-  useEffect(() => {
-    if (showVictory) {
-      if (onLevelComplete) {
-        onLevelComplete(); // Это вызовет handleLevelComplete из App.tsx
-      }
-    }
-  }, [showVictory, onLevelComplete]); // Запускается, когда изменяется showVictory или onLevelComplete
+  // УДАЛЕНО: useEffect, который автоматически вызывал onLevelComplete при showVictory
   // Перемещенный код КОНЕЦ
 
   return (
@@ -515,6 +509,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
             rewards={rewards}
             isFirstCompletion={isFirstCompletion}
             levelId={levelId as number}
+            onLevelComplete={onLevelComplete} // Передаем onLevelComplete в VictoryScreen
           />
         ) : showDefeatScreen ? ( // Добавляем условие для экрана поражения
           <DefeatScreen
@@ -522,9 +517,9 @@ const GamePlay: React.FC<GamePlayProps> = ({
               setShowDefeatScreen(false);
               restartGame(); // Используем restartGame, который уже вызывает onRestart из App.tsx
             }}
-            onReturnToMenu={() => {
+            onLevelComplete={() => {
               setShowDefeatScreen(false);
-              onReturnToMenu();
+              onLevelComplete();
             }}
           />
         ) : (

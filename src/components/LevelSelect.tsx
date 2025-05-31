@@ -34,7 +34,7 @@ const trainingRoomLevelConfig: LevelConfig = {
   id: 0,
   name: 'Тренировочная комната',
   description: 'Оттачивайте свои навыки!',
-  language: Language.KEYBOARD_TRAINING,
+  language: Language.EN, // <-- Исправлено: используем Language.EN вместо несуществующего Language.KEYBOARD_TRAINING
   contentType: ContentType.KeyCombos, // <-- Use KeyCombos (not KEY_COMBOS)
   monsterHealth: 0,
   monsterRegeneration: 0,

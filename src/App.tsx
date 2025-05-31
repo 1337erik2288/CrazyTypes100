@@ -38,21 +38,20 @@ function App() {
   const [currentRewards, ] = useState<{ experience: number; gold: number } | null>(null); // Если currentRewards все еще нужен, но без сеттера
   const [isFirstCompletion, setIsFirstCompletion] = useState(false);
   const [currentLevel, setCurrentLevel] = useState<LevelConfig | null>(null);
-  // const [selectedTrack, setSelectedTrack] = useState<ContentType | null>(null); // selectedTrack не используется напрямую
+  const [selectedTrack, setSelectedTrack] = useState<ContentType | null>(null); // Добавляем состояние для отслеживания выбранного трека
   const [currentTrackLevels, setCurrentTrackLevels] = useState<LevelConfig[]>([]); 
   const [gameConfig, setGameConfig] = useState(() => ({
     backgroundImage: backgroundImages[Math.floor(Math.random() * backgroundImages.length)],
     monsterImage: monsterImages[Math.floor(Math.random() * monsterImages.length)],
-    initialHealth: 150,
+    initialHealth: 150, // Это значение по умолчанию для игрока, не монстра
     healAmount: 5,
     regenerateAmount: 1,
-    damageAmount: 4,
+    damageAmount: 4, // Урон игрока
     healOnMistake: 5,
     language: 'en' as Language,
-    // Добавим поля из LevelConfig, которые могут быть перезаписаны
-    contentType: ContentType.KeyCombos, // Значение по умолчанию
-    timeLimit: 120, // Значение по умолчанию
-    levelContent: [], // Значение по умолчанию
+    contentType: ContentType.KeyCombos,
+    timeLimit: 120,
+    levelContent: [],
   }))
 
   const handleRestart = () => {
@@ -69,18 +68,15 @@ function App() {
     // Свойства из levelDetails перезапишут базовые в gameConfig
     setGameConfig(prevConfig => ({
       ...prevConfig,
-      language: levelDetails.language !== undefined ? levelDetails.language : prevConfig.language, 
-      monsterHealth: levelDetails.monsterHealth,
+      language: levelDetails.language !== undefined ? levelDetails.language : prevConfig.language,
+      monsterHealth: levelDetails.monsterHealth, // Теперь берется напрямую из levelDetails
       monsterRegeneration: levelDetails.monsterRegeneration,
       monsterHealOnMistake: levelDetails.monsterHealOnMistake,
-      damageAmount: levelDetails.damageAmount,
-      background: levelDetails.background,
+      damageAmount: levelDetails.damageAmount, // Урон монстра, если это свойство в LevelConfig
+      backgroundImage: levelDetails.backgroundImage, // Изменено с 'background'
       monsterImage: levelDetails.monsterImage,
       contentType: levelDetails.contentType,
-      // timeLimit и levelContent не являются частью LevelConfig в текущей структуре.
-      // Они будут взяты из prevConfig, если не будут добавлены в LevelConfig.
-      // timeLimit: levelDetails.timeLimit || prevConfig.timeLimit, // Пример, если бы timeLimit был в LevelConfig
-      // levelContent: levelDetails.levelContent || prevConfig.levelContent, // Пример
+      // timeLimit и levelContent остаются, если они не в LevelConfig
     }));
     setCurrentLevelId(levelDetails.id);
     setCurrentLevel(levelDetails); 
@@ -97,7 +93,7 @@ function App() {
   };
 
   const handleTrackSelect = (track: ContentType) => {
-    // setSelectedTrack(track); // Можно удалить, если selectedTrack не используется для других целей
+    setSelectedTrack(track); // Устанавливаем выбранный трек
     let levelsForTrack: LevelConfig[] = [];
     switch (track) {
       case ContentType.RUSSIAN_TRACK:
@@ -123,25 +119,25 @@ function App() {
     setCurrentScreen('levelSelect');
   };
   
-  const handleOpenShop = () => {
+  const handleOpenShop = () => { // Убедитесь, что эта функция определена
     setCurrentScreen('shop');
   };
   
-  const handleEquipmentPurchased = (updatedProgress: PlayerProgress) => {
+  const handleEquipmentPurchased = (updatedProgress: PlayerProgress) => { // Убедитесь, что эта функция определена
     setPlayerProgress(updatedProgress);
   };
   
   // Load player progress from localStorage on component mount
-  useEffect(() => {
-    const progress = getPlayerProgress();
-    setPlayerProgress(progress);
-  }, []);
-  
-  // Mark current level as completed and award rewards when victory is achieved
   const handleLevelComplete = () => {
     if (currentLevelId !== null && currentLevel && !playerProgress.completedLevels.includes(currentLevelId.toString())) {
       // Логика наград будет здесь или передаваться в GamePlay
       // if (currentRewards) { ... }
+    }
+    // После завершения уровня возвращаемся к списку уровней текущего трека
+    if (selectedTrack) {
+      handleTrackSelect(selectedTrack); // Возвращаемся к выбранному треку
+    } else {
+      setCurrentScreen('levelSelect'); // Если трек не выбран, возвращаемся в общее меню
     }
   };
 
@@ -152,7 +148,7 @@ function App() {
           <GamePlay 
             config={gameConfig} 
             onRestart={handleRestart} 
-            onReturnToMenu={handleReturnToMenu}
+            // onReturnToMenu={handleReturnToMenu} // Удалено
             onLevelComplete={handleLevelComplete}
             rewards={currentRewards || undefined}
             isFirstCompletion={isFirstCompletion}
@@ -164,7 +160,7 @@ function App() {
           <Shop 
             playerProgress={playerProgress}
             onReturnToMenu={handleReturnToMenu}
-            onEquipmentPurchased={handleEquipmentPurchased}
+            onEquipmentPurchased={handleEquipmentPurchased} // Убедимся, что эта функция определена
           />
         );
       case 'trainingRoom': 
@@ -182,7 +178,7 @@ function App() {
             onLevelSelect={handleLevelSelect}
             completedLevels={playerProgress.completedLevels}
             playerProgress={playerProgress}
-            onOpenShop={handleOpenShop}
+            onOpenShop={handleOpenShop} // Убедимся, что эта функция определена
             onBackToTrackSelect={() => setCurrentScreen('levelSelect')} 
             // onTrackSelect не передаем, так как он не нужен здесь
           />
@@ -195,7 +191,7 @@ function App() {
             onLevelSelect={handleLevelSelect} 
             completedLevels={playerProgress.completedLevels}
             playerProgress={playerProgress}
-            onOpenShop={handleOpenShop}
+            onOpenShop={handleOpenShop} // Убедимся, что эта функция определена
           />
         );
     }
