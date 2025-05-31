@@ -14,9 +14,8 @@ export interface PlayerProgress {
 export enum Language {
   RU = 'ru',
   EN = 'en',
-  KEYBOARD_TRAINING = 'keyboard-training',
-  Code = 'code', // <--- ДОБАВЛЕНО
-  Math = 'math',  // <--- ДОБАВЛЕНО
+  Code = 'code',
+  Math = 'math',
 }
 
 // Объединенный ContentType
@@ -29,6 +28,12 @@ export enum ContentType {
   Code = 'code',
   Paragraphs = 'paragraphs',
   Mixed = 'mixed',
+  RussianLetterCombinations = 'russian-letter-combinations',
+  RussianSimpleWords = 'russian-simple-words',
+  RussianComplexWords = 'russian-complex-words',
+  EnglishLetterCombinations = 'english-letter-combinations',
+  EnglishSimpleWords = 'english-simple-words',
+  EnglishComplexWords = 'english-complex-words',
   // Типы для треков (можно использовать для фильтрации или навигации)
   RUSSIAN_TRACK = 'russian_track',
   ENGLISH_TRACK = 'english_track',

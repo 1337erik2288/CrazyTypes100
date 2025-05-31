@@ -12,7 +12,7 @@ export const russianLevels: LevelConfig[] = [
     requiredWPM: 20,
     background: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (2).jpg',
     monsterImage: '/src/image/monster/Cartoon Monster Design.png',
-    contentType: ContentType.KeyCombos, // Этот тип может быть общим, уточните
+    contentType: ContentType.RussianLetterCombinations, // Изменено на RussianLetterCombinations
     monsterDamage: 0,
     attackInterval: 0,
     language: Language.RU,

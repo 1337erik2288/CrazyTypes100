@@ -151,41 +151,28 @@ const GamePlay: React.FC<GamePlayProps> = ({
   }, [equippedPlayerItems, maxPlayerHealth, showVictory, showDefeatScreen]);
 
   const generateNewWord = useCallback(() => {
-    if (initialConfig.language === 'code') { 
+    if (initialConfig.contentType === ContentType.Code) { 
       const codeLanguages = ['javascript', 'python', 'typescript', 'java', 'csharp']; 
-      // хочу гулять... // <--- Удаляем этот комментарий
       const randomLang = codeLanguages[Math.floor(Math.random() * codeLanguages.length)];
       getRandomCodeLine(randomLang).then((codeLine: string) => {
         setCurrentWord(codeLine);
         setUserInput('');
       });
-    } else if (initialConfig.language === 'math') { // Специальная обработка для математических выражений
-      getAdditionalWords(initialConfig.language).then(newWords => { // <--- FIX: Use initialConfig
-        if (newWords.length > 0) {
-          const randomIndex = Math.floor(Math.random() * newWords.length);
-          const newWord = newWords[randomIndex];
-          
-          // Проверяем, является ли это выражением или числом
-          const useExpressions = Math.random() > 0.5;
-          if (!useExpressions) {
-            // Если это число, просто отображаем его
-            setCurrentWord(newWord);
-          } else {
-            // Если это выражение, находим соответствующее отображение
-            const matchingExpression = mathExpressions.expressions.find(expr => expr.answer === newWord);
-            if (matchingExpression) {
-              // Устанавливаем отображаемое выражение, но пользователь будет вводить только ответ
-              setCurrentWord(matchingExpression.display);
-            } else {
-              // Если не нашли соответствия, просто отображаем число
-              setCurrentWord(newWord);
-            }
-          }
-          setUserInput('');
-        }
-      });
+    } else if (initialConfig.contentType === ContentType.Math) { 
+      const useExpression = Math.random() < 0.7; // 70% шанс на выражение, 30% на число
+      if (useExpression && mathExpressions.expressions.length > 0) {
+        const randomIndex = Math.floor(Math.random() * mathExpressions.expressions.length);
+        const expression = mathExpressions.expressions[randomIndex];
+        setCurrentWord(expression.display); // Отображаем выражение
+      } else if (mathExpressions.numbers.length > 0) {
+        const randomIndex = Math.floor(Math.random() * mathExpressions.numbers.length);
+        setCurrentWord(mathExpressions.numbers[randomIndex]); // Отображаем число
+      } else {
+        setCurrentWord('1+1=?'); // Fallback
+      }
+      setUserInput('');
     } else {
-      getAdditionalWords(initialConfig.language).then(newWords => { // <--- FIX: Use initialConfig
+      getAdditionalWords(initialConfig.language).then(newWords => { 
         if (newWords.length > 0) {
           const randomIndex = Math.floor(Math.random() * newWords.length);
           const newWord = newWords[randomIndex];
@@ -194,7 +181,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
         }
       });
     }
-  }, [initialConfig.language]); // <--- FIX: Use initialConfig.language in dependency array
+  }, [initialConfig.contentType, initialConfig.language]); 
 
   const restartGame = () => {
     setMonster({
@@ -320,23 +307,21 @@ const GamePlay: React.FC<GamePlayProps> = ({
     const value = e.target.value;
     const lastCharIndex = value.length - 1;
     
-    // Проверяем, является ли текущее слово математическим выражением
-    const isMathExpression = initialConfig.language === 'math' && currentWord.includes('=?'); // <--- FIX: Use initialConfig
+    const isMathExpressionContent = initialConfig.contentType === ContentType.Math; 
     
-    // Если это математическое выражение, находим ожидаемый ответ
-    let expectedAnswer = currentWord;
-    if (isMathExpression) {
+    let expectedContent = currentWord;
+    if (isMathExpressionContent) {
       const matchingExpression = mathExpressions.expressions.find(expr => expr.display === currentWord);
       if (matchingExpression) {
-        expectedAnswer = matchingExpression.answer;
+        expectedContent = matchingExpression.answer; // Для выражений ожидаем ответ
+      } else {
+        expectedContent = currentWord; // Для чисел ожидаем само число
       }
     }
     
     if (lastCharIndex >= 0) {
-      // Для математических выражений проверяем ввод относительно ответа, а не отображаемого выражения
-      const compareWith = isMathExpression ? expectedAnswer : currentWord;
+      const compareWith = expectedContent;
       
-      // Проверяем, не выходит ли индекс за пределы длины ответа
       if (lastCharIndex < compareWith.length) {
         const isCorrect = value[lastCharIndex] === compareWith[lastCharIndex];
         
@@ -418,8 +403,8 @@ const GamePlay: React.FC<GamePlayProps> = ({
         setUserInput(value);
         
         // Для математических выражений проверяем, совпадает ли ввод с ответом
-        if ((isMathExpression && value === expectedAnswer) || 
-            (!isMathExpression && value === currentWord)) {
+        if ((isMathExpressionContent && value === expectedContent) || 
+            (!isMathExpressionContent && value === currentWord)) {
           if (!monster.isDefeated) {
             generateNewWord();
           }

@@ -12,7 +12,7 @@ export const englishLevels: LevelConfig[] = [
     requiredWPM: 20,
     background: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (4).jpg', // Другой фон для разнообразия
     monsterImage: '/src/image/monster/Cartoon Monster Photoroom Mar 18 2025.png',
-    contentType: ContentType.KeyCombos, // Этот тип может быть общим, уточните
+    contentType: ContentType.EnglishLetterCombinations, // Изменено на EnglishLetterCombinations
     monsterDamage: 0,
     attackInterval: 0,
     language: Language.EN,
