@@ -148,16 +148,20 @@ const LevelSelect: React.FC<LevelSelectProps> = ({
             {onTrackSelect && (
               <>
                 <button onClick={() => onTrackSelect(ContentType.RUSSIAN_TRACK)} className="track-button russian-track">
-                  Русский язык
+                  <span className="track-title">Русский язык</span>
+                  <span className="track-description">Практикуйте набор текста на русском языке.</span>
                 </button>
                 <button onClick={() => onTrackSelect(ContentType.ENGLISH_TRACK)} className="track-button english-track">
-                  Английский язык
+                  <span className="track-title">Английский язык</span>
+                  <span className="track-description">Совершенствуйте свои навыки набора текста на английском.</span>
                 </button>
                 <button onClick={() => onTrackSelect(ContentType.CODE_TRACK)} className="track-button code-track">
-                  Программирование
+                  <span className="track-title">Программирование</span>
+                  <span className="track-description">Набирайте фрагменты кода на различных языках.</span>
                 </button>
                 <button onClick={() => onTrackSelect(ContentType.MATH_TRACK)} className="track-button math-track">
-                  Математика
+                  <span className="track-title">Математика</span>
+                  <span className="track-description">Практикуйтесь в наборе математических выражений.</span>
                 </button>
               </>
             )}

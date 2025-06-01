@@ -3109,3 +3109,132 @@
   align-items: center;
 
 }
+
+/* Стили для выбора трека */
+.track-selection {
+  width: 100%;
+  max-width: 900px; /* Можно настроить по желанию */
+  margin-top: 30px;
+  text-align: center;
+}
+
+.track-selection h2 {
+  font-size: 1.8em;
+  margin-bottom: 25px;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.track-buttons {
+  display: flex;
+  flex-direction: column; /* Располагаем кнопки в столбец для лучшего отображения описаний */
+  gap: 20px; /* Расстояние между кнопками */
+  align-items: center; /* Центрируем кнопки в столбце */
+}
+
+.track-button {
+  padding: 20px 30px; /* Увеличенные отступы внутри кнопки */
+  font-size: 1.2em; /* Увеличенный размер шрифта */
+  border: 2px solid transparent; /* Убираем стандартную рамку, будем использовать box-shadow или градиентные рамки */
+  border-radius: 12px; /* Более скругленные углы */
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  min-width: 300px; /* Минимальная ширина кнопки */
+  max-width: 500px; /* Максимальная ширина кнопки */
+  width: 100%; /* Занимает доступную ширину в рамках max-width */
+  text-align: left; /* Текст внутри кнопки выравниваем по левому краю */
+  display: flex;
+  flex-direction: column; /* Для заголовка и описания */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.track-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.track-button .track-title {
+  font-size: 1.2em; /* Немного уменьшим шрифт заголовка для лучшего вмещения */
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.track-button .track-description {
+  font-size: 0.9em; /* Размер шрифта для описания */
+  color: #e0e0e0; /* Слегка приглушенный цвет для описания */
+  line-height: 1.4;
+}
+
+/* Цвета для кнопок треков */
+.russian-track {
+  background: linear-gradient(135deg, #4A90E2 0%, #0052A5 100%);
+  border-color: #357ABD;
+}
+.russian-track:hover {
+  background: linear-gradient(135deg, #5A9EEA 0%, #0062C5 100%);
+}
+
+.english-track {
+  background: linear-gradient(135deg, #D0021B 0%, #900000 100%);
+  border-color: #B00215;
+}
+.english-track:hover {
+  background: linear-gradient(135deg, #E0122B 0%, #A00000 100%);
+}
+
+.code-track {
+  background: linear-gradient(135deg, #417505 0%, #2B4E03 100%);
+  border-color: #315A04;
+}
+.code-track:hover {
+  background: linear-gradient(135deg, #518515 0%, #3B5E13 100%);
+}
+
+.math-track {
+  background: linear-gradient(135deg, #F5A623 0%, #B8791A 100%);
+  border-color: #D59620;
+}
+.math-track:hover {
+  background: linear-gradient(135deg, #FBAF33 0%, #C8892A 100%);
+}
+
+/* Адаптивность для кнопок треков */
+@media (min-width: 768px) {
+  .track-buttons {
+    flex-direction: row; /* Возвращаем к ряду на больших экранах */
+    flex-wrap: wrap; /* Позволяем переноситься на новую строку */
+    justify-content: center; /* Центрируем кнопки в ряду */
+    gap: 25px; /* Немного увеличиваем расстояние */
+  }
+  .track-button {
+    width: calc(50% - 12.5px); /* Две кнопки в ряд с учетом gap */
+    max-width: 400px; /* Ограничиваем максимальную ширину */
+  }
+}
+
+@media (min-width: 1024px) {
+  .track-button {
+     /* Можно оставить две в ряд или сделать одну, если хочется очень крупные кнопки */
+     /* Если нужно 4 в ряд, то calc(25% - (gap*3)/4) */
+  }
+}
+
+
+/* Старые стили для .track-button, если они были, их нужно удалить или закомментировать */
+/* Например, если были такие стили:
+.track-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.track-button:hover {
+  background-color: #0056b3;
+}
+*/
