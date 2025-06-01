@@ -101,11 +101,20 @@ const GamePlay: React.FC<GamePlayProps> = ({
   const [showAttackWarning, setShowAttackWarning] = useState<boolean>(false);
   const [currentErrorChars, setCurrentErrorChars] = useState<string[]>([]);
   
+  // Новое состояние для фона
+  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+
   const monsterAttackInterval = useRef<NodeJS.Timeout | null>(null);
 
   const totalMonsterDamageReduction = useMemo(() => {
     return equippedPlayerItems.reduce((sum: number, item: any) => sum + (item.effects?.monsterDamageReduction || 0), 0);
   }, [equippedPlayerItems]);
+
+  // Установка фона один раз при монтировании
+  useEffect(() => {
+    const randomBackground = getRandomBackgroundImage();
+    setBackgroundImage(randomBackground);
+  }, []);
 
   useEffect(() => {
     const totalPlayerHealBonus = equippedPlayerItems.reduce(
@@ -410,7 +419,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
 
   return (
     <div className="game-play-container">
-      <BackgroundManager imagePath={getRandomBackgroundImage()} />
+      <BackgroundManager imagePath={backgroundImage || ''} />
       <div className="game-content">
         <div className="top-section">
           <button className="menu-button" onClick={handleReturnToMenu}>Вернуться в меню</button>
@@ -441,12 +450,6 @@ const GamePlay: React.FC<GamePlayProps> = ({
               isDefeated={monster.isDefeated}
               onHealthChange={(newHealth) => setMonster(prev => ({ ...prev, health: newHealth }))}
             />
-            {/* Uncomment below to use PlayerHealthBar if intended */}
-            {/* <PlayerHealthBar
-              health={playerHealth}
-              maxHealth={maxPlayerHealth}
-              damageAnimation={playerDamageAnimation}
-            /> */}
             {showVictory ? (
               <VictoryScreen
                 gameStats={{ ...gameStats, errorChars: currentErrorChars }}
