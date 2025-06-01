@@ -14,8 +14,12 @@ export interface PlayerProgress {
 export enum Language {
   RU = 'ru',
   EN = 'en',
-  Code = 'code',
+  // Code = 'code', // Заменяем общее значение
   Math = 'math',
+  JavaScript = 'javascript',
+  TypeScript = 'typescript',
+  Python = 'python',
+  Rust = 'rust',
 }
 
 // Объединенный ContentType
