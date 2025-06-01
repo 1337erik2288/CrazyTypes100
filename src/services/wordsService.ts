@@ -64,7 +64,8 @@ export async function fetchEnglishWords(count: number = 20): Promise<string[]> {
   
   console.log('Falling back to local English dictionary after failed API attempts');
   // Fallback to local dictionary after all attempts failed
-  const shuffledWords = [...enWords].sort(() => Math.random() - 0.5)
+  // Заменяем enWords на enSimpleWords
+  const shuffledWords = [...enSimpleWords].sort(() => Math.random() - 0.5)
     .filter((word: string) => word.length >= 4 && word.length <= 12 && /^[a-zA-Z]+$/.test(word));
   
   // Ensure we have words with different starting letters
@@ -180,18 +181,28 @@ export async function fetchRussianWords(count: number = 20): Promise<string[]> {
   return shuffledWords.slice(0, count);
 }
 
-import { enWords } from '../data/en-words'; // Corrected import
-import { ruWords } from '../data/ru-words'; // Corrected import
+// Заменяем импорт enWords на импорты новых массивов
+import { enLetterCombinations, enSimpleWords, enComplexWordsAndPhrases } from '../data/en-words'; 
+import { ruWords, ruLetters, ruSimpleWords, ruComplexWordsAndPhrases } from '../data/ru-words'; // Добавил также русские для полноты, если они понадобятся в подобной структуре
 
-// Example: if you create separate files for words
+// Обновляем структуру allWords
+// Вам нужно будет решить, как мапить ContentType на эти категории
 const allWords: { [key: string]: { [key: string]: string[] } } = {
   en: {
-    'keyboard-training': enWords, // from en-words.ts
-    // ... other categories for English
+    // Пример: используем enSimpleWords для категории 'keyboard-training'
+    // Вам нужно будет добавить другие категории и связать их с ContentType
+    'keyboard-training': enSimpleWords, 
+    'letter-combinations': enLetterCombinations,
+    'simple-words': enSimpleWords,
+    'complex-words': enComplexWordsAndPhrases,
+    // ... другие категории для английского языка
   },
   ru: {
-    'keyboard-training': ruWords, // from ru-words.ts
-    // ... other categories for Russian
+    'keyboard-training': ruSimpleWords, // Пример для русских слов
+    'letter-combinations': ruLetters,
+    'simple-words': ruSimpleWords,
+    'complex-words': ruComplexWordsAndPhrases,
+    // ... другие категории для русского языка
   }
 };
 
@@ -231,7 +242,6 @@ import { textParagraphs } from '../data/text-paragraphs';
 import { mixedChallenges } from '../data/mixed-challenges';
 // import { enChallenges } from '../data/en-challenges'; // Removed unused import
 
-import { ruLetters, ruSimpleWords, ruComplexWordsAndPhrases } from '../data/ru-words';
 import { ContentType } from '../types';
 
 export async function getAdditionalWords(contentType: ContentType): Promise<string[]> {
@@ -270,6 +280,12 @@ export async function getAdditionalWords(contentType: ContentType): Promise<stri
         return Promise.resolve(ruSimpleWords.sort(() => Math.random() - 0.5).slice(0, 10));
       case ContentType.RussianComplexWords:
         return Promise.resolve(ruComplexWordsAndPhrases.sort(() => Math.random() - 0.5).slice(0, 10));
+      case ContentType.EnglishLetterCombinations: // Added case
+        return Promise.resolve(enLetterCombinations.sort(() => Math.random() - 0.5).slice(0, 10));
+      case ContentType.EnglishSimpleWords: // Added case
+        return Promise.resolve(enSimpleWords.sort(() => Math.random() - 0.5).slice(0, 10));
+      case ContentType.EnglishComplexWords: // Added case
+        return Promise.resolve(enComplexWordsAndPhrases.sort(() => Math.random() - 0.5).slice(0, 10));
       case ContentType.RUSSIAN_TRACK:
         // Логика для общего русского трека, возможно, с использованием API или смешанных источников
         try {
@@ -291,17 +307,20 @@ export async function getAdditionalWords(contentType: ContentType): Promise<stri
           return apiWords;
         } catch (apiError) {
           console.error('Error fetching English words from API, falling back to local dictionary:', apiError);
-          const shuffledWords = [...enWords].sort(() => Math.random() - 0.5);
+          // Заменяем enWords на enSimpleWords
+          const shuffledWords = [...enSimpleWords].sort(() => Math.random() - 0.5);
           return shuffledWords.slice(0, 10);
         }
       // Добавьте другие ContentType по мере необходимости
       default:
-        console.warn(`Unknown contentType: ${contentType}. Falling back to default English words.`);
-        return Promise.resolve(enWords.sort(() => Math.random() - 0.5).slice(0, 10));
+        console.warn(`Unknown contentType: ${contentType}. Falling back to default English simple words.`);
+        // Заменяем enWords на enSimpleWords
+        return Promise.resolve(enSimpleWords.sort(() => Math.random() - 0.5).slice(0, 10));
     }
   } catch (error) {
     console.error('Error in getAdditionalWords:', error);
     // Ultimate fallback to a generic set of words in case of any error
-    return Promise.resolve(enWords.sort(() => Math.random() - 0.5).slice(0, 10));
+    // Заменяем enWords на enSimpleWords
+    return Promise.resolve(enSimpleWords.sort(() => Math.random() - 0.5).slice(0, 10));
   }
 }
