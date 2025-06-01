@@ -31,6 +31,7 @@ export enum ContentType {
   RussianLetterCombinations = 'russian-letter-combinations',
   RussianSimpleWords = 'russian-simple-words',
   RussianComplexWords = 'russian-complex-words',
+  RussianWords = 'russian-words',
   EnglishLetterCombinations = 'english-letter-combinations',
   EnglishSimpleWords = 'english-simple-words',
   EnglishComplexWords = 'english-complex-words',

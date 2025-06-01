@@ -230,17 +230,41 @@
 /* Эти классы (.level-easy, .level-medium, .level-hard) нужно будет добавить к элементу .level-card-rect в вашем React компоненте (.tsx) в зависимости от сложности уровня */
 .level-card-rect.level-easy {
   border-color: #4CAF50; /* Зеленая граница для легкого уровня */
-  /* background: rgba(76, 175, 80, 0.85); */ /* Опционально: изменить фон */
+}
+
+.level-card-rect.level-easy-medium {
+  border-color: linear-gradient(to right, #4CAF50, #FFC107); /* Градиент от зеленого к желтому */
+  border-image: linear-gradient(to right, #4CAF50, #FFC107) 1;
+  border-image-slice: 1;
 }
 
 .level-card-rect.level-medium {
   border-color: #FFC107; /* Желтая граница для среднего уровня */
-  /* background: rgba(255, 193, 7, 0.85); */ /* Опционально: изменить фон */
+}
+
+.level-card-rect.level-medium-hard {
+  border-color: linear-gradient(to right, #FFC107, #F44336); /* Градиент от желтого к красному */
+  border-image: linear-gradient(to right, #FFC107, #F44336) 1;
+  border-image-slice: 1;
 }
 
 .level-card-rect.level-hard {
   border-color: #F44336; /* Красная граница для сложного уровня */
-  /* background: rgba(244, 67, 54, 0.85); */ /* Опционально: изменить фон */
+}
+
+.level-card-rect.level-hard-expert {
+  border-color: linear-gradient(to right, #F44336, #9C27B0); /* Градиент от красного к фиолетовому */
+  border-image: linear-gradient(to right, #F44336, #9C27B0) 1;
+  border-image-slice: 1;
+}
+
+.level-card-rect.level-expert {
+  border-color: #9C27B0; /* Фиолетовая граница для экспертного уровня */
+}
+
+.level-card-rect.level-master {
+  border-color: #FFD700; /* Золотая граница для мастер уровня */
+  box-shadow: 0 0 15px #FFD700; /* Дополнительная тень для выделения */
 }
 
 /* НОВЫЕ СТИЛИ: Для названия уровня в карточке */
