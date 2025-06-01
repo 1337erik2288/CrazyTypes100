@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from 'react'; // Восстановлен useEffect
 import './VictoryScreen.css';
 import { LevelReward, calculatePlayerRating } from '../services/playerService';
-import { saveLevelResult } from '../services/progressService';
+import { saveLevelResult } from '../services/progressService'; // Восстановлен импорт
 
 interface GameStats {
   correctChars: number;
@@ -9,35 +9,35 @@ interface GameStats {
   totalChars: number;
   startTime: number;
   endTime: number | null;
-  errorChars?: string[]; // Add this line
+  errorChars?: string[];
 }
 
 interface VictoryScreenProps {
   gameStats: GameStats;
   onRestart: () => void;
-  onLevelComplete: () => void; // Добавлено onLevelComplete
+  onLevelComplete: () => void;
   rewards?: LevelReward;
   isFirstCompletion?: boolean;
-  speed: number;
-  accuracy: number;
-  levelId: number;
+  speed: number; // Пропс восстановлен
+  accuracy: number; // Пропс восстановлен
+  levelId: number; // Пропс восстановлен
 }
 
 const VictoryScreen: React.FC<VictoryScreenProps> = ({
   onRestart,
-  onLevelComplete, // Добавлено onLevelComplete
+  onLevelComplete,
   rewards,
   isFirstCompletion,
-  speed,
-  accuracy,
+  speed, // Пропс восстановлен
+  accuracy, // Пропс восстановлен
   gameStats,
-  levelId
+  levelId // Пропс восстановлен
 }) => {
   useEffect(() => {
     if (levelId !== undefined && levelId !== null) {
       saveLevelResult(levelId.toString(), speed, accuracy, gameStats.errorChars || []);
     }
-  }, [levelId, speed, accuracy, gameStats.errorChars]);
+  }, [levelId, speed, accuracy, gameStats.errorChars]); // Восстановлен useEffect
 
   return (
     <div className="victory-screen">
@@ -48,6 +48,9 @@ const VictoryScreen: React.FC<VictoryScreenProps> = ({
         <p>Total characters: {gameStats.totalChars}</p>
         <p>Correct characters: {gameStats.correctChars}</p>
         <p>Mistakes: {gameStats.incorrectChars}</p>
+        {gameStats.errorChars && gameStats.errorChars.length > 0 && (
+          <p>Error characters: {gameStats.errorChars.join(', ')}</p>
+        )}
         <p>Accuracy: {((gameStats.correctChars / gameStats.totalChars) * 100).toFixed(1)}%</p>
         <p>Speed: {Math.round((gameStats.totalChars / ((gameStats.endTime || Date.now()) - gameStats.startTime)) * 60000)} CPM</p>
         <p>Rating: {Math.round(calculatePlayerRating(

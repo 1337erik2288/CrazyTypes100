@@ -15,7 +15,7 @@ import { getEquippedItems, applyEquipmentEffects } from '../services/equippedGea
 import { mathExpressions } from '../data/math-expressions';
 import PlayerHealthBar from './PlayerHealthBar';
 // Removed unused: getPlayerProgress, savePlayerProgress
-import { getPlayerHealth, getMaxPlayerHealth, damagePlayer, healPlayerToMax, getPlayerBaseDamage } from '../services/playerService'; 
+import { getPlayerHealth, getMaxPlayerHealth, damagePlayer, healPlayerToMax, getPlayerBaseDamage, addRewards } from '../services/playerService'; 
 import { saveLevelResult } from '../services/progressService';
 import { Language, ContentType } from '../types'; // <--- ИСПРАВЛЕННЫЙ ПУТЬ ИМПОРТА
 
@@ -61,6 +61,7 @@ export interface GamePlayConfig {
   contentType: ContentType; // <--- ДОБАВИТЬ contentType
   monsterDamage?: number;
   attackInterval?: number;
+  difficulty?: string; // ДОБАВЛЕНО: Свойство сложности
 }
 
 interface GamePlayProps {
@@ -415,16 +416,10 @@ const GamePlay: React.FC<GamePlayProps> = ({
 
   // Удалена логика сохранения результатов
   const handleReturnToMenu = () => {
-    // Сохраняем результат только если победа и есть id уровня
-    if (showVictory && gameStats && levelId !== null && gameStats.endTime && gameStats.startTime && gameStats.totalChars > 0) { // Changed: (gameConfig as any).id to levelId
-      const durationMinutes = (gameStats.endTime - gameStats.startTime) / 60000;
-      const speed = gameStats.correctChars / durationMinutes;
-      const accuracy = (gameStats.correctChars / gameStats.totalChars) * 100;
-      saveLevelResult(levelId.toString(), speed, accuracy, currentErrorChars); // Pass currentErrorChars here
-    }
+    // Removed saveLevelResult call from here as it will be handled in handleVictory
     onLevelComplete();
   };
-  // Перемещенный код НАЧАЛО
+
   const handleVictory = useCallback(() => {
     if (showVictory || showDefeatScreen) return; // Already handled
 
@@ -435,13 +430,26 @@ const GamePlay: React.FC<GamePlayProps> = ({
       endTime: Date.now(),
     }));
 
+    // Save level result here upon victory
+    if (levelId !== null && gameStats.endTime === null) { // Ensure it's only saved once
+      const durationMinutes = (Date.now() - gameStats.startTime) / 60000;
+      const speed = gameStats.correctChars / durationMinutes;
+      const accuracy = (gameStats.correctChars / gameStats.totalChars) * 100;
+      saveLevelResult(levelId.toString(), speed, accuracy, currentErrorChars);
+
+      // Начисление наград, если они есть и это первое прохождение
+      if (isFirstCompletion && rewards) {
+        addRewards(rewards.experience, rewards.gold);
+      }
+    }
+
     // НЕ ВЫЗЫВАЙТЕ onLevelComplete здесь напрямую
 
     // Stop monster attacks
     if (monsterAttackInterval.current) {
       clearInterval(monsterAttackInterval.current);
     }
-  }, [showVictory, showDefeatScreen /* убрали onLevelComplete отсюда, если он не нужен для других логик в useCallback */]);
+  }, [showVictory, showDefeatScreen, levelId, gameStats, currentErrorChars, isFirstCompletion, rewards]);
 
   // Существующий useEffect для определения условия победы
   useEffect(() => {
@@ -460,7 +468,9 @@ const GamePlay: React.FC<GamePlayProps> = ({
       <BackgroundManager imagePath={gameConfig.backgroundImage} />
       <div className="game-container">
         <button className="menu-button" onClick={handleReturnToMenu}>Вернуться в меню</button>
-        
+
+        {/* УДАЛЕНО: Отображение сложности здесь */}
+
         <div className="monster-container">
           <Monster 
             imagePath={monster.imagePath}

@@ -6,7 +6,7 @@ import GamePlay from './components/GamePlay'; // Убрал Language, если �
 import LevelSelect from './components/LevelSelect'; 
 import Shop from './components/Shop';
 // import { getPlayerProgress, savePlayerProgress, addRewards, PlayerProgress } from './services/playerService'; // УДАЛЕНЫ savePlayerProgress, addRewards
-import { getPlayerProgress, PlayerProgress } from './services/playerService'; 
+import { getPlayerProgress, savePlayerProgress, addRewards, PlayerProgress } from './services/playerService'; // Раскомментированы savePlayerProgress и addRewards
 import TrainingRoom from './components/TrainingRoom';
 import { LevelConfig, ContentType, Language } from './types'; // Убедимся, что Language импортирован
 import { russianLevels } from './data/russianLevels';
@@ -34,8 +34,7 @@ function App() {
   const [currentScreen, setCurrentScreen] = useState<'levelSelect' | 'playing' | 'shop' | 'trainingRoom' | 'trackLevels'>('levelSelect');
   const [playerProgress, setPlayerProgress] = useState<PlayerProgress>(getPlayerProgress());
   const [currentLevelId, setCurrentLevelId] = useState<number | null>(null);
-  // const [currentRewards, setCurrentRewards] = useState<{ experience: number; gold: number } | null>(null); // <-- УДАЛЕНО, так как setCurrentRewards не используется
-  const [currentRewards, ] = useState<{ experience: number; gold: number } | null>(null); // Если currentRewards все еще нужен, но без сеттера
+  const [currentRewards, setCurrentRewards] = useState<{ experience: number; gold: number } | null>(null);
   const [isFirstCompletion, setIsFirstCompletion] = useState(false);
   const [currentLevel, setCurrentLevel] = useState<LevelConfig | null>(null);
   const [selectedTrack, setSelectedTrack] = useState<ContentType | null>(null); // Добавляем состояние для отслеживания выбранного трека
@@ -63,33 +62,34 @@ function App() {
   }
 
   // Эта функция будет вызываться при выборе уровня на экране трека
-  const handleLevelSelect = (levelDetails: LevelConfig) => { 
-    // Устанавливаем конфигурацию игры на основе выбранного уровня
-    // Свойства из levelDetails перезапишут базовые в gameConfig
+  const handleLevelSelect = (levelDetails: LevelConfig) => {
     setGameConfig(prevConfig => ({
       ...prevConfig,
       language: levelDetails.language !== undefined ? levelDetails.language : prevConfig.language,
-      monsterHealth: levelDetails.monsterHealth, // Теперь берется напрямую из levelDetails
-      monsterRegeneration: levelDetails.monsterRegeneration,
-      monsterHealOnMistake: levelDetails.monsterHealOnMistake,
-      damageAmount: levelDetails.damageAmount, // Урон монстра, если это свойство в LevelConfig
-      backgroundImage: levelDetails.backgroundImage, // Изменено с 'background'
+      initialHealth: levelDetails.monsterHealth, // ИСПОЛЬЗУЕМ monsterHealth КАК initialHealth
+      regenerateAmount: levelDetails.monsterRegeneration !== undefined ? levelDetails.monsterRegeneration : prevConfig.regenerateAmount,
+      healOnMistake: levelDetails.monsterHealOnMistake, // Corrected property name
+      damageAmount: levelDetails.damageAmount,
+      backgroundImage: levelDetails.backgroundImage,
       monsterImage: levelDetails.monsterImage,
       contentType: levelDetails.contentType,
-      // timeLimit и levelContent остаются, если они не в LevelConfig
+      difficulty: levelDetails.difficulty, // ПЕРЕДАЕМ СЛОЖНОСТЬ
     }));
     setCurrentLevelId(levelDetails.id);
-    setCurrentLevel(levelDetails); 
-    
+    setCurrentLevel(levelDetails);
+
     const isFirstTime = !playerProgress.completedLevels.includes(levelDetails.id.toString());
     setIsFirstCompletion(isFirstTime);
-        
-    // Используем contentType для определения, является ли это тренировочным уровнем
-    if (levelDetails.contentType === ContentType.KeyCombos) { // Используем ContentType.KeyCombos
+
+    if (levelDetails.contentType === ContentType.KeyCombos) {
       setCurrentScreen('trainingRoom');
     } else {
       setCurrentScreen('playing');
     }
+    setCurrentRewards({
+      experience: levelDetails.experienceReward || 0,
+      gold: levelDetails.goldReward || 0
+    });
   };
 
   const handleTrackSelect = (track: ContentType) => {
@@ -129,10 +129,24 @@ function App() {
   
   // Load player progress from localStorage on component mount
   const handleLevelComplete = () => {
-    if (currentLevelId !== null && currentLevel && !playerProgress.completedLevels.includes(currentLevelId.toString())) {
-      // Логика наград будет здесь или передаваться в GamePlay
-      // if (currentRewards) { ... }
+    let updatedProgress = playerProgress;
+    if (currentLevelId !== null && currentLevel && isFirstCompletion && currentRewards) {
+      // Начисляем награды только при первом прохождении и если они есть
+      updatedProgress = addRewards(currentRewards.experience, currentRewards.gold);
+      // Отмечаем уровень как пройденный (если это еще не сделано в progressService.saveLevelResult)
+      // Если saveLevelResult уже добавляет ID в completedLevels, этот блок может быть не нужен
+      // или его нужно будет синхронизировать с логикой progressService
+      if (!updatedProgress.completedLevels.includes(currentLevelId.toString())) {
+        updatedProgress.completedLevels.push(currentLevelId.toString());
+      }
+      savePlayerProgress(updatedProgress); // Сохраняем обновленный прогресс
+      setPlayerProgress(updatedProgress); // Обновляем состояние
+    } else {
+      // Если не первое прохождение или нет наград, просто обновляем состояние из localStorage
+      // на случай, если статистика уровня (скорость, точность) обновилась
+      setPlayerProgress(getPlayerProgress());
     }
+
     // После завершения уровня возвращаемся к списку уровней текущего трека
     if (selectedTrack) {
       handleTrackSelect(selectedTrack); // Возвращаемся к выбранному треку
@@ -191,7 +205,7 @@ function App() {
             onLevelSelect={handleLevelSelect} 
             completedLevels={playerProgress.completedLevels}
             playerProgress={playerProgress}
-            onOpenShop={handleOpenShop} // Убедимся, что эта функция определена
+            onOpenShop={handleOpenShop} // Убедитесь, что эта функция определена
           />
         );
     }

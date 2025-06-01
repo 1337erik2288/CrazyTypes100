@@ -34,14 +34,16 @@ const trainingRoomLevelConfig: LevelConfig = {
   id: 0,
   name: 'Тренировочная комната',
   description: 'Оттачивайте свои навыки!',
-  language: Language.EN, // <-- Исправлено: используем Language.EN вместо несуществующего Language.KEYBOARD_TRAINING
-  contentType: ContentType.KeyCombos, // <-- Use KeyCombos (not KEY_COMBOS)
+  language: Language.EN,
+  contentType: ContentType.KeyCombos,
   monsterHealth: 0,
   monsterRegeneration: 0,
   monsterHealOnMistake: 0,
   damageAmount: 0,
-  background: '',
+  backgroundImage: '',
   monsterImage: '',
+  monsterDamage: 0, // Added missing property
+  attackInterval: 0, // Added missing property
   levelContent: [],
   timeLimit: 0,
   experienceReward: 0,
@@ -110,12 +112,20 @@ const LevelSelect: React.FC<LevelSelectProps> = ({
             return (
               <div key={level.id} className={`level-card-rect ${isCompleted ? 'completed' : ''}`}>
                 <div className="level-title">{level.name}</div>
+                {level.difficulty && (
+                  <div className={`level-difficulty ${level.difficulty.toLowerCase()}`}>
+                    Сложность: {level.difficulty}
+                  </div>
+                )}
                 <div className="level-content">Описание: {level.description}</div>
                 <div className="level-stats">
                   {stats ? (
                     <>
                       <div>Скорость: <b>{stats.speed.toFixed(2)} зн./мин</b></div>
                       <div>Точность: <b>{stats.accuracy.toFixed(2)}%</b></div>
+                      {stats.errorChars && stats.errorChars.length > 0 && (
+                        <div>Ошибки: <b>{stats.errorChars.join(', ')}</b></div>
+                      )}
                     </>
                   ) : (
                     <div>Нет данных</div>

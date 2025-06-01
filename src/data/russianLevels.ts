@@ -11,7 +11,7 @@ export const russianLevels: LevelConfig[] = [
     backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (4).jpg',
     monsterImage: '/src/image/monster/Cartoon Monster Photoroom Mar 18 2025.png',
     monsterHealth: 100, // Убедимся, что здесь правильное значение
-    monsterRegeneration: 0.5,
+    monsterRegeneration: 1,
     monsterHealOnMistake: 5,
     language: Language.RU,
     contentType: ContentType.RussianLetterCombinations,
@@ -31,7 +31,7 @@ export const russianLevels: LevelConfig[] = [
     backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (2).jpg',
     monsterImage: '/src/image/monster/Cartoon Style Monster Photoroom.png',
     monsterHealth: 150, // Убедимся, что здесь правильное значение
-    monsterRegeneration: 0.7,
+    monsterRegeneration: 3,
     monsterHealOnMistake: 7,
     language: Language.RU,
     contentType: ContentType.RussianSimpleWords,
@@ -51,7 +51,7 @@ export const russianLevels: LevelConfig[] = [
     backgroundImage: '/src/image/background/I_need_a_picture_of_a_beautiful_landscape_there_s_fe26500b_4270 (3).jpg',
     monsterImage: '/src/image/monster/DALL·E Cartoon March 18 2025.png',
     monsterHealth: 200, // Убедимся, что здесь правильное значение
-    monsterRegeneration: 1,
+    monsterRegeneration: 5,
     monsterHealOnMistake: 10,
     language: Language.RU,
     contentType: ContentType.RussianComplexWords,

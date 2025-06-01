@@ -399,22 +399,27 @@
   text-align: left;
 }
 
-/* Стили для блока сложности */
-.level-card-rect .level-difficulty {
-  font-size: 0.9em;
-  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
-  text-align: left;
+.level-difficulty {
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-/* Цветовое выделение для текста сложности */
-.level-card-rect .level-difficulty.easy b {
-  color: #66bb6a; /* Зеленый */
+.level-difficulty.легко {
+  background-color: #4CAF50; /* Green */
 }
-.level-card-rect .level-difficulty.medium b {
-  color: #ffee58; /* Желтый */
+
+.level-difficulty.средне {
+  background-color: #FFC107; /* Amber */
 }
-.level-card-rect .level-difficulty.hard b {
-  color: #ef5350; /* Красный */
+
+.level-difficulty.сложно {
+  background-color: #F44336; /* Red */
 }
 
 /* Стили для содержания уровня */
@@ -607,22 +612,27 @@
   text-align: left;
 }
 
-/* Стили для блока сложности */
-.level-card-rect .level-difficulty {
-  font-size: 0.9em;
-  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
-  text-align: left;
+.level-difficulty {
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-/* Цветовое выделение для текста сложности */
-.level-card-rect .level-difficulty.easy b {
-  color: #66bb6a; /* Зеленый */
+.level-difficulty.легко {
+  background-color: #4CAF50; /* Green */
 }
-.level-card-rect .level-difficulty.medium b {
-  color: #ffee58; /* Желтый */
+
+.level-difficulty.средне {
+  background-color: #FFC107; /* Amber */
 }
-.level-card-rect .level-difficulty.hard b {
-  color: #ef5350; /* Красный */
+
+.level-difficulty.сложно {
+  background-color: #F44336; /* Red */
 }
 
 /* Стили для содержания уровня */
@@ -1026,22 +1036,27 @@
   text-align: left;
 }
 
-/* Стили для блока сложности */
-.level-card-rect .level-difficulty {
-  font-size: 0.9em;
-  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
-  text-align: left;
+.level-difficulty {
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-/* Цветовое выделение для текста сложности */
-.level-card-rect .level-difficulty.easy b {
-  color: #66bb6a; /* Зеленый */
+.level-difficulty.легко {
+  background-color: #4CAF50; /* Green */
 }
-.level-card-rect .level-difficulty.medium b {
-  color: #ffee58; /* Желтый */
+
+.level-difficulty.средне {
+  background-color: #FFC107; /* Amber */
 }
-.level-card-rect .level-difficulty.hard b {
-  color: #ef5350; /* Красный */
+
+.level-difficulty.сложно {
+  background-color: #F44336; /* Red */
 }
 
 /* Стили для содержания уровня */
@@ -1234,22 +1249,27 @@
   text-align: left;
 }
 
-/* Стили для блока сложности */
-.level-card-rect .level-difficulty {
-  font-size: 0.9em;
-  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
-  text-align: left;
+.level-difficulty {
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-/* Цветовое выделение для текста сложности */
-.level-card-rect .level-difficulty.easy b {
-  color: #66bb6a; /* Зеленый */
+.level-difficulty.легко {
+  background-color: #4CAF50; /* Green */
 }
-.level-card-rect .level-difficulty.medium b {
-  color: #ffee58; /* Желтый */
+
+.level-difficulty.средне {
+  background-color: #FFC107; /* Amber */
 }
-.level-card-rect .level-difficulty.hard b {
-  color: #ef5350; /* Красный */
+
+.level-difficulty.сложно {
+  background-color: #F44336; /* Red */
 }
 
 /* Стили для содержания уровня */
@@ -1442,22 +1462,27 @@
   text-align: left;
 }
 
-/* Стили для блока сложности */
-.level-card-rect .level-difficulty {
-  font-size: 0.9em;
-  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
-  text-align: left;
+.level-difficulty {
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-/* Цветовое выделение для текста сложности */
-.level-card-rect .level-difficulty.easy b {
-  color: #66bb6a; /* Зеленый */
+.level-difficulty.легко {
+  background-color: #4CAF50; /* Green */
 }
-.level-card-rect .level-difficulty.medium b {
-  color: #ffee58; /* Желтый */
+
+.level-difficulty.средне {
+  background-color: #FFC107; /* Amber */
 }
-.level-card-rect .level-difficulty.hard b {
-  color: #ef5350; /* Красный */
+
+.level-difficulty.сложно {
+  background-color: #F44336; /* Red */
 }
 
 /* Стили для содержания уровня */
@@ -1650,22 +1675,27 @@
   text-align: left;
 }
 
-/* Стили для блока сложности */
-.level-card-rect .level-difficulty {
-  font-size: 0.9em;
-  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
-  text-align: left;
+.level-difficulty {
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-/* Цветовое выделение для текста сложности */
-.level-card-rect .level-difficulty.easy b {
-  color: #66bb6a; /* Зеленый */
+.level-difficulty.легко {
+  background-color: #4CAF50; /* Green */
 }
-.level-card-rect .level-difficulty.medium b {
-  color: #ffee58; /* Желтый */
+
+.level-difficulty.средне {
+  background-color: #FFC107; /* Amber */
 }
-.level-card-rect .level-difficulty.hard b {
-  color: #ef5350; /* Красный */
+
+.level-difficulty.сложно {
+  background-color: #F44336; /* Red */
 }
 
 /* Стили для содержания уровня */
@@ -1858,22 +1888,27 @@
   text-align: left;
 }
 
-/* Стили для блока сложности */
-.level-card-rect .level-difficulty {
-  font-size: 0.9em;
-  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
-  text-align: left;
+.level-difficulty {
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-/* Цветовое выделение для текста сложности */
-.level-card-rect .level-difficulty.easy b {
-  color: #66bb6a; /* Зеленый */
+.level-difficulty.легко {
+  background-color: #4CAF50; /* Green */
 }
-.level-card-rect .level-difficulty.medium b {
-  color: #ffee58; /* Желтый */
+
+.level-difficulty.средне {
+  background-color: #FFC107; /* Amber */
 }
-.level-card-rect .level-difficulty.hard b {
-  color: #ef5350; /* Красный */
+
+.level-difficulty.сложно {
+  background-color: #F44336; /* Red */
 }
 
 /* Стили для содержания уровня */
@@ -2066,22 +2101,27 @@
   text-align: left;
 }
 
-/* Стили для блока сложности */
-.level-card-rect .level-difficulty {
-  font-size: 0.9em;
-  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
-  text-align: left;
+.level-difficulty {
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-/* Цветовое выделение для текста сложности */
-.level-card-rect .level-difficulty.easy b {
-  color: #66bb6a; /* Зеленый */
+.level-difficulty.легко {
+  background-color: #4CAF50; /* Green */
 }
-.level-card-rect .level-difficulty.medium b {
-  color: #ffee58; /* Желтый */
+
+.level-difficulty.средне {
+  background-color: #FFC107; /* Amber */
 }
-.level-card-rect .level-difficulty.hard b {
-  color: #ef5350; /* Красный */
+
+.level-difficulty.сложно {
+  background-color: #F44336; /* Red */
 }
 
 /* Стили для содержания уровня */
@@ -2274,22 +2314,27 @@
   text-align: left;
 }
 
-/* Стили для блока сложности */
-.level-card-rect .level-difficulty {
-  font-size: 0.9em;
-  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
-  text-align: left;
+.level-difficulty {
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-/* Цветовое выделение для текста сложности */
-.level-card-rect .level-difficulty.easy b {
-  color: #66bb6a; /* Зеленый */
+.level-difficulty.легко {
+  background-color: #4CAF50; /* Green */
 }
-.level-card-rect .level-difficulty.medium b {
-  color: #ffee58; /* Желтый */
+
+.level-difficulty.средне {
+  background-color: #FFC107; /* Amber */
 }
-.level-card-rect .level-difficulty.hard b {
-  color: #ef5350; /* Красный */
+
+.level-difficulty.сложно {
+  background-color: #F44336; /* Red */
 }
 
 /* Стили для содержания уровня */
@@ -2482,22 +2527,27 @@
   text-align: left;
 }
 
-/* Стили для блока сложности */
-.level-card-rect .level-difficulty {
-  font-size: 0.9em;
-  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
-  text-align: left;
+.level-difficulty {
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-/* Цветовое выделение для текста сложности */
-.level-card-rect .level-difficulty.easy b {
-  color: #66bb6a; /* Зеленый */
+.level-difficulty.легко {
+  background-color: #4CAF50; /* Green */
 }
-.level-card-rect .level-difficulty.medium b {
-  color: #ffee58; /* Желтый */
+
+.level-difficulty.средне {
+  background-color: #FFC107; /* Amber */
 }
-.level-card-rect .level-difficulty.hard b {
-  color: #ef5350; /* Красный */
+
+.level-difficulty.сложно {
+  background-color: #F44336; /* Red */
 }
 
 /* Стили для содержания уровня */
@@ -2690,22 +2740,27 @@
   text-align: left;
 }
 
-/* Стили для блока сложности */
-.level-card-rect .level-difficulty {
-  font-size: 0.9em;
-  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
-  text-align: left;
+.level-difficulty {
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-/* Цветовое выделение для текста сложности */
-.level-card-rect .level-difficulty.easy b {
-  color: #66bb6a; /* Зеленый */
+.level-difficulty.легко {
+  background-color: #4CAF50; /* Green */
 }
-.level-card-rect .level-difficulty.medium b {
-  color: #ffee58; /* Желтый */
+
+.level-difficulty.средне {
+  background-color: #FFC107; /* Amber */
 }
-.level-card-rect .level-difficulty.hard b {
-  color: #ef5350; /* Красный */
+
+.level-difficulty.сложно {
+  background-color: #F44336; /* Red */
 }
 
 /* Стили для содержания уровня */
@@ -2898,22 +2953,27 @@
   text-align: left;
 }
 
-/* Стили для блока сложности */
-.level-card-rect .level-difficulty {
-  font-size: 0.9em;
-  color: #f0f0f0; /* Основной цвет текста "Сложность:" */
-  text-align: left;
+.level-difficulty {
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-/* Цветовое выделение для текста сложности */
-.level-card-rect .level-difficulty.easy b {
-  color: #66bb6a; /* Зеленый */
+.level-difficulty.легко {
+  background-color: #4CAF50; /* Green */
 }
-.level-card-rect .level-difficulty.medium b {
-  color: #ffee58; /* Желтый */
+
+.level-difficulty.средне {
+  background-color: #FFC107; /* Amber */
 }
-.level-card-rect .level-difficulty.hard b {
-  color: #ef5350; /* Красный */
+
+.level-difficulty.сложно {
+  background-color: #F44336; /* Red */
 }
 
 /* Стили для содержания уровня */
