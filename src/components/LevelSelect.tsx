@@ -177,4 +177,3 @@ const LevelSelect: React.FC<LevelSelectProps> = ({
 };
 
 export default LevelSelect;
-// Удалена строка: export { levels };

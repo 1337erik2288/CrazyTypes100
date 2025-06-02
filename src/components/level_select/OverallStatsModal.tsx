@@ -115,12 +115,12 @@ const OverallStatsModal: React.FC<OverallStatsModalProps> = ({ /* isOpen, */ onC
 
   return (
     <div className="stats-modal-overlay" onClick={onClose}>
-      <div className="stats-modal-content" onClick={(e) => e.stopPropagation()}>
+      <div className="stats-modal-content" onClick={(e) => e.stopPropagation()}> 
         <h2>Общая статистика</h2>
         <div className="stats-grid">
           <div className="stat-item">
             <span className="stat-label">Средняя скорость</span>
-            <span className="stat-value">{stats.averageSpeedCPM} CPM</span>
+            <span className="stat-value">{stats.averageSpeedCPM} зн/мин</span> {/* Изменено CPM на зн/мин */}
           </div>
           <div className="stat-item">
             <span className="stat-label">Средняя точность</span>

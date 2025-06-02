@@ -41,36 +41,36 @@ const VictoryScreen: React.FC<VictoryScreenProps> = ({
 
   return (
     <div className="victory-screen">
-      <h2>Victory!</h2>
-      <p>You defeated the monster!</p>
+      <h2>Победа!</h2>
+      <p>Вы одолели монстра!</p>
       <div className="stats">
-        <p>Time: {((gameStats.endTime || Date.now()) - gameStats.startTime) / 1000} seconds</p>
-        <p>Total characters: {gameStats.totalChars}</p>
-        <p>Correct characters: {gameStats.correctChars}</p>
-        <p>Mistakes: {gameStats.incorrectChars}</p>
+        <p>Время: {((gameStats.endTime || Date.now()) - gameStats.startTime) / 1000} секунд</p>
+        <p>Всего символов: {gameStats.totalChars}</p>
+        <p>Правильных символов: {gameStats.correctChars}</p>
+        <p>Ошибок: {gameStats.incorrectChars}</p>
         {gameStats.errorChars && gameStats.errorChars.length > 0 && (
-          <p>Error characters: {gameStats.errorChars.join(', ')}</p>
+          <p>Символы с ошибками: {gameStats.errorChars.join(', ')}</p>
         )}
-        <p>Accuracy: {((gameStats.correctChars / gameStats.totalChars) * 100).toFixed(1)}%</p>
-        <p>Speed: {Math.round((gameStats.totalChars / ((gameStats.endTime || Date.now()) - gameStats.startTime)) * 60000)} CPM</p>
-        <p>Rating: {Math.round(calculatePlayerRating(
+        <p>Точность: {((gameStats.correctChars / gameStats.totalChars) * 100).toFixed(1)}%</p>
+        <p>Скорость: {Math.round((gameStats.totalChars / ((gameStats.endTime || Date.now()) - gameStats.startTime)) * 60000)} зн/мин</p>
+        <p>Рейтинг: {Math.round(calculatePlayerRating(
           Math.round((gameStats.totalChars / ((gameStats.endTime || Date.now()) - gameStats.startTime)) * 60000),
           ((gameStats.correctChars / gameStats.totalChars) * 100)
         ))}</p>
         {isFirstCompletion && rewards && (
           <div className="rewards">
-            <p className="reward-title">Rewards Earned:</p>
+            <p className="reward-title">Полученные награды:</p>
             <p className="xp-reward">+{rewards.experience} XP</p>
-            <p className="gold-reward">+{rewards.gold} Gold</p>
+            <p className="gold-reward">+{rewards.gold} Золота</p>
           </div>
         )}
       </div>
       <div className="victory-buttons">
         <button onClick={onRestart} className="restart-button">
-          Play Again
+          Играть снова
         </button>
-        <button onClick={onLevelComplete} className="return-button"> {/* Добавлена кнопка Return to Menu */}
-          Return to Menu
+        <button onClick={onLevelComplete} className="return-button"> 
+          Вернуться в меню
         </button>
       </div>
     </div>
