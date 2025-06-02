@@ -48,6 +48,7 @@ export interface GamePlayConfig {
   monsterDamage?: number;
   attackInterval?: number;
   difficulty?: string;
+  levelContent?: string[]; // Добавляем это свойство
 }
 
 interface GamePlayProps {
@@ -146,7 +147,11 @@ const GamePlay: React.FC<GamePlayProps> = ({
   }, [gameConfig.initialHealth, gameConfig.monsterImage]);
 
   const generateNewWord = useCallback(() => {
-    if (initialConfig.contentType === ContentType.Code) { 
+    if (initialConfig.contentType === ContentType.DYNAMIC_CONTENT_TRACK && initialConfig.levelContent && initialConfig.levelContent.length > 0) {
+      const randomIndex = Math.floor(Math.random() * initialConfig.levelContent.length);
+      setCurrentWord(initialConfig.levelContent[randomIndex]);
+      setUserInput('');
+    } else if (initialConfig.contentType === ContentType.Code) { 
       const codeLanguages = ['javascript', 'python', 'typescript', 'java', 'csharp']; 
       const randomLang = codeLanguages[Math.floor(Math.random() * codeLanguages.length)];
       getRandomCodeLine(randomLang).then((codeLine: string) => {
@@ -176,7 +181,7 @@ const GamePlay: React.FC<GamePlayProps> = ({
         }
       });
     }
-  }, [initialConfig.contentType, initialConfig.language]); 
+  }, [initialConfig.contentType, initialConfig.language, initialConfig.levelContent]); 
 
   const restartGame = () => {
     const randomMonsterImage = getRandomMonsterImage();

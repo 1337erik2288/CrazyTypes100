@@ -163,6 +163,10 @@ const LevelSelect: React.FC<LevelSelectProps> = ({
                   <span className="track-title">Математика</span>
                   <span className="track-description">Практикуйтесь в наборе математических выражений.</span>
                 </button>
+                <button onClick={() => onTrackSelect(ContentType.DYNAMIC_CONTENT_TRACK)} className="track-button dynamic-content-track">
+                  <span className="track-title">Меняющийся контент</span>
+                  <span className="track-description">Уровни с динамически изменяющимся содержимым.</span>
+                </button>
               </>
             )}
           </div>

@@ -44,6 +44,7 @@ export enum ContentType {
   ENGLISH_TRACK = 'english_track',
   CODE_TRACK = 'code_track',
   MATH_TRACK = 'math_track',
+  DYNAMIC_CONTENT_TRACK = 'dynamic_content_track',
 }
 
 // LevelConfigDetails удален

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import './App.css'
 import './components/GameContainer.css'
 import GamePlay from './components/GamePlay'; // Убрал Language, если он импортируется из types.ts
@@ -13,6 +13,7 @@ import { russianLevels } from './data/russianLevels';
 import { englishLevels } from './data/englishLevels';
 import { codeLevels } from './data/codeLevels';
 import { mathLevels } from './data/mathLevels';
+import { dynamicContentLevels } from './data/dynamicContentLevels';
 
 const monsterImages = [
   '/src/image/monster/Cartoon Monster Design 3.png',
@@ -50,7 +51,7 @@ function App() {
     language: 'en' as Language,
     contentType: ContentType.KeyCombos,
     timeLimit: 120,
-    levelContent: [],
+    levelContent: [] as string[], // Changed from never[] to string[]
   }))
 
   const handleRestart = () => {
@@ -74,6 +75,7 @@ function App() {
       monsterImage: levelDetails.monsterImage,
       contentType: levelDetails.contentType,
       difficulty: levelDetails.difficulty, // ПЕРЕДАЕМ СЛОЖНОСТЬ
+      levelContent: levelDetails.levelContent || [], // Provide a fallback to an empty array
     }));
     setCurrentLevelId(levelDetails.id);
     setCurrentLevel(levelDetails);
@@ -93,7 +95,7 @@ function App() {
   };
 
   const handleTrackSelect = (track: ContentType) => {
-    setSelectedTrack(track); // Устанавливаем выбранный трек
+    setSelectedTrack(track);
     let levelsForTrack: LevelConfig[] = [];
     switch (track) {
       case ContentType.RUSSIAN_TRACK:
@@ -108,10 +110,12 @@ function App() {
       case ContentType.MATH_TRACK:
         levelsForTrack = mathLevels;
         break;
-      // Добавить другие треки, если необходимо
+      case ContentType.DYNAMIC_CONTENT_TRACK:
+        levelsForTrack = dynamicContentLevels;
+        break;
     }
     setCurrentTrackLevels(levelsForTrack);
-    setCurrentScreen('trackLevels'); 
+    setCurrentScreen('trackLevels');
   };
 
   const handleReturnToMenu = () => {
