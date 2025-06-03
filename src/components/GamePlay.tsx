@@ -16,6 +16,7 @@ import { getPlayerHealth, getMaxPlayerHealth, damagePlayer, healPlayerToMax, get
 import { saveLevelResult } from '../services/progressService';
 import { Language, ContentType } from '../types';
 import { getRandomBackgroundImage, getRandomMonsterImage } from '../data/levelResources';
+import PlayerHealthBar from './PlayerHealthBar';
 
 interface Monster {
   health: number;
@@ -423,11 +424,13 @@ const GamePlay: React.FC<GamePlayProps> = ({
   }, [monster.health, monster.isDefeated, showVictory, showDefeatScreen, handleVictory]);
 
   return (
-    <div className="game-play-container">
-      <BackgroundManager imagePath={backgroundImage || ''} />
+    <div className={`game-play-container ${gameConfig.difficulty || ''}`}>
+      {backgroundImage && <BackgroundManager imagePath={backgroundImage} />}
       <div className="game-content">
         <div className="top-section">
           <button className="menu-button" onClick={handleReturnToMenu}>Вернуться в меню</button>
+          {/* Add the player health bar here */}
+          <PlayerHealthBar currentHealth={playerHealth} maxHealth={maxPlayerHealth} />
           <div className="monster-container">
             <Monster 
               imagePath={monster.imagePath}

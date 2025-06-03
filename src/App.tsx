@@ -76,6 +76,8 @@ function App() {
       contentType: levelDetails.contentType,
       difficulty: levelDetails.difficulty, // ПЕРЕДАЕМ СЛОЖНОСТЬ
       levelContent: levelDetails.levelContent || [], // Provide a fallback to an empty array
+      monsterDamage: levelDetails.monsterDamage, // <--- ДОБАВЛЕНО
+      attackInterval: levelDetails.attackInterval, // <--- ДОБАВЛЕНО
     }));
     setCurrentLevelId(levelDetails.id);
     setCurrentLevel(levelDetails);
